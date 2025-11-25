@@ -7,17 +7,17 @@ Vagrant.configure("2") do |config|
       v.cpus = 1
     end
 
-    config.vm.define :app1 do |app1|
-      # Vagrant va récupérer une machine de base ubuntu 20.04 (focal) depuis cette plateforme https://app.vagrantup.com/boxes/search
-      app1.vm.box = "bento/ubuntu-24.04"
-      app1.vm.hostname = "app1"
-      app1.vm.network :private_network, ip: "192.168.56.111"
+    config.vm.define :VMserveur do |VMserveur|
+      # Vagrant va récupérer une machine de base ubuntu 24.04 depuis cette plateforme https://app.vagrantup.com/boxes/search
+      VMserveur.vm.box = "bento/ubuntu-24.04"
+      VMserveur.vm.hostname = "VMserveur"
+      VMserveur.vm.network :private_network, ip: "192.168.56.111"
     end
 
-    config.vm.define :app2 do |app2|
-      # Vagrant va récupérer une machine de base ubuntu 20.04 (focal) depuis cette plateforme https://app.vagrantup.com/boxes/search
-      app2.vm.box = "bento/ubuntu-24.04"
-      app2.vm.hostname = "app2"
-      app2.vm.network :private_network, ip: "192.168.56.112"
+    config.vm.define :VMdatabase do |VMdatabase|
+      # Vagrant va récupérer une machine de base ubuntu 24.04 depuis cette plateforme https://app.vagrantup.com/boxes/search
+      VMdatabase.vm.box = "bento/ubuntu-24.04"
+      VMdatabase.vm.hostname = "VMdatabase"
+      VMdatabase.vm.network :private_network, ip: "192.168.56.112"
     end
   end
