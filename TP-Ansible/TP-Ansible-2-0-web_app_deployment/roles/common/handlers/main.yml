@@ -1,7 +1,0 @@
----
-# common/handlers/main.yml
-
-- name: Reload systemd
-  command: systemctl daemon-reload
-  args:
-    warn: false
