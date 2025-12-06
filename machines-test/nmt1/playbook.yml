@@ -1,0 +1,64 @@
+---
+- hosts: all
+  become: yes
+  
+  tasks:
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    
+    - name: Installer les dépendances
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - software-properties-common
+        state: present
+    
+    - name: Ajouter la clé GPG de Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    
+    - name: Ajouter le dépôt Docker
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+    
+    - name: Installer Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+    
+    - name: Ajouter l'utilisateur vagrant au groupe docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+    
+    - name: Activer et démarrer le service Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+    
+    - name: Installer Docker Compose (version autonome)
+      shell: |
+        curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+      args:
+        creates: /usr/local/bin/docker-compose
+    
+    - name: Installer Alpine pour les tests
+      shell: docker pull alpine
+      become_user: vagrant
+      become: yes
