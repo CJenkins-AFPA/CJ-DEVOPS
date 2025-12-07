@@ -98,6 +98,44 @@ Gestion d'infrastructure réseau avec NetBox.
 - Device Type Library import
 - Documentation interactive
 - **Durée estimée** : 2h
+- **Niveau** : Intermédiaire
+
+### [12 - NetBox Professionnel](./12-netbox-professionnel/) ⭐
+**Production-grade IPAM/DCIM** avec infrastructure complète.
+- **Stack complet** : NetBox + PostgreSQL + Redis + Traefik + Monitoring
+- **Sécurité** : SSL/TLS automatique, rate limiting, security headers
+- **Monitoring** : Prometheus + Grafana avec dashboards
+- **API** : REST API + GraphQL
+- **Backup** : Scripts automatisés avec restore
+- **Documentation** : Guide production avec Ansible examples
+- **Durée estimée** : 3h
+- **Niveau** : Avancé/Production
+
+### [13 - Prometheus Docker (Monitoring)](./13-prometheus-docker/)
+Stack de monitoring complet avec Prometheus.
+- **Stack** : Prometheus + Node Exporter + cAdvisor + Alertmanager
+- **Métriques** : Système (CPU, RAM, disque) + Conteneurs Docker
+- **Alerting** : 20+ règles configurées (node, container)
+- **Recording rules** : Métriques pré-calculées pour performance
+- **Alertmanager** : Routing par sévérité (critical/warning/info)
+- **Queries PromQL** : 30+ exemples documentés
+- **Durée estimée** : 2-3h
+- **Niveau** : Intermédiaire
+
+### [14 - Prometheus + Grafana Production](./14-prometheus-grafana-pro/) ⭐⭐
+**Enterprise monitoring stack** avec observabilité complète.
+- **Stack complet** : Prometheus + Grafana + Loki + Traefik + Blackbox
+- **10 services** : Monitoring, logs, alerting, reverse proxy
+- **Sécurité** : SSL/TLS Let's Encrypt + Basic Auth + Rate limiting
+- **Grafana** : Dashboards auto-provisionnés + datasources
+- **Loki + Promtail** : Agrégation logs avec LogQL
+- **Alerting avancé** : 40+ alertes + multi-canal (Email/Slack/PagerDuty)
+- **Blackbox Exporter** : Monitoring endpoints HTTP/HTTPS
+- **Recording rules** : Optimisation performance
+- **Backup/Restore** : Scripts automatisés complets
+- **Documentation** : 1200+ lignes avec architecture complète
+- **Durée estimée** : 4-6h
+- **Niveau** : Expert/Production
 - **Niveau** : Débutant
 
 ### [12 - NetBox Professionnel](./12-netbox-professionnel/) ⭐⭐
@@ -178,13 +216,14 @@ git checkout docker
 7. TP 05 - Réseaux
 8. TP 06 - Volumes
 9. TP 04 - Registry Privé
+10. TP 13 - Prometheus Docker (monitoring)
 
 ### 🔴 Avancé (Jour 5-7)
-10. TP 07 - Dockerfiles avancés
-11. TP 08 - Docker Swarm
+11. TP 07 - Dockerfiles avancés
+12. TP 08 - Docker Swarm
 
-### 🏆 Expert / Production (Jour 8-12)
-12. **TP 10 - BookStack Production Sécurisé** ⭐
+### 🏆 Expert / Production (Jour 8-14)
+13. **TP 10 - BookStack Production Sécurisé** ⭐
     - Architecture de sécurité multi-couches
     - Reverse proxy, 2FA, IDS/IPS
     - Monitoring et observabilité
@@ -192,12 +231,20 @@ git checkout docker
     - Automation avec Ansible
     - Hardening système complet
 
-13. **TP 12 - NetBox Professionnel** ⭐⭐
+14. **TP 12 - NetBox Professionnel** ⭐⭐
     - IPAM/DCIM solution complète
     - Traefik reverse proxy
     - Prometheus + Grafana monitoring
     - API REST + GraphQL
     - Device types import
+
+15. **TP 14 - Prometheus + Grafana Production** ⭐⭐⭐
+    - Stack monitoring enterprise-grade
+    - 10 services orchestrés
+    - Logs + Metrics + Alerting
+    - SSL/TLS + Security hardening
+    - Multi-canal alerting
+    - Backup/Restore automatisés
     - Backup/restore scripts
     - Intégration automation
 
