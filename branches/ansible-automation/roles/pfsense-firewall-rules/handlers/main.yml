@@ -1,6 +1,0 @@
----
-# Handlers placeholder
-
-- name: Placeholder handler
-  debug:
-    msg: "Handler placeholder"
