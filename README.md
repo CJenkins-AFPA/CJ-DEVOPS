@@ -68,6 +68,28 @@ Orchestration et haute disponibilité.
 - Haute disponibilité
 - **Durée estimée** : 3h
 
+### [09 - BookStack Docker (Basique)](./09-bookstack-docker/)
+Déploiement de BookStack pour la documentation.
+- Stack BookStack + MySQL
+- Configuration de base
+- Variables d'environnement
+- Premier déploiement simple
+- **Durée estimée** : 1h
+- **Niveau** : Débutant
+
+### [10 - BookStack Production Sécurisé](./10-bookstack-production/) ⭐
+**Production-grade deployment** avec sécurité multi-couches.
+- **Architecture complète** : 11 services orchestrés
+- **Sécurité** : Traefik v3 + Authelia 2FA + CrowdSec + Docker Secrets
+- **Réseaux isolés** : proxy, backend internal, database isolated
+- **Monitoring** : Prometheus + Grafana + Node-exporter
+- **Backup** : Restic avec chiffrement GPG
+- **Hardening** : UFW, Fail2Ban, kernel tuning, SSH hardening, auditd
+- **Automation** : Scripts install/backup/restore/hardening + Playbook Ansible
+- **Documentation** : 500+ lignes avec architecture, troubleshooting, exercices
+- **Durée estimée** : 4-6h
+- **Niveau** : Avancé/Production
+
 ## 🎯 Objectifs Globaux
 
 À la fin de cette formation, vous serez capable de :
@@ -79,6 +101,9 @@ Orchestration et haute disponibilité.
 ✅ Maîtriser les réseaux et volumes Docker  
 ✅ Créer des Dockerfiles optimisés  
 ✅ Déployer des applications en haute disponibilité avec Docker Swarm  
+✅ **Déployer des stacks production avec sécurité multi-couches** (reverse proxy, 2FA, IDS, monitoring)  
+✅ **Automatiser avec Ansible** et gérer des secrets Docker  
+✅ **Implémenter monitoring, backups et disaster recovery**  
 
 ## 📋 Prérequis
 
@@ -122,16 +147,28 @@ git checkout docker
 1. TP 01 - Installation
 2. TP 02 - Commandes de base
 3. TP 03 - Docker Compose (partie 1)
+4. TP 09 - BookStack basique
 
 ### 🟡 Intermédiaire (Jour 3-4)
-4. TP 03 - Docker Compose (partie 2)
-5. TP 05 - Réseaux
-6. TP 06 - Volumes
-7. TP 04 - Registry Privé
+5. TP 03 - Docker Compose (partie 2)
+6. TP 05 - Réseaux
+7. TP 06 - Volumes
+8. TP 04 - Registry Privé
 
 ### 🔴 Avancé (Jour 5-7)
-8. TP 07 - Dockerfiles avancés
-9. TP 08 - Docker Swarm
+9. TP 07 - Dockerfiles avancés
+10. TP 08 - Docker Swarm
+
+### 🏆 Expert / Production (Jour 8-10)
+11. **TP 10 - BookStack Production Sécurisé** ⭐
+    - Architecture de sécurité multi-couches
+    - Reverse proxy, 2FA, IDS/IPS
+    - Monitoring et observabilité
+    - Backups automatisés chiffrés
+    - Automation avec Ansible
+    - Hardening système complet
+
+> **💡 Note pour le TP10** : Ce TP représente une mise en production réelle et démontre des compétences DevOps avancées recherchées en entreprise. Parfait pour un portfolio professionnel.
 
 ## 🔧 Outils Complémentaires
 
@@ -194,6 +231,31 @@ docker/
 - "Docker Deep Dive" - Nigel Poulton
 - "Docker in Action" - Jeff Nickoloff
 - "Kubernetes Patterns" - Bilgin Ibryam (pour après Docker)
+
+## 🛡️ Technologies Modernes Utilisées (TP10)
+
+Ce repository inclut les dernières technologies DevOps pour production :
+
+| Technologie | Usage | Version |
+|-------------|-------|---------|
+| **Traefik** | Reverse Proxy & SSL | v3.x |
+| **Authelia** | 2FA / SSO | v4.x |
+| **CrowdSec** | IDS/IPS collaboratif | Latest |
+| **Prometheus** | Monitoring metrics | Latest |
+| **Grafana** | Dashboards & alerting | Latest |
+| **Restic** | Backups chiffrés | Latest |
+| **Docker Secrets** | Gestion credentials | Built-in |
+| **Ansible** | Infrastructure as Code | 2.9+ |
+
+### Stack de Sécurité (TP10)
+```
+Internet → UFW Firewall
+       → Traefik (SSL/TLS 1.3)
+          → Authelia (2FA TOTP)
+             → CrowdSec (IDS/IPS)
+                → Application (BookStack)
+                   → MySQL (Isolated Network)
+```
 
 ## 💡 Conseils d'Apprentissage
 
