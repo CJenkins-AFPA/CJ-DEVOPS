@@ -2,154 +2,39 @@
 
 Bienvenue dans la formation Docker ! Cette branche contient l'ensemble des travaux pratiques pour maîtriser Docker de A à Z.
 
-## 📚 Liste des TPs
+## 📚 Liste des TPs (1-18)
 
-### [01 - Installation de Docker](./01-docker-install/)
-Installation et configuration de Docker Engine sur Linux.
-- Installation automatique et manuelle
-- Configuration post-installation
-- Vérification et tests
-- **Durée estimée** : 30 min
+### Fondamentaux Docker
+| TP | Titre | Focus | Durée | Niveau |
+|----|-------|-------|-------|--------|
+| **01** | Installation de Docker | Setup Docker Engine | 30 min | Débutant |
+| **02** | Commandes Docker de Base | Images, conteneurs, logs | 1h30 | Débutant |
+| **03** | Docker Compose | Multi-conteneurs, stacks | 2h | Intermédiaire |
+| **04** | Docker Registry Privé | Registry sécurisé, TLS, auth | 2h | Intermédiaire |
+| **05** | Réseaux Docker | Bridge, host, overlay, DNS | 1h30 | Intermédiaire |
+| **06** | Volumes Docker | Persistance, backups | 1h30 | Intermédiaire |
+| **07** | Dockerfiles | Multi-stage, optimisation | 2h30 | Intermédiaire |
+| **08** | Docker Swarm | Orchestration, HA | 3h | Avancé |
 
-### [02 - Commandes Docker de Base](./02-docker-basics/)
-Maîtrise des commandes essentielles Docker.
-- Gestion des images et conteneurs
-- Logs et inspection
-- Cycle de vie des conteneurs
-- Exercices pratiques (Nginx, PostgreSQL, Python)
-- **Durée estimée** : 1h30
+### Applications & Observabilité
+| TP | Titre | Focus | Durée | Niveau |
+|----|-------|-------|-------|--------|
+| **09** | BookStack Docker (Basique) | Déploiement simple BookStack | 1h | Débutant |
+| **10** ⭐ | BookStack Production Sécurisé | Traefik v3, Authelia 2FA, CrowdSec, backups | 4-6h | Avancé/Prod |
+| **11** | NetBox Docker (Basique) | IPAM/DCIM rapide (PostgreSQL, Redis, Worker) | 2h | Intermédiaire |
+| **12** ⭐ | NetBox Professionnel | Reverse proxy TLS, monitoring, API GraphQL | 3-4h | Avancé/Prod |
+| **13** | Prometheus Docker | Prometheus + Node Exporter + cAdvisor + Alertmanager | 2-3h | Intermédiaire |
+| **14** ⭐⭐ | Prometheus + Grafana Pro | Grafana, Loki, Blackbox, alerting multi-canal | 4-6h | Expert/Prod |
 
-### [03 - Docker Compose](./03-docker-compose/)
-Orchestration d'applications multi-conteneurs.
-- Syntaxe docker-compose.yml
-- Stack WordPress, Monitoring
-- Variables d'environnement et secrets
-- Commandes Compose avancées
-- **Durée estimée** : 2h
+### Registries & Ops
+| TP | Titre | Focus | Durée | Niveau |
+|----|-------|-------|-------|--------|
+| **15** | Harbor Docker (Basique) | Registry + Trivy + portail web | 2-3h | Intermédiaire |
+| **16** ⭐ | Harbor Production | HA (PostgreSQL/Redis), Traefik, monitoring, backups | 4-6h | Avancé/Prod |
+| **17** | Portainer Docker (Basique) | Portainer CE, gestion conteneurs/stacks | 1h | Débutant |
+| **18** ⭐ | Portainer Enterprise | Portainer EE, PostgreSQL, GitOps, Traefik, metrics | 3-4h | Avancé/Prod |
 
-### [04 - Docker Registry Privé](./04-docker-registry-prive/)
-Déploiement d'un registry Docker sécurisé.
-- Configuration TLS avec certificats auto-signés
-- Authentication htpasswd
-- Déploiement avec Vagrant + Ansible
-- Push/Pull d'images personnalisées
-- **Durée estimée** : 2h
-
-### [05 - Réseaux Docker](./05-docker-network/)
-Maîtrise des réseaux et communication inter-conteneurs.
-- Types de réseaux (bridge, host, overlay)
-- Isolation et segmentation
-- DNS et service discovery
-- Reverse proxy avec Nginx
-- **Durée estimée** : 1h30
-
-### [06 - Volumes Docker](./06-docker-volumes/)
-Persistance des données et gestion du stockage.
-- Volumes, bind mounts, tmpfs
-- Backup et restore
-- Permissions et sécurité
-- Drivers NFS et CIFS
-- **Durée estimée** : 1h30
-
-### [07 - Création de Dockerfiles](./07-dockerfiles/)
-Construction d'images Docker personnalisées.
-- Syntaxe et instructions
-- Multi-stage builds
-- Optimisation et best practices
-- Exemples : Python, Node.js, Go, PHP
-- **Durée estimée** : 2h30
-
-### [08 - Docker Swarm](./08-docker-swarm/)
-Orchestration et haute disponibilité.
-- Initialisation d'un cluster Swarm
-- Services et stacks
-- Scaling et rolling updates
-- Secrets et configs
-- Haute disponibilité
-- **Durée estimée** : 3h
-
-### [09 - BookStack Docker (Basique)](./09-bookstack-docker/)
-Déploiement de BookStack pour la documentation.
-- Stack BookStack + MySQL
-- Configuration de base
-- Variables d'environnement
-- Premier déploiement simple
-- **Durée estimée** : 1h
-- **Niveau** : Débutant
-
-### [10 - BookStack Production Sécurisé](./10-bookstack-production/) ⭐
-**Production-grade deployment** avec sécurité multi-couches.
-- **Architecture complète** : 11 services orchestrés
-- **Sécurité** : Traefik v3 + Authelia 2FA + CrowdSec + Docker Secrets
-- **Réseaux isolés** : proxy, backend internal, database isolated
-- **Monitoring** : Prometheus + Grafana + Node-exporter
-- **Backup** : Restic avec chiffrement GPG
-- **Hardening** : UFW, Fail2Ban, kernel tuning, SSH hardening, auditd
-- **Automation** : Scripts install/backup/restore/hardening + Playbook Ansible
-- **Documentation** : 500+ lignes avec architecture, troubleshooting, exercices
-- **Durée estimée** : 4-6h
-- **Niveau** : Avancé/Production
-
-### [11 - NetBox Docker (Basique)](./11-netbox-docker/)
-Gestion d'infrastructure réseau avec NetBox.
-- Docker Compose simple (PostgreSQL + Redis + NetBox)
-- 3 containers (app, worker, housekeeping)
-- API REST configuration
-- Device Type Library import
-- Documentation interactive
-- **Durée estimée** : 2h
-- **Niveau** : Intermédiaire
-
-### [12 - NetBox Professionnel](./12-netbox-professionnel/) ⭐
-**Production-grade IPAM/DCIM** avec infrastructure complète.
-- **Stack complet** : NetBox + PostgreSQL + Redis + Traefik + Monitoring
-- **Sécurité** : SSL/TLS automatique, rate limiting, security headers
-- **Monitoring** : Prometheus + Grafana avec dashboards
-- **API** : REST API + GraphQL
-- **Backup** : Scripts automatisés avec restore
-- **Documentation** : Guide production avec Ansible examples
-- **Durée estimée** : 3h
-- **Niveau** : Avancé/Production
-
-### [13 - Prometheus Docker (Monitoring)](./13-prometheus-docker/)
-Stack de monitoring complet avec Prometheus.
-- **Stack** : Prometheus + Node Exporter + cAdvisor + Alertmanager
-- **Métriques** : Système (CPU, RAM, disque) + Conteneurs Docker
-- **Alerting** : 20+ règles configurées (node, container)
-- **Recording rules** : Métriques pré-calculées pour performance
-- **Alertmanager** : Routing par sévérité (critical/warning/info)
-- **Queries PromQL** : 30+ exemples documentés
-- **Durée estimée** : 2-3h
-- **Niveau** : Intermédiaire
-
-### [14 - Prometheus + Grafana Production](./14-prometheus-grafana-pro/) ⭐⭐
-**Enterprise monitoring stack** avec observabilité complète.
-- **Stack complet** : Prometheus + Grafana + Loki + Traefik + Blackbox
-- **10 services** : Monitoring, logs, alerting, reverse proxy
-- **Sécurité** : SSL/TLS Let's Encrypt + Basic Auth + Rate limiting
-- **Grafana** : Dashboards auto-provisionnés + datasources
-- **Loki + Promtail** : Agrégation logs avec LogQL
-- **Alerting avancé** : 40+ alertes + multi-canal (Email/Slack/PagerDuty)
-- **Blackbox Exporter** : Monitoring endpoints HTTP/HTTPS
-- **Recording rules** : Optimisation performance
-- **Backup/Restore** : Scripts automatisés complets
-- **Documentation** : 1200+ lignes avec architecture complète
-- **Durée estimée** : 4-6h
-- **Niveau** : Expert/Production
-- **Niveau** : Débutant
-
-### [12 - NetBox Professionnel](./12-netbox-professionnel/) ⭐⭐
-**Production-ready IPAM/DCIM solution**.
-- **Architecture complète** : 6 services (NetBox, PostgreSQL, Redis, Traefik, Prometheus, Grafana)
-- **Sécurité** : Traefik v3 + SSL/TLS + Rate limiting + Security headers
-- **Monitoring** : Prometheus + Grafana avec dashboards
-- **Backup** : Scripts automatisés de sauvegarde/restauration
-- **API** : REST + GraphQL activés
-- **Automation** : Scripts import/export + Device Types
-- **Use Cases** : IPAM, DCIM, Circuits, Cables, Contacts
-- **Documentation** : Guide complet avec exemples API/Ansible
-- **Durée estimée** : 3-4h
-- **Niveau** : Avancé/Infrastructure
+> Branche `docker` = référence principale des TPs. Dossier `branches/docker/` = snapshot consultable sans changer de branche.
 
 ## 🎯 Objectifs Globaux
 

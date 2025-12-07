@@ -22,6 +22,24 @@
 | **09** | BookStack Docker (Basique) | BookStack + MySQL simple | 1h | Débutant | ⭐⭐ |
 | **10** | BookStack Production Sécurisé | 11 services + sécurité | 4-6h | Avancé | ⭐⭐⭐⭐⭐ |
 
+### TP11-14 : Apps & Observabilité
+
+| TP | Titre | Stack | Durée | Niveau | Portfolio |
+|----|-------|-------|-------|--------|-----------|
+| **11** | NetBox Docker (Basique) | NetBox + PostgreSQL + Redis | 2h | Intermédiaire | ⭐⭐ |
+| **12** | NetBox Professionnel | NetBox + Traefik + Monitoring | 3-4h | Avancé/Prod | ⭐⭐⭐⭐ |
+| **13** | Prometheus Docker | Prometheus + cAdvisor + Alertmanager | 2-3h | Intermédiaire | ⭐⭐ |
+| **14** | Prometheus + Grafana Pro | Grafana + Loki + Blackbox + TLS | 4-6h | Expert/Prod | ⭐⭐⭐⭐⭐ |
+
+### TP15-18 : Registries & Ops
+
+| TP | Titre | Stack | Durée | Niveau | Portfolio |
+|----|-------|-------|-------|--------|-----------|
+| **15** | Harbor Docker (Basique) | Registry + Trivy + Portal | 2-3h | Intermédiaire | ⭐⭐ |
+| **16** | Harbor Production | HA (PostgreSQL/Redis), Traefik, monitoring | 4-6h | Avancé/Prod | ⭐⭐⭐⭐ |
+| **17** | Portainer Docker (Basique) | Portainer CE + compose | 1h | Débutant | ⭐⭐ |
+| **18** | Portainer Enterprise | Portainer EE + Traefik + PostgreSQL + metrics | 3-4h | Avancé/Prod | ⭐⭐⭐⭐ |
+
 ---
 
 ## 🎯 Chemins d'Apprentissage
@@ -90,16 +108,24 @@
 
 ```
 /
-├── 01-docker-install/          # Installation & setup
-├── 02-docker-basics/           # Commandes de base
-├── 03-docker-compose/          # Orchestration
-├── 04-docker-registry-prive/   # Registry privé
-├── 05-docker-network/          # Réseaux
-├── 06-docker-volumes/          # Volumes & persistence
-├── 07-dockerfiles/             # Création d'images
-├── 08-docker-swarm/            # Clustering
-├── 09-bookstack-docker/        # Application simple
-├── 10-bookstack-production/    # Production sécurisée ⭐
+├── 01-docker-install/           # Installation & setup
+├── 02-docker-basics/            # Commandes de base
+├── 03-docker-compose/           # Orchestration
+├── 04-docker-registry-prive/    # Registry privé
+├── 05-docker-network/           # Réseaux
+├── 06-docker-volumes/           # Volumes & persistence
+├── 07-dockerfiles/              # Création d'images
+├── 08-docker-swarm/             # Clustering
+├── 09-bookstack-docker/         # Application simple
+├── 10-bookstack-production/     # Production sécurisée ⭐
+├── 11-netbox-docker/            # NetBox basique
+├── 12-netbox-professionnel/     # NetBox production
+├── 13-prometheus-docker/        # Monitoring Docker
+├── 14-prometheus-grafana-pro/   # Observabilité avancée
+├── 15-harbor-docker/            # Registry Harbor basique
+├── 16-harbor-pro/               # Harbor production-ready
+├── 17-portainer-docker/         # Portainer CE
+├── 18-portainer-pro/            # Portainer Enterprise
 └── README.md                    # Guide principal
 ```
 

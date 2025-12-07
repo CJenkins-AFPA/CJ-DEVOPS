@@ -1,5 +1,15 @@
 # ✅ Checklist de Validation Finale - TP10
 
+## 🔎 Validation rapide (TP11 → TP18)
+- TP11 NetBox Docker : ✅ compose basique, `.env.example`, services NetBox/PostgreSQL/Redis + workers.
+- TP12 NetBox Pro : ✅ Traefik TLS, monitoring Prometheus/Grafana, scripts d'init, secrets générés.
+- TP13 Prometheus Docker : ✅ Prometheus, Node Exporter, cAdvisor, Alertmanager + alertes SMTP paramétrables.
+- TP14 Prometheus + Grafana Pro : ✅ Grafana provisionné, Loki/Promtail, Blackbox, Traefik TLS.
+- TP15 Harbor Docker : ✅ registry + portail, secrets générés, Trivy activé, variables `.env` documentées.
+- TP16 Harbor Production : ✅ Traefik v3, HA PostgreSQL/Redis, monitoring/alerting, backups/restores.
+- TP17 Portainer Docker : ✅ Portainer CE, ports 9000/9443/8000, stack Compose simple.
+- TP18 Portainer Enterprise : ✅ Portainer EE + PostgreSQL, Traefik TLS, métriques Prometheus/Grafana.
+
 ## 📋 Fichiers Créés (25/25)
 
 ### Documents de Référence (5/5)

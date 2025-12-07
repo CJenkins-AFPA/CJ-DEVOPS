@@ -1,0 +1,6 @@
+# This directory contains snapshots of branch code
+# for reference purposes without changing branches.
+# All content here is not meant to be committed to main branches.
+*
+!.gitignore
+!README.md

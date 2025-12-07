@@ -1,33 +1,53 @@
-# Ignore environment files
+# ==================== ENVIRONMENT ====================
 .env
 .env.local
 .env.*.local
 
-# Ignore data directories
+# ==================== SECRETS ====================
+secrets/
+*.key
+*.crt
+*.pem
+acme.json
+
+# ==================== DATA & STORAGE ====================
 prometheus/data/
 grafana/data/
 loki/data/
 alertmanager/data/
+traefik/acme.json
 
-# Ignore Let's Encrypt certificates
-letsencrypt/
-
-# Ignore backups
+# ==================== BACKUPS ====================
 backups/
 *.tar.gz
 *.backup
+*.zip
 
-# Ignore log files
+# ==================== LOG FILES ====================
 *.log
 logs/
 
-# Ignore temporary files
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
 *.tmp
+*.bak
 *.swp
+*.swo
 *~
 
-# Ignore IDE files
-.vscode/
 .idea/
 *.iml
 

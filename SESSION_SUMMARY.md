@@ -1,4 +1,14 @@
-# 🎉 TP10 COMPLÉTÉ - Résumé de la Session
+# 🎉 TPs Docker - Résumé de Session
+
+## 🆕 Nouveaux TPs ajoutés (11 → 18)
+- TP11 NetBox Docker (basique) : déploiement rapide IPAM/DCIM (PostgreSQL + Redis + Worker).
+- TP12 NetBox Professionnel : Traefik TLS, monitoring Prometheus/Grafana, API GraphQL/REST sécurisée.
+- TP13 Prometheus Docker : stack monitoring (Prometheus, Node Exporter, cAdvisor, Alertmanager).
+- TP14 Prometheus + Grafana Pro : observabilité complète (Grafana, Loki, Blackbox, alerting multi-canal).
+- TP15 Harbor Docker : registry + portail web + scanning Trivy.
+- TP16 Harbor Production : Traefik v3, HA PostgreSQL/Redis, monitoring, backups automatisés.
+- TP17 Portainer Docker : Portainer CE pour gérer conteneurs/stacks.
+- TP18 Portainer Enterprise : Portainer EE + PostgreSQL + Traefik + GitOps + métriques.
 
 ## 📊 Travail Accompli Aujourd'hui
 

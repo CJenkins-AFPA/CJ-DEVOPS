@@ -1,22 +1,40 @@
-# Portainer Docker Setup - Git Ignore
-
-# Environment
+# ==================== ENVIRONMENT ====================
 .env
 .env.local
 .env.*.local
 
-# Data
+# ==================== SECRETS ====================
+secrets/
+*.key
+*.crt
+*.pem
+
+# ==================== DATA & VOLUMES ====================
 data/
 volumes/
+portainer-data/
 
-# Temporary files
+# ==================== LOG FILES ====================
 *.log
-*.tmp
-*.swp
-*~
-.DS_Store
+logs/
 
-# IDE
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== IDE ====================
 .vscode/
 .idea/
 *.sublime-project
+*.sublime-workspace
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
