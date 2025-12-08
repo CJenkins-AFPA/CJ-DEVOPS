@@ -1,0 +1,152 @@
+
+<link rel="stylesheet" href="css/modele_gestion.css"> <!-- Inclusion du fichier CSS personnalisé -->
+
+<script src="js/modele.js"></script>
+
+<!-- ------------------------------------------------ -->
+<!-- AJOUT POUR OUVRIR UNE MODAL PAR DESSUS UNE MODAL -->
+<!-- ------------------------------------------------ -->
+
+<script src="js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="js/jquery-ui-1.12.1/jquery-ui.min.css">
+
+<style>
+	.ModalWindowDisplayMeOnTopPlease {
+		z-index: 1200;
+	}
+	.width-600 {
+		width: 600px;
+	}
+</style>
+
+<script>
+// Renommer tous les modal_admin_marque en modal_admin_AUTRE_FONCTIONNALITE
+function loadModalMarque()	{
+	$('#modal_admin_marque').load("route.php?page=marque_gestion&bJSON=1").dialog("open");
+}
+
+$(document).ready(function(){
+	$("#modal_admin_marque").dialog({
+		autoOpen: false,
+		dialogClass: 'ModalWindowDisplayMeOnTopPlease',
+		titleIsHtml: true, 
+		draggable: true, 
+		show: {
+			effect: "slide",
+			direction: "up",
+			duration: 400
+		}, 
+		hide: {
+			effect: "slide",
+			direction: "up",
+			duration: 400
+		},
+		position: { my: "top+11", at: "top+11", of: window },
+		title: '',
+		width : '600',
+		resize: true,
+		height : '500',
+		modal : true,
+		overflow : 'auto',
+		open: function() {
+		  jQuery('.ui-widget-overlay').bind('click', function(){
+			// $('body').css("overflow", "visible");
+		  })
+		} 
+	});
+
+});
+</script>
+
+		<!-- DIV MODAL SUPPLEMENT -->
+		<div id="div_main_modal_admin_marque" tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" aria-describedby="modal" aria-labelledby="ui-id-1" style="display: none; position: absolute;">
+			<div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle">
+				<span id="ui-id-1" class="ui-dialog-title">Compléments d'infos</span>
+				<span style="display: none">
+					<img src="img/icon_close.png" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" role="button" title="">
+				</span>
+			</div>
+			<div id="modal_admin_marque" class="ui-dialog-content ui-widget-content modal_center">
+			</div>
+			<div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div>
+			<div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div>
+		</div>
+		<!-- FIN DIV MODAL SUPPLEMENT -->
+
+<!-- ---------------------------------------------------- -->
+<!-- FIN AJOUT POUR OUVRIR UNE MODAL PAR DESSUS UNE MODAL -->
+<!-- ---------------------------------------------------- -->
+
+
+        <div class="container-fluid tableau">
+            <div class="d-flex modele_bandeau-tab align-items-center justify-content-between pe-4 ps-4">
+                <div class="col-6 text-light">
+                    <h3>Gestion des modeles</h3>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary my-4" data-bs-toggle="modal" data-bs-target="#modeleModal" id="modele_bouton_ajout" onclick="Fermeturemodal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                              </svg> Ajouter un modele
+                        </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table_modele" class="table_rep" border="1"></table>
+            </div>
+        </div>
+        <!--------------------------------------Message si l'utilisateur veux-être sur de vouloir supprimé la ligne-------------------------------------->
+        <div id="confirmModal" style="display: none;">
+            <div id="confirmModalContent">
+                <p>Êtes-vous sûr de vouloir supprimer la ligne pour le modele : <span id="supprmodele"></span> ?</p>
+                <button id="confirmYesBtn">Oui</button>
+                <button id="confirmNoBtn" >Non</button>
+            </div>
+        </div>
+        <!-- Modal Ajouter une modele-->
+        <div class="modal fade" id="modeleModal" tabindex="-1" aria-labelledby="modeleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl width-600">
+                <div class="modal-content">
+                    <div class="modal-header border border-dark">
+                        <h1 class="modal-title fs-5" id="modeleModalLabel">Ajouter un modèle</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="Fermeturemodal()"></button>
+                    </div>
+                    <div class="modal-body col-lg-12">
+                        <div class="col-12 pt-2 align-items-center text-center">
+                            <p>Marque</p>
+                            <select id="id_marque" name="id_marque"></select>
+							<button type="button" class="btn btn-primary my-4" id="marque_bouton_ajout" onclick="loadModalMarque()">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+									<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+									<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+								</svg> Ajouter une marque
+							</button>
+                            <p>Dénomination du modèle</p>
+                            <input type="text" id="nom_modele" name="nom_modele" style="width: 50%;">
+                            <p>Type de vélo</p>
+                            <select id="id_type_velo" name="id_type_velo"></select>
+                            <input type="hidden" id="id_modele" name="id_modele" style="width: 50%;">
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button onclick="ajoutModele()" type="button" class="btn btn-secondary bg-success" id="modele_valide">Valider</button>
+                        <button onclick="modifModele()" type="button" class="btn btn-secondary bg-success" id="modele_modifier">Modifier</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="Fermeturemodal()">Fermer</button>
+                        <div class="form-check form-switch d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" role="switch" name="actif_modele" id="actif_modele" style="margin-left:2px;" checked>
+                            <label class="form-check-label" for="ficheactive" style="margin-left:10px;">Fiche active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
+
+                 

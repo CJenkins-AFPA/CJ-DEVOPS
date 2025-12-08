@@ -1,0 +1,1 @@
+INSERT INTO contrat__accessoire(id_contrat, id_accessoire) VALUES (@id_contrat,@id_accessoire);

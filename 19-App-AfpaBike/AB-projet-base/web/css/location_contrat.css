@@ -1,0 +1,243 @@
+/*------------------------------------Page location_contrat------------------------------------*/
+/* Cette section gère les styles spécifiques à la page "location_contrat" */
+
+/*------------------------------------Style pour les validations des input------------------------------------*/
+/* Ajoute une croix (X) ou une coche (✓) après l'élément <span> adjacent à l'input selon qu'il soit valide ou non */
+input:invalid + span:after {
+    position: relative;
+    content: "X"; /* Affiche "X" si l'input est invalide */
+    padding-left: 5px;
+    margin: auto;
+}
+input:valid + span:after {
+    position: relative;
+    content: "✓"; /* Affiche "✓" si l'input est valide */
+    padding-left: 5px;
+}
+
+/* Ajuste la largeur des éléments spécifiques tels que les champs de saisie et les listes déroulantes */
+input#velo_datalist, input[type="datetime-local"], select#id_type_identite, input#numeroidentite_contrat {
+    width: 90%; /* Définit la largeur à 90% */
+}
+
+/*------------------------------------Style pour les messages d'erreur de contrôle de saisie------------------------------------*/
+/* Définit le style des messages d'erreur pour la saisie incorrecte */
+.error-message {
+    color: red; /* Couleur rouge pour le texte d'erreur */
+    font-size: 16px; /* Taille de police des messages d'erreur */
+    display: none; /* Les messages d'erreur sont cachés par défaut */
+}
+
+/*------------------------------------Style pour le input de type checkbox------------------------------------*/
+/* Style personnalisé pour les cases à cocher */
+input[type="checkbox"]#id_accessoire {
+    appearance: none; /* Supprime l'apparence par défaut de la case à cocher */
+    width: 30px; /* Définit la largeur de la case */
+    height: 30px; /* Définit la hauteur de la case */
+    border: 2px solid #86BD24; /* Ajoute une bordure verte */
+    border-radius: 4px; /* Ajoute des coins légèrement arrondis */
+    margin-right: 10px; /* Ajoute une marge à droite */
+    position: relative; /* Utilisé pour positionner le contenu personnalisé */
+    cursor: pointer; /* Le curseur devient une main au survol */
+}
+/* Style appliqué lorsque la case est cochée */
+input[type="checkbox"]#id_accessoire:checked::before {
+    content: "✔"; /* Affiche une coche lorsque la case est cochée */
+    position: absolute; /* Position absolue pour l'alignement */
+    top: 0;
+    left: 4px;
+    font-size: 28px; /* Taille de la coche */
+    font-family: 'Courier New', Courier, monospace !important;
+    color: white; /* La coche est blanche */
+}
+/* Change le fond de la case cochée en vert */
+input[type="checkbox"]#id_accessoire:checked {
+    background-color: #86BD24; /* Fond vert */
+}
+
+/* Style lors du focus sur la case à cocher */
+input[type="checkbox"]#id_accessoire :focus {
+    outline: none; /* Supprime le contour lors du focus */
+    box-shadow: 0 0 3px 2px rgba(105, 160, 17, 0.5); /* Ajoute une légère ombre verte */
+}
+/* Style lors du survol de la case à cocher */
+input[type="checkbox"]#id_accessoire :hover {
+    box-shadow: 0 0 7px #86BD24; /* Ajoute une ombre plus forte lors du survol */
+    text-shadow: 0 0 7px #86BD24; /* Ajoute une ombre sur le texte lors du survol */
+}
+
+/* Style pour le label associé à la case à cocher */
+#id_accessoire label {
+    line-height: 40px;
+    padding-bottom: 5px;
+    font-weight: normal !important; /* Force le poids de la police à "normal" */
+}
+
+/* Centrage des éléments dans les lignes d'une table */
+#id_accessoire tr {
+    display: flex;
+    align-items: center; /* Centre les éléments verticalement */
+} 
+
+/* Style pour le champ "velo_datalist" */
+#velo_datalist {
+    width: 100%; /* Occupe toute la largeur */
+}
+
+/* Met le texte en majuscules dans le champ "numeroidentite_contrat" */
+#numeroidentite_contrat {
+    text-transform: uppercase;
+}
+
+/* Style pour un wrapper avec bordure verte */
+.loc_wrapper {
+    border: 1px solid #86BD24;
+    border-right: 0; /* Pas de bordure à droite */
+}
+
+/* Style pour un canevas de signature (client) */
+canvas#loc_signature_client {
+    background: #fff;
+    width: 100%; /* Largeur complète */
+    cursor: crosshair; /* Curseur de croix */
+}
+
+/* Style pour un bouton de réinitialisation de signature */
+.loc_btn_clear {
+    background: #86BD24;
+    border: 1px solid transparent;
+    color: #fff; /* Texte en blanc */
+    font-weight: 600; /* Texte en gras */
+    cursor: pointer;
+}
+.loc_btn_clear span {
+    display: block; /* Chaque span prend toute la largeur */
+}
+
+/* Style pour un canevas de signature (technicien) */
+canvas#loc_signature_tech {
+    background: #fff;
+    width: 100%;
+    cursor: crosshair;
+}
+
+/* Style pour une bordure verte */
+.loc_border_green {
+    border: 1px solid #86BD24;
+}
+
+/* Style pour les inputs et selects lors du focus */
+.form-control:focus, .form-select:focus {
+    outline: none; /* Supprime le contour par défaut */
+    box-shadow: 0 0 3px 2px #86BD24 !important; /* Ombre verte légère */
+}
+
+/* Style pour les inputs et selects lors du survol */
+.form-control:hover, .form-select:hover {
+    box-shadow: 0 0 7px #86BD24; /* Ajoute une ombre plus prononcée lors du survol */
+}
+
+/* Style pour divers boutons d'ajout */
+.ajout_accessoire, .ajout_formation, .ajout_ville, .ajout_utilisateur {
+    margin-left: 10px;
+    background-color: #86BD24;
+    border: none;
+}
+
+/* Style pour le select utilisateur */
+select#id_utilisateur {
+    width: 55%; /* Définit la largeur à 55% */
+}
+
+/*-Style pour les lignes impaires et paires des tableaux dans "retourloc"-*/
+/* Ajoute un fond vert pour les lignes impaires */
+.retourloc_bg_green {
+    background-color: #86BD24;
+    border-radius: 10px;
+    border-color: white;
+}
+
+/* Style des lignes du tableau : vert pour les lignes impaires et blanc pour les lignes paires */
+#table_retourloc tbody tr:nth-child(odd) {
+    background-color: #86BD24; /* Vert pour les lignes impaires */
+}
+#table_retourloc tr:nth-child(even) {
+    background-color: white; /* Blanc pour les lignes paires */
+    border: 1px;
+}
+
+/* Style pour les cellules du tableau : bordure noire et texte centré */
+#table_retourloc tr, #table_retourloc td {
+    border: solid 1px black;
+    text-align: center;
+}
+
+/* Style pour l'en-tête du tableau : texte en gras */
+#table_retourloc thead {
+    font-weight: bold;
+}
+
+/* Bordure pour le tableau avec marges */
+.tableau_retour {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Bordure fine et grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* En-tête pour la section "location_retour" */
+.location_retour_head {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */
+}
+
+/*------------------------------------Page location_gestion------------------------------------*/
+/* Section dédiée à la page "location_gestion" */
+
+/*-Style pour les lignes impaires et paires des tableaux dans "gestionloc"-*/
+#table_gestionloc tbody tr:nth-child(odd) {
+    background-color:#86BD24; /* Fond vert pour les lignes impaires */
+}
+#table_gestionloc tr:nth-child(even) {
+    background-color: white; /* Fond blanc pour les lignes paires */
+    border: 1px;
+}
+
+/* Style des cellules : bordure noire, texte centré et espacement autour des éléments */
+#table_gestionloc tr, #table_gestionloc td {
+    border: solid 1px black;
+    text-align:center;
+    justify-content: space-around;
+}
+
+/* Centrage du contenu dans les pieds de modal */
+.gestionloc_modalfooter, .retourloc_modalfooter {
+    justify-content: center;
+}
+
+/* Style pour l'en-tête du tableau : texte en gras */
+#table_gestionloc thead {
+    font-weight: bold;
+}
+
+/* Bordure pour le tableau "gestion" */
+.tableau_gestion {
+    border: 30px solid rgba(168, 161, 161, 0.1);
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* En-tête pour la section "location_gestion" */
+.location_gestion_head {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Priorité élevée pour cette fenêtre modale */
+.ModalWindowDisplayMeOnTopPlease {
+    z-index: 1200;
+}
+
+/* Définit une largeur fixe de 600px */
+.width-600 {
+    width: 600px;
+}

@@ -1,0 +1,1 @@
+UPDATE contrat__accessoire SET id_accessoire=@id_accessoire WHERE id_contrat=@id_contrat;

@@ -34,6 +34,11 @@ Bienvenue dans la formation Docker ! Cette branche contient l'ensemble des trava
 | **17** | Portainer Docker (Basique) | Portainer CE, gestion conteneurs/stacks | 1h | Débutant |
 | **18** ⭐ | Portainer Enterprise | Portainer EE, PostgreSQL, GitOps, Traefik, metrics | 3-4h | Avancé/Prod |
 
+### Projets applicatifs complémentaires
+| TP | Titre | Focus | Dossier |
+|----|-------|-------|---------|
+| **19** | AfpaBike (refonte Dev/DevOps) | Repackaging Docker, refonte DevOps, variante appli corrigée | `19-App-AfpaBike/` (`AB-projet-base`, `AB-Devops-ok`, `AB-App-ok`) |
+
 > Branche `docker` = référence principale des TPs. Dossier `branches/docker/` = snapshot consultable sans changer de branche.
 
 ## 🎯 Objectifs Globaux

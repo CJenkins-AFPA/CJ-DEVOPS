@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="css/entretien_gestion.css"> <!-- Inclusion du fichier CSS personnalisé -->
+
+<script src="js/entretien.js"></script>
+
+        <div class="container-fluid tableau">
+            <div class="d-flex rep_bandeau-tab align-items-center justify-content-between pe-4 ps-4">
+                <div class="col-6 text-light">
+                    <h3>Gestion réparation</h3>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary my-4" data-bs-toggle="modal" data-bs-target="#exampleModal" id="rep_bouton_ajout">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                              </svg> Ajouter une réparation
+                        </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table_rep" class="table_rep" border="1"></table>
+            </div>
+        </div>
+  
+        <!-- Modal Ajouter une réparation -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border border-dark">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body col-lg-12 border border-dark">
+                        <div class="d-flex">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-5 ml-4">
+                                <label for="entretien_datalist">Selection velo:</label>
+                                <input list="velo_list" id="velo_datalist" name="velo_datalist" />                               
+                                <datalist id="velo_list">
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 ml-12 d-flex">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-2 col-md-2 pt-2">
+                                <p>Réparation à effectuer :</p>
+                            </div>
+                            <div class="col-lg-5 col-md-5 pt-2">
+                                <select class="form-select form-select-md fw-bold" id="id_typerep" name="id_typerep" aria-label="Large select example">
+                                    
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">+</button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id_reparation" id="id_reparation">
+                        <div class="modal-footer justify-content-center">
+                            <button onclick="ajoutRep()" type="button" class="btn btn-secondary bg-success" id="rep_valide">Enregistrer</button>
+                            <button onclick="modifRep()" type="button" class="btn btn-secondary bg-success" id="rep_modifier">Modifier</button>
+                            <button onclick="Fermeturemodal()" type="button" class="btn btn-danger" id="rep_annuler" data-bs-dismiss="modal">Fermer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
+                 

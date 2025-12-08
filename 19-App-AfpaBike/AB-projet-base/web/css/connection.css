@@ -1,0 +1,38 @@
+/*------------------------------------Page connection------------------------------------*/
+
+.connection_box {
+    background-color: #00AAFF;
+    padding: 20px;
+    width: 500px;
+    text-align: center;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    box-shadow: 10px 5px 5px grey;
+}
+
+.connection_form_group {
+    margin-bottom: 15px;
+    text-align: left;
+    display: block;
+    font-weight: bold;
+}
+
+.connection_btn_rose {
+    background-color: #E3007E;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+    font-size: 1em;
+    box-shadow: 0px 5px 5px grey;
+}
+
+.connection_footer {
+    text-align: center;
+    color: #000;
+    background-color: #86BD24; /* Bandeau vert en haut */
+    width: 100%; /* Largeur pleine */
+    height: 100px;
+}

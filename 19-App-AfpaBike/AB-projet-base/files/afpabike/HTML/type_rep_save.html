@@ -1,0 +1,8 @@
+<?php
+		$array_res[0] = array(
+			'error' => $oMain->resultat["type_rep_save"]["error"], 
+			'id_typerep' => $oMain->resultat["id_type_rep_created"]
+		);
+		// Prepare and send view
+		echo json_encode ($array_res);
+?>

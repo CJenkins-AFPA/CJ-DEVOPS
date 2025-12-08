@@ -1,0 +1,29 @@
+/*------------------------------------Page location_gestion------------------------------------*/
+
+/*-Style pour les lignes impaires et paires des tableaux-*/
+#table_gestionloc .odd:nth-child(2n+1) {
+    background-color:#86BD24; /* Fond vert pour les lignes impaires */
+
+}
+#table_gestionloc .even:nth-child(1n+2) {
+    background-color: white; /* Fond blanc pour les lignes paires */
+    border: 1px;
+}
+#table_gestionloc tr, #table_gestionloc td {
+    border: solid 1px black;
+}
+.gestionloc_modalfooter, .retourloc_modalfooter {
+    justify-content: center;
+}
+#table_gestionloc thead {
+    font-weight: bold;
+}
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Fine bordure grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.location_gestion_head {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+}

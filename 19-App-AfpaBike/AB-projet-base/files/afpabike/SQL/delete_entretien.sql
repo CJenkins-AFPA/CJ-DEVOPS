@@ -1,0 +1,1 @@
+delete from reparation where id_reparation=@id_reparation

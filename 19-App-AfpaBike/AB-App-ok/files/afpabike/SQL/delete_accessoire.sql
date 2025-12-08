@@ -1,0 +1,1 @@
+delete from accessoire where id_accessoire=@id_accessoire;

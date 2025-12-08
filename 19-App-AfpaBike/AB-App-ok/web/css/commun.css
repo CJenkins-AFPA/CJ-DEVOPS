@@ -1,0 +1,137 @@
+:root{
+    --vertafpa : #86BD24
+}
+/*------------------------------------CSS COMMUN A TOUTES LES PAGES------------------------------------*/
+/* Cible tous les labels dans tous les formulaires */
+form label {
+    font-weight: bold;
+}
+.btn_bggreen {
+    background-color: #86BD24;
+}
+.modal-footer{
+    margin-top:20px ;
+}
+.modal-header{
+    background-color: #86BD24;
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+#img_delete{
+    width: 30px;
+}
+/*------------------------------------CSS HEADER NAV FOOTER------------------------------------*/
+header{
+    width: 50px;
+}
+nav, footer{
+    background-color: #86BD24;
+}
+.logonav{
+    height: 50px;
+}
+body {
+    margin: 0px 30px;
+}
+.logo {
+    max-width: 100%;
+    height: auto;
+    max-height: 80px;
+}
+
+
+
+/*------------------------------------Page accueil.php------------------------------------*/
+.accueil_notifications {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.accueil_notificationitem {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.accueil_notificationitem.red {
+    background-color: #dc3545;
+}
+
+.accueil_notificationitem.orange {
+    background-color: #fd7e14;
+}
+
+.accueil_notificationitem.blue {
+    background-color: #007bff;
+}
+
+.accueil_calendar {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.accueil_calendar .accueil_calendarheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.accueil_calendar .accueil_calendarheader button {
+    border: none;
+    background: none;
+}
+
+.accueil_calendartable {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.accueil_calendartable th,
+.accueil_calendartable td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.accueil_calendartable .highlightred {
+    background-color: #f8d7da;
+    color: #721c24;
+    font-weight: bold;
+}
+
+.accueil_calendartable .highlightblue {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    font-weight: bold;
+}
+
+.accueil_calendartable .highlightorange {
+    background-color: #ffe8a1;
+    color: #856404;
+    font-weight: bold;
+}
+
+.accueil_togglebuttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.accueil_togglebuttons .formswitch {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        max-height: 40px; /* Scale down on smaller screens */
+    }
+}

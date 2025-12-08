@@ -1,0 +1,102 @@
+
+<script src="js/piece.js"></script>
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <!-- Bouton Ajouter une pièce -->
+        <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+            <button type="button" class="btn w-100" style="background-color: #86bd24; color: white;" data-bs-toggle="modal" data-bs-target="#modalpiece">
+                Ajouter une pièce
+            </button>
+        </div>
+
+    <!-- Tableau pour afficher les pièces existantes -->
+    <div class="tableau_pieces_existantes">
+        <table class="table table-bordered" id="tableau_pieces_existantes">
+        </table>
+    </div>
+</main>
+
+<!-- Modal  -->
+<div class="modal fade" id="modalpiece" tabindex="-1" aria-labelledby="modalpieceLabel" aria-hidden="true">
+    <div class="modal-dialog custom-modal-size piece_custom-modal-size">
+        <div class="modal-content piece_modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalpieceLabel">Ajouter Pièce piece</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formpiece">
+                    <div class="mb-3">
+                        <label for="nom_piece_piece" class="form-label">Nom de la pièce</label>
+                        <input type="text" class="form-control" id="nom_piece_piece" placeholder="Nom de la pièce">
+                    </div>
+                    <div class="mb-3">
+                        <label for="type_de_piece_piece" class="form-label">Quantité de pièce</label>
+                        <input type="text" class="form-control" id="type_de_piece_piece" placeholder="Quantité de pièce">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="ajouterLigne('piece')">Ajouter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript pour gérer l'ajout de lignes et l'affichage des pièces -->
+ 
+<script>
+/*
+const piecesExistantes = [];
+
+    function ajouterLigne(categorie) {
+        let nom, type, marque, prix, quantite;
+
+        if (categorie === 'piece') {
+            nom = document.getElementById('nom_piece_piece').value;
+            type = document.getElementById('type_de_piece_piece').value;
+            marque = document.getElementById('marque_piece').value;
+            prix = document.getElementById('prix_piece').value;
+            quantite = document.getElementById('quantite_piece').value;
+        } else if (categorie === 'Transmission') {
+            nom = document.getElementById('nom_piece_transmission').value;
+            type = document.getElementById('type_de_piece_transmission').value;
+            marque = document.getElementById('marque_transmission').value;
+            prix = document.getElementById('prix_transmission').value;
+            quantite = document.getElementById('quantite_transmission').value;
+        } else if (categorie === 'Roue') {
+            nom = document.getElementById('nom_piece_roue').value;
+            type = document.getElementById('type_de_piece_roue').value;
+            marque = document.getElementById('marque_roue').value;
+            prix = document.getElementById('prix_roue').value;
+            quantite = document.getElementById('quantite_roue').value;
+        }
+
+        const piece = { nom, type, marque, prix, quantite, categorie };
+        piecesExistantes.push(piece);
+
+        afficherPiecesExistantes();
+    }
+
+    function afficherPiecesExistantes() {
+        const tbody = document.getElementById('tableau_pieces_existantes');
+        tbody.innerHTML = ''; // Clear previous content
+
+        piecesExistantes.forEach(piece => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${piece.nom}</td>
+                <td>${piece.type}</td>
+                <td>${piece.marque}</td>
+                <td>${piece.prix}</td>
+                <td>${piece.quantite}</td>
+                <td>${piece.categorie}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    window.onload = afficherPiecesExistantes;
+/*
+</script>
