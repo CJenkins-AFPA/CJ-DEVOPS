@@ -1,0 +1,37 @@
+# Swarm Infrastructure - Vagrant + Ansible
+
+# Vagrant
+.vagrant/
+*.box
+crash.log
+
+# Ansible
+*.retry
+ansible/logs/
+ansible/.ansible/
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System
+.directory
+Thumbs.db
+
+# VM data
+volumes/
+backups/

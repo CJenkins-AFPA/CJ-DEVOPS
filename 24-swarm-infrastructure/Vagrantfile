@@ -1,0 +1,297 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+################################################################################
+# Vagrantfile - Docker Swarm Infrastructure
+#
+# Description:
+#   Crée et configure 4 VMs pour un cluster Docker Swarm:
+#   - 1 Manager Swarm (swarm-manager)
+#   - 2 Workers Swarm (swarm-worker1, swarm-worker2)
+#   - 1 Database Server (swarm-db)
+#
+# Usage:
+#   vagrant up                    # Créer toutes les VMs
+#   vagrant up swarm-manager      # Créer une seule VM
+#   vagrant ssh swarm-manager     # Se connecter à une VM
+#   vagrant halt                  # Arrêter les VMs
+#   vagrant destroy -f            # Supprimer les VMs
+#
+# Requirements:
+#   - Vagrant >= 2.3
+#   - VirtualBox >= 6.1 (ou autre provider)
+#   - 10GB RAM disponible (5 * 2GB par VM)
+#   - 30GB disque libre
+#
+# Provider:
+#   Par défaut VirtualBox. Pour autre provider:
+#   VAGRANT_DEFAULT_PROVIDER=libvirt vagrant up
+#
+################################################################################
+
+Vagrant.require_version ">= 2.3"
+
+################################################################################
+# Configuration
+################################################################################
+
+# Network
+NETWORK_BASE = "192.168.56"
+HOSTS = {
+  "swarm-manager"  => "#{NETWORK_BASE}.20",
+  "swarm-worker1"  => "#{NETWORK_BASE}.21",
+  "swarm-worker2"  => "#{NETWORK_BASE}.22",
+  "swarm-db"       => "#{NETWORK_BASE}.23",
+}
+
+# VM Resources
+VM_MEMORY = 2048          # 2GB RAM
+VM_CPUS = 2               # 2 CPUs
+VM_DISK = 20              # 20GB disk
+
+# OS Image
+BOX_NAME = "ubuntu/jammy64"  # Ubuntu 22.04 LTS
+BOX_VERSION = ">= 20240101.0.0"
+
+# Provider Configuration
+VIRTUALBOX_VERSION = "7.0"
+LIBVIRT_MEMORY = VM_MEMORY
+LIBVIRT_CPUS = VM_CPUS
+
+################################################################################
+# Vagrant Configuration
+################################################################################
+
+Vagrant.configure("2") do |config|
+  
+  # ============================================================================
+  # Global Configuration
+  # ============================================================================
+  
+  config.vm.box = BOX_NAME
+  config.vm.box_version = BOX_VERSION
+  config.vm.box_check_update = true
+  
+  # SSH Configuration
+  config.ssh.insert_key = true
+  config.ssh.username = "vagrant"
+  config.ssh.private_key_path = ["~/.vagrant.d/insecure_private_key"]
+  
+  # Vagrant Cloud (skip plugin check)
+  config.vagrant.plugins = "vagrant-vbguest"
+  
+  # ============================================================================
+  # Define Each Host
+  # ============================================================================
+  
+  HOSTS.each do |hostname, ip|
+    
+    config.vm.define hostname do |host|
+      
+      # === Basic Configuration ===
+      host.vm.hostname = hostname
+      host.vm.network :private_network, ip: ip
+      
+      # === Host Entries ===
+      # Add to /etc/hosts on host machine
+      host.vm.hostname = hostname
+      host.hostmanager.enabled = false  # Disable if issues
+      
+      # === Provider: VirtualBox ===
+      host.vm.provider :virtualbox do |vb|
+        vb.name = hostname
+        vb.memory = VM_MEMORY
+        vb.cpus = VM_CPUS
+        vb.gui = false
+        
+        # Performance Tuning
+        vb.customize [
+          "modifyvm", :id,
+          "--vram", "16",
+          "--nic-promisc1", "deny",
+          "--nic-promisc2", "deny",
+          "--nested-hw-virt", "on",
+          "--hwvirtex", "on",
+          "--ioapic", "on",
+          "--pae", "on",
+          "--longmode", "on",
+        ]
+        
+        # Network Bridging (pour communication inter-VM)
+        vb.customize [
+          "modifyvm", :id,
+          "--hostonlyadapter2", "VirtualBox Host-Only Ethernet Adapter"
+        ]
+        
+        # Disk resize (optionnel, nécessite vagrant-disksize)
+        # host.disksize.size = "#{VM_DISK}GB"
+      end
+      
+      # === Provider: Libvirt (pour KVM/QEMU) ===
+      host.vm.provider :libvirt do |libvirt|
+        libvirt.memory = LIBVIRT_MEMORY
+        libvirt.cpus = LIBVIRT_CPUS
+        libvirt.machine_type = "q35"
+        libvirt.cpu_mode = "host-passthrough"
+        libvirt.disk_bus = "virtio"
+        libvirt.video_type = "qxl"
+      end
+      
+      # === Provisioning: Shell - Initial Setup ===
+      # Exécuté pour chaque VM avant Ansible
+      host.vm.provision :shell, inline: <<-SHELL
+        #!/bin/bash
+        set -e
+        
+        echo "======================================"
+        echo "Provisioning: #{hostname}"
+        echo "======================================"
+        
+        # Update system
+        echo "🔄 Updating system packages..."
+        apt-get update -qq
+        apt-get upgrade -y -qq
+        
+        # Install essential packages
+        echo "📦 Installing essential packages..."
+        apt-get install -y -qq \
+          curl wget git vim nano \
+          net-tools dnsutils telnet \
+          software-properties-common \
+          build-essential \
+          python3 python3-pip python3-apt \
+          apt-transport-https ca-certificates \
+          openssh-client openssh-server
+        
+        # Configure SSH
+        echo "🔐 Configuring SSH..."
+        sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+        sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        systemctl restart ssh
+        
+        # Set timezone to UTC
+        echo "⏰ Setting timezone to UTC..."
+        timedatectl set-timezone UTC
+        
+        # Install NTP
+        echo "🕐 Installing NTP (chrony)..."
+        apt-get install -y -qq chrony
+        systemctl enable chrony
+        systemctl start chrony
+        
+        # Set hostname resolution
+        echo "🌐 Configuring DNS..."
+        echo "127.0.1.1 #{hostname} #{hostname}.local" >> /etc/hosts
+        
+        # Log provisioning completion
+        echo "✅ Initial provisioning completed for #{hostname}"
+        echo "IP: #{ip}"
+        echo "Hostname: #{hostname}"
+        date
+      SHELL
+      
+      # === Provisioning: Ansible ===
+      # Will be run manually via ansible-playbook command
+      # (Pour plus de contrôle et de feedback)
+      
+    end
+  end
+  
+end
+
+################################################################################
+# Post-Up Configuration
+################################################################################
+
+# Affiche des informations après creation
+Vagrant.configure("2") do |config|
+  config.vm.post_up_message = <<-MSG
+  
+╔════════════════════════════════════════════════════════════════╗
+║     Docker Swarm Infrastructure - VMs Created Successfully     ║
+╚════════════════════════════════════════════════════════════════╝
+
+📋 Machines créées:
+
+  🎯 swarm-manager    192.168.56.20  (Manager Swarm)
+  🎯 swarm-worker1    192.168.56.21  (Worker Swarm)
+  🎯 swarm-worker2    192.168.56.22  (Worker Swarm)
+  🎯 swarm-db         192.168.56.23  (PostgreSQL)
+
+🚀 Prochaines étapes:
+
+  1. Se connecter à une VM:
+     vagrant ssh swarm-manager
+
+  2. Vérifier le statut:
+     vagrant status
+
+  3. Provisionner avec Ansible:
+     ansible-playbook -i ansible/inventory.ini ansible/playbooks/00-prepare.yml
+     ansible-playbook -i ansible/inventory.ini ansible/playbooks/01-docker-install.yml
+     ansible-playbook -i ansible/inventory.ini ansible/playbooks/02-swarm-init.yml
+     ansible-playbook -i ansible/inventory.ini ansible/playbooks/03-db-deploy.yml
+     ansible-playbook -i ansible/inventory.ini ansible/playbooks/04-registry-config.yml
+
+  4. Ou utiliser le script automatisé:
+     bash scripts/setup-cluster.sh
+
+📊 Ressources:
+
+  💾 RAM: #{HOSTS.size * VM_MEMORY / 1024} GB
+  🖥️  CPUs: #{HOSTS.size * VM_CPUS}
+  💿 Disk: ~#{HOSTS.size * VM_DISK} GB
+
+📖 Documentation:
+
+  cat README.md
+  cat QUICKSTART.md
+
+🛠️  Commandes utiles:
+
+  vagrant up [name]         # Créer/démarrer VM(s)
+  vagrant ssh [name]        # Connecter à une VM
+  vagrant halt [name]       # Arrêter VM(s)
+  vagrant reload [name]     # Redémarrer VM(s)
+  vagrant destroy -f        # Supprimer VM(s)
+  vagrant status            # Voir le statut
+  vagrant snapshot          # Créer snapshots
+
+⚠️  Notes importantes:
+
+  - Les VMs sont accessibles via Vagrant SSH
+  - Réseau privé: 192.168.56.0/24
+  - Configuration Ansible dans: ansible/
+  - Logs disponibles dans: vagrant/logs/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  MSG
+end
+
+################################################################################
+# Helper Functions (optional)
+################################################################################
+
+# Uncomment to enable custom functions
+
+=begin
+
+# Print fancy debug info
+def debug(msg)
+  puts "\e[36m[DEBUG]\e[0m #{msg}"
+end
+
+def info(msg)
+  puts "\e[34m[INFO]\e[0m #{msg}"
+end
+
+def success(msg)
+  puts "\e[32m[SUCCESS]\e[0m #{msg}"
+end
+
+def error(msg)
+  puts "\e[31m[ERROR]\e[0m #{msg}"
+end
+
+=end

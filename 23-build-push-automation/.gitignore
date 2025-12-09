@@ -1,0 +1,25 @@
+# Build & Push Automation - Local Development
+
+# Logs
+*.log
+build-push.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System
+.directory
+Thumbs.db
+
+# Testing
+test-output/

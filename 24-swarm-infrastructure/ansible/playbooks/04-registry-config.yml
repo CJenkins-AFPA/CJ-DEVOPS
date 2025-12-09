@@ -1,0 +1,184 @@
+---
+################################################################################
+# Playbook: 04-registry-config.yml
+#
+# Purpose: Configurer Docker pour utiliser un registre privé Harbor
+#   - Modifier daemon.json pour insecure registries
+#   - Ajouter les hosts pour résolution DNS
+#   - Redémarrer le daemon Docker
+#   - Tester la connexion au registre
+#
+# Usage:
+#   ansible-playbook -i inventory.ini playbooks/04-registry-config.yml
+#
+# Tags:
+#   - registry
+#   - registry-config
+#   - registry-verify
+#
+################################################################################
+
+- name: "Configure Docker Registry Access"
+  hosts: swarm_nodes
+  gather_facts: yes
+  
+  tasks:
+    
+    - name: "Registry | Display configuration plan"
+      debug:
+        msg: |
+          ====================================
+          Docker Registry Configuration
+          ====================================
+          Host: {{ ansible_hostname }}
+          Registry URL: {{ registry_url }}
+          Insecure Registries:
+          {% for registry in insecure_registries %}
+          - {{ registry }}
+          {% endfor %}
+          ====================================
+      tags: [always]
+    
+    # ========================================================================
+    # DNS Resolution
+    # ========================================================================
+    
+    - name: "Registry | Configure /etc/hosts for registry"
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+        state: present
+      loop:
+        - "192.168.1.100 {{ registry_url }}"  # Replace with your host IP
+        - "127.0.0.1 {{ registry_url }}"
+      tags: [registry, registry-config]
+      ignore_errors: yes
+    
+    # ========================================================================
+    # Docker Daemon Configuration
+    # ========================================================================
+    
+    - name: "Registry | Create docker daemon.json if not exists"
+      file:
+        path: /etc/docker/daemon.json
+        state: touch
+        mode: "0644"
+      tags: [registry, registry-config]
+    
+    - name: "Registry | Read current daemon.json"
+      shell: |
+        cat /etc/docker/daemon.json | python3 -m json.tool 2>/dev/null || echo '{}'
+      register: daemon_json
+      changed_when: false
+      tags: [registry, registry-config]
+    
+    - name: "Registry | Merge insecure-registries to daemon.json"
+      shell: |
+        python3 << 'EOF'
+        import json
+        import sys
+        
+        # Read current config
+        try:
+            with open('/etc/docker/daemon.json', 'r') as f:
+                config = json.load(f)
+        except:
+            config = {}
+        
+        # Ensure keys exist
+        if 'insecure-registries' not in config:
+            config['insecure-registries'] = []
+        
+        # Add registries
+        registries = {{ insecure_registries | to_json }}
+        for registry in registries:
+            if registry not in config['insecure-registries']:
+                config['insecure-registries'].append(registry)
+        
+        # Write back
+        with open('/etc/docker/daemon.json', 'w') as f:
+            json.dump(config, f, indent=2)
+        
+        print("✓ Configuration updated")
+        EOF
+      register: daemon_update
+      tags: [registry, registry-config]
+      changed_when: "daemon_update.rc == 0"
+    
+    - name: "Registry | Display updated daemon.json"
+      shell: "cat /etc/docker/daemon.json"
+      register: daemon_show
+      changed_when: false
+      tags: [registry, registry-config, registry-verify]
+    
+    - name: "Registry | Show daemon config"
+      debug:
+        msg: "{{ daemon_show.stdout_lines }}"
+      tags: [registry, registry-config, registry-verify]
+    
+    # ========================================================================
+    # Restart Docker
+    # ========================================================================
+    
+    - name: "Registry | Restart Docker daemon"
+      systemd:
+        name: docker
+        state: restarted
+        daemon_reload: yes
+      tags: [registry, registry-config]
+      register: docker_restart
+    
+    - name: "Registry | Wait for Docker to be ready"
+      shell: "docker ps"
+      register: docker_ready
+      until: docker_ready is succeeded
+      retries: 10
+      delay: 2
+      tags: [registry, registry-config]
+    
+    # ========================================================================
+    # Verification & Testing
+    # ========================================================================
+    
+    - name: "Registry | Check Docker daemon status"
+      shell: "systemctl status docker --no-pager"
+      changed_when: false
+      register: docker_status
+      tags: [registry, registry-verify]
+    
+    - name: "Registry | Display Docker status"
+      debug:
+        msg: "{{ docker_status.stdout_lines[:5] }}"
+      tags: [registry, registry-verify]
+    
+    - name: "Registry | Display Docker info"
+      shell: "docker info | grep -A 5 'Insecure Registries:'"
+      changed_when: false
+      register: docker_info
+      tags: [registry, registry-verify]
+      ignore_errors: yes
+    
+    - name: "Registry | Show registered registries"
+      debug:
+        msg: "{{ docker_info.stdout_lines }}"
+      tags: [registry, registry-verify]
+    
+    # ========================================================================
+    # Summary
+    # ========================================================================
+    
+    - name: "Summary | Registry configuration complete"
+      debug:
+        msg: |
+          ====================================
+          ✅ Docker Registry Configured
+          ====================================
+          Host: {{ ansible_hostname }}
+          Registry: {{ registry_url }}
+          
+          Next steps:
+          1. docker login {{ registry_url }}
+          2. docker tag myimage {{ registry_url }}/project/myimage
+          3. docker push {{ registry_url }}/project/myimage
+          ====================================
+      tags: [always]
