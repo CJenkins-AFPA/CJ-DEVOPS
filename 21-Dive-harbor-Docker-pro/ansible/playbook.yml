@@ -8,6 +8,12 @@
     dive_download_url: "https://github.com/wagoodman/dive/releases/download/v{{ dive_version }}/dive_{{ dive_version }}_{{ dive_arch }}.deb"
     dive_package_path: "/tmp/dive_{{ dive_version }}_{{ dive_arch }}.deb"
     report_dir: "/tmp/dive-reports"
+    dive_fetch_reports: true
+    dive_local_reports_dir: "{{ playbook_dir }}/reports"
+    install_docker: true
+    manage_docker_service: true
+    harbor_login_enabled: true
+    full_image: "{{ harbor_host }}/{{ harbor_project }}/{{ harbor_image }}:{{ harbor_tag }}"
     harbor_host: "harbor.example.com"
     harbor_project: "demo"
     harbor_image: "app"
@@ -16,7 +22,40 @@
     harbor_password: "ChangeMe!"
     lowest_efficiency: 0.90
   tasks:
-    - name: Ensure dependencies are present
+    - name: Ensure base tools for Docker (optional)
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+        update_cache: true
+      when: install_docker | bool
+
+    - name: Install Docker engine (optional)
+      apt:
+        name:
+          - docker.io
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+      when: install_docker | bool
+
+    - name: Ensure docker service is running (even if already installed)
+      service:
+        name: docker
+        state: started
+        enabled: true
+      when: manage_docker_service | bool
+      failed_when: false
+
+    - name: Fail fast if Docker CLI is absent
+      command: docker info
+      register: docker_info
+      changed_when: false
+      failed_when: docker_info.rc != 0
+
+    - name: Ensure dependencies are present (Dive prerequisites)
       apt:
         name:
           - ca-certificates
@@ -47,21 +86,23 @@
         docker login {{ harbor_host }}
         --username {{ harbor_username }}
         --password {{ harbor_password }}
-      changed_when: "Login Succeeded" in docker_login.stdout if docker_login is defined else true
       register: docker_login
+      no_log: true
+      changed_when: false
+      failed_when: docker_login.rc != 0
+      when: harbor_login_enabled | bool
 
     - name: Pull target image from Harbor
       command: >-
-        docker pull {{ harbor_host }}/{{ harbor_project }}/{{ harbor_image }}:{{ harbor_tag }}
+        docker pull {{ full_image }}
       register: pull_image
-      changed_when: "Downloaded" in pull_image.stdout or "Pull complete" in pull_image.stdout
+      changed_when: '"Downloaded" in pull_image.stdout or "Pull complete" in pull_image.stdout'
 
     - name: Run Dive in CI mode
       command: >-
-        dive {{ harbor_host }}/{{ harbor_project }}/{{ harbor_image }}:{{ harbor_tag }}
+        dive {{ full_image }}
         --ci
         --json {{ report_dir }}/dive-report.json
-        --exit-code 1
         --lowestEfficiency {{ lowest_efficiency }}
       register: dive_ci
       failed_when: dive_ci.rc != 0
@@ -72,9 +113,20 @@
         dest: "{{ report_dir }}/dive-report.txt"
         mode: "0644"
 
+    - name: Fetch Dive reports locally (controller)
+      fetch:
+        src: "{{ item }}"
+        dest: "{{ dive_local_reports_dir }}/"
+        flat: yes
+      loop:
+        - "{{ report_dir }}/dive-report.json"
+        - "{{ report_dir }}/dive-report.txt"
+      when: dive_fetch_reports | bool
+
     - name: Show Dive summary
       debug:
         msg:
           - "Efficiency threshold: {{ lowest_efficiency }}"
           - "Report JSON: {{ report_dir }}/dive-report.json"
           - "Report text: {{ report_dir }}/dive-report.txt"
+          - "Fetched locally: {{ dive_local_reports_dir }}" 
