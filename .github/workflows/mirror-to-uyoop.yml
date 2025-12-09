@@ -1,12 +1,13 @@
-# Mirror all refs (branches, tags, notes) from this repo (CJenkins-AFPA/CJ-DEVOPS)
-# to uyoop/DevOpsTraining. Requires a repository secret TARGET_PAT in the source repo.
+name: Mirror all refs (branches, tags, notes) from this repo (CJenkins-AFPA/CJ-DEVOPS)
+     to uyoop/DevOpsTraining. Requires repository secret TARGET_PAT in the source repo.
+     
 name: Mirror to uyoop/DevOpsTraining
 
 on:
   push:
     branches: ['**']
   schedule:
-    - cron: '0 0 * * *' # daily at 00:00 UTC
+    - cron: '0 8 * * *'  # daily at 08:00 UTC
   workflow_dispatch:
 
 concurrency:
@@ -20,29 +21,27 @@ jobs:
       TARGET_REPO: uyoop/DevOpsTraining
       TARGET_PAT: ${{ secrets.TARGET_PAT }}
     steps:
-      - name: Check mirror period has not expired
+      - name: Check secret period has not expired
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
           EXPIRY="2026-06-30"
+          TODAY=$(date -u +%Y-%m-%d)
           if [[ "$TODAY" > "$EXPIRY" ]]; then
             echo "Mirror period expired on $EXPIRY (today: $TODAY). Exiting without pushing."
             exit 0
           fi
-
+        
       - name: Checkout repository (no persisted credentials)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false  # important: avoid using GITHUB_TOKEN for other remotes
+          persist-credentials: false
 
       - name: Sanity check TARGET_PAT
         run: |
-          # fail early if the secret is not set
-          if [ -z "${TARGET_PAT}" ]; then
-            echo "TARGET_PAT is not set or is empty. Please add the secret TARGET_PAT in repository settings." >&2
+          if [[ -z "$TARGET_PAT" ]]; then
+            echo "TARGET_PAT is not set or is empty. Please add the secret TARGET_PAT in repository settings."
             exit 1
           fi
-          # print length of token for debugging (does not reveal the token)
           echo "TARGET_PAT length: ${#TARGET_PAT}"
 
       - name: Configure git
@@ -50,11 +49,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Push to mirror (all refs)
+      - name: Add target remote with authentication
         run: |
-          set -e
-          # Use PAT in remote URL. Ensure TARGET_PAT is non-empty (checked above).
-          git remote add mirror "https://x-access-token:${TARGET_PAT}@github.com/${TARGET_REPO}.git"
-          # show the remote URL without token for verification
+          git remote add target https://oauth2:${TARGET_PAT}@github.com/${TARGET_REPO}.git
           git remote -v
-          git push --mirror mirror
+
+      - name: Mirror push to target
+        run: |
+          git push target --mirror --force
