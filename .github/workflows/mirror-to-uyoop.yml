@@ -23,42 +23,34 @@ jobs:
           EXPIRY="2026-06-30"
           TODAY=$(date -u +%Y-%m-%d)
           if [[ "$TODAY" > "$EXPIRY" ]]; then
-            echo "Mirror period expired on $EXPIRY (today: $TODAY)."
+            echo "Mirror period expired."
             exit 0
           fi
         
-      - name: Checkout repository with full history
+      - name: Checkout with full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Create local branches from remote branches
+      - name: Create all local branches
         run: |
           git branch -r | grep -v '\->' | grep -v 'HEAD' | while read remote; do
             branch="${remote#origin/}"
-            git branch --track "$branch" "$remote" 2>/dev/null || git branch -f "$branch" "$remote"
+            if [ "$branch" != "main" ]; then
+              git branch --track "$branch" "$remote" 2>/dev/null || true
+            fi
           done
-          echo "=== Local branches created ==="
           git branch -a
-
-      - name: Sanity check TARGET_PAT
-        run: |
-          if [[ -z "$TARGET_PAT" ]]; then
-            echo "TARGET_PAT is not set. Please add the secret."
-            exit 1
-          fi
-          echo "TARGET_PAT length: ${#TARGET_PAT}"
 
       - name: Configure git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Add target remote
+      - name: Add target remote and push
+        env:
+          GIT_TERMINAL_PROMPT: 0
         run: |
           git remote add target https://oauth2:${TARGET_PAT}@github.com/${TARGET_REPO}.git
-
-      - name: Mirror push to target
-        run: |
           git push target --mirror --force
