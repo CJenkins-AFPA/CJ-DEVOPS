@@ -19,14 +19,16 @@ Script bash intelligent pour automatiser le build, le tagging et le push d'image
 ```
 23-build-push-automation/
 ├── README.md                 # Cette documentation
-├── build-push.sh            # Script principal
-├── tag-strategy.md          # Stratégie de tagging
-├── examples.md              # Exemples d'utilisation
-├── templates/
-│   ├── Dockerfile.example   # Template Dockerfile
-│   └── gitlab-ci.yml.example # Intégration CI/CD (futur)
-└── tests/
-    └── test-build-push.sh   # Tests du script
+├── build-push.sh            # Script principal (✅ implémenté)
+├── .gitignore               # Fichiers à ignorer
+└── (futurs fichiers)
+    ├── tag-strategy.md          # Stratégie de tagging détaillée
+    ├── examples.md              # Exemples d'utilisation avancée
+    ├── templates/
+    │   ├── Dockerfile.example   # Template Dockerfile
+    │   └── gitlab-ci.yml.example # Intégration CI/CD
+    └── tests/
+        └── test-build-push.sh   # Tests du script
 ```
 
 ## 🚀 Installation Rapide
