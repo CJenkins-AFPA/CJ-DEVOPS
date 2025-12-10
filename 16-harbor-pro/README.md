@@ -1,53 +1,51 @@
-# TP16 - Harbor Production-Ready Setup
+# TP16 - Harbor Production-Ready (Registre d'Entreprise)
 
-## Overview
+Déploiement complet et production-ready d'un registre Harbor avec haute disponibilité, monitoring et sécurité avancée.
 
-**TP16** is a comprehensive, production-ready Harbor (container registry) deployment with advanced features for enterprise environments.
+## 🎯 Vue d'ensemble
 
-### What is Harbor?
+**Harbor** est un registre cloud-native open-source qui stocke, signe et analyse les images conteneurs pour les vulnérabilités. Il étend Docker Registry avec les fonctionnalités requises par les environnements d'entreprise.
 
-[Harbor](https://goharbor.io/) is an open-source cloud native registry that stores, signs, and scans container images for vulnerabilities. It extends the Docker Registry with features required by enterprise users.
-
-### TP16 Features
+## ✨ Fonctionnalités TP16
 
 ✅ **Reverse Proxy & Load Balancing**
-- Traefik v3 with automatic SSL/TLS via Let's Encrypt
-- HTTP to HTTPS redirection
-- Rate limiting and compression middleware
+- Traefik v3 avec SSL/TLS automatique via Let's Encrypt
+- Redirection HTTP vers HTTPS
+- Middleware de rate limiting et compression
 
-✅ **High Availability**
-- PostgreSQL with streaming replication (1 primary + 2 replicas)
-- Redis Sentinel with automatic failover (1 master + 2 replicas + 3 sentinels)
-- Health checks on all critical services
+✅ **Haute Disponibilité**
+- PostgreSQL avec réplication streaming (1 primary + 2 replicas)
+- Redis Sentinel avec failover automatique (1 master + 2 replicas + 3 sentinels)
+- Health checks sur tous les services critiques
 
-✅ **Monitoring & Observability**
-- Prometheus for metrics collection
-- Grafana for visualization and dashboarding
-- Loki for log aggregation
-- AlertManager for alert routing and notifications
-- Promtail for log shipping
+✅ **Monitoring & Observabilité**
+- Prometheus pour la collecte de métriques
+- Grafana pour les dashboards
+- Loki pour l'agrégation des logs
+- AlertManager pour le routage d'alertes
+- Promtail pour l'expédition de logs
 
-✅ **Security**
-- Trivy security scanner for vulnerability scanning
-- Notary for image signing and verification (optional)
-- LDAP/OIDC integration support
-- Custom CA certificate support
-- TLS 1.2+ enforcement
+✅ **Sécurité**
+- Trivy pour le scan de vulnérabilités
+- Notary pour la signature d'images (optionnel)
+- Support LDAP/OIDC
+- Support certificats CA personnalisés
+- TLS 1.2+ enforced
 
 ✅ **Backup & Disaster Recovery**
-- Automated backup scripts for data, database, and configs
-- Restore scripts for quick recovery
-- Retention policy management
+- Scripts de backup automatisés (données, BD, configs)
+- Scripts de restore pour récupération rapide
+- Gestion des politiques de rétention
 
-✅ **Container Orchestration**
-- Docker Compose v3.9 for easy deployment
-- Service health checks and automatic restart
-- Resource limits and reservations
-- Network isolation
+✅ **Orchestration Conteneurs**
+- Docker Compose v3.9
+- Health checks et restart automatique
+- Limites de ressources
+- Isolation réseau
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
                           Internet
@@ -61,7 +59,7 @@
               |              |              |
          ┌────▼───┐   ┌─────▼────┐   ┌───▼────┐
          │ Harbor │   │ Grafana  │   │Alerts  │
-         │  Core  │   │  Dashboard   │Manager │
+         │  Core  │   │Dashboard │   │Manager │
          └────┬───┘   └────┬─────┘   └───┬────┘
               |            |             |
               └────────────┼─────────────┘
@@ -79,119 +77,130 @@
 
 ---
 
-## Prerequisites
+## 📋 Prérequis Système
 
-### System Requirements
+| Élément | Minimum | Production |
+|---------|---------|-----------|
+| **OS** | Ubuntu 20.04+, Debian 11+ | Ubuntu 22.04 LTS |
+| **CPU** | 4 cores | 8+ cores |
+| **RAM** | 8 GB | 16+ GB |
+| **Storage** | 50 GB | 200+ GB |
+| **Docker** | 20.10+ | 24.0+ |
+| **Docker Compose** | 2.0+ | 2.20+ |
 
-- **OS**: Linux (Ubuntu 20.04+, CentOS 8+, Debian 11+)
-- **CPU**: 4 cores minimum (8 recommended for production)
-- **RAM**: 8 GB minimum (16+ GB recommended for production)
-- **Storage**: 50 GB minimum (more depending on image volume)
-- **Docker**: 20.10+
-- **Docker Compose**: 2.0+
+### Accès Réseau
 
-### Network Requirements
+- Domaine publique avec DNS A record
+- Port 80 (HTTP) pour ACME challenge
+- Port 443 (HTTPS) pour Harbor
+- Port 8080 (Traefik Dashboard) - accès restreint admin
 
-- Public domain with DNS A record pointing to your server
-- Port 80 (HTTP) open for ACME challenge
-- Port 443 (HTTPS) open for Harbor access
-- Port 8080 (Traefik Dashboard) accessible from admin network only
+### Services Externes (Optionnels)
 
-### External Services (Optional)
-
-- LDAP/Active Directory for authentication
-- OIDC provider (e.g., Keycloak, Okta)
-- S3-compatible storage for registry backend
-- SMTP server for email notifications
-- Slack workspace for alerting
+- LDAP/Active Directory
+- OIDC provider (Keycloak, Okta, etc.)
+- S3-compatible storage
+- SMTP server
+- Slack workspace
 
 ---
 
-## Quick Start
+## 🚀 Démarrage Rapide
 
-### 1. Clone and Configure
+### 1. Configuration initiale
 
 ```bash
-cd /path/to/16-harbor-pro
+cd 16-harbor-pro
 cp .env.example .env
 ```
 
-### 2. Edit Configuration
-
-Edit `.env` with your settings:
+### 2. Éditer la configuration
 
 ```bash
-# Essential settings
-HARBOR_HOSTNAME=harbor.example.com
-HARBOR_ADMIN_PASSWORD=YourSecurePassword123!
-CERT_EMAIL=admin@example.com
-TRAEFIK_DASHBOARD_PASSWORD=$(openssl passwd -apr1)
+nano .env
 ```
 
-### 3. Make Scripts Executable
+Paramètres essentiels:
+
+```env
+# Accès
+HARBOR_HOSTNAME=harbor.example.com
+HARBOR_ADMIN_PASSWORD=ChangeMeToSecurePassword123!
+CERT_EMAIL=admin@example.com
+TRAEFIK_DASHBOARD_PASSWORD=$(openssl passwd -apr1)
+
+# Versions
+HARBOR_VERSION=v2.9.1
+POSTGRES_VERSION=15
+REDIS_VERSION=7.2
+PROMETHEUS_VERSION=latest
+GRAFANA_VERSION=latest
+```
+
+### 3. Rendre les scripts exécutables
 
 ```bash
 chmod +x scripts/*.sh
 ```
 
-### 4. Deploy
+### 4. Déployer
 
 ```bash
 ./scripts/deploy.sh
 ```
 
-### 5. Verify
+### 5. Vérifier le statut
 
 ```bash
-docker-compose ps
-docker-compose logs -f harbor
+docker compose ps
+docker compose logs -f harbor
 ```
 
-### 6. Access Harbor
+### 6. Accéder à Harbor
 
 - **URL**: https://harbor.example.com
 - **Username**: admin
-- **Password**: [From HARBOR_ADMIN_PASSWORD in .env]
+- **Password**: [Depuis HARBOR_ADMIN_PASSWORD]
 
 ---
 
-## Configuration Guide
+## ⚙️ Configuration Détaillée
 
 ### Harbor Core
 
 | Variable | Description |
 |----------|-------------|
-| `HARBOR_HOSTNAME` | Fully qualified domain name for Harbor |
-| `HARBOR_ADMIN_PASSWORD` | Initial admin password (change after first login) |
-| `HARBOR_VERSION` | Harbor version (e.g., v2.9.1) |
+| `HARBOR_HOSTNAME` | FQDN pour Harbor |
+| `HARBOR_ADMIN_PASSWORD` | Mot de passe admin initial |
+| `HARBOR_VERSION` | Version Harbor (ex: v2.9.1) |
+| `HARBOR_STORAGE_PATH` | Chemin stockage images |
 
-### Database (PostgreSQL)
+### Base de Données (PostgreSQL)
 
 | Variable | Description |
 |----------|-------------|
-| `POSTGRES_PASSWORD` | Superuser password |
-| `POSTGRES_USER_PASSWORD` | Harbor database user password |
-| `POSTGRES_REPLICATION_PASSWORD` | Replication user password |
+| `POSTGRES_PASSWORD` | Mot de passe superuser |
+| `POSTGRES_USER_PASSWORD` | Mot de passe utilisateur Harbor |
+| `POSTGRES_REPLICATION_PASSWORD` | Mot de passe réplication |
 
 ### Cache (Redis)
 
 | Variable | Description |
 |----------|-------------|
-| `REDIS_PASSWORD` | Redis master password |
-| `REDIS_SENTINEL_PASSWORD` | Sentinel password |
+| `REDIS_PASSWORD` | Mot de passe Redis master |
+| `REDIS_SENTINEL_PASSWORD` | Mot de passe Sentinel |
 
 ### SSL/TLS
 
 | Variable | Description |
 |----------|-------------|
-| `CERT_EMAIL` | Email for Let's Encrypt notifications |
-| `ACME_SERVER` | ACME server URL (production or staging) |
+| `CERT_EMAIL` | Email Let's Encrypt |
+| `ACME_SERVER` | URL serveur ACME (prod/staging) |
 
-### S3 Backend (Optional)
-
-Set `S3_ENABLED=true` and configure:
+### S3 Backend (Optionnel)
 
 ```env
+S3_ENABLED=true
 S3_ENDPOINT=s3.amazonaws.com
 S3_REGION=us-east-1
 S3_BUCKET=harbor-registry
@@ -199,22 +208,20 @@ S3_ACCESS_KEY=YOUR_ACCESS_KEY
 S3_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
-### LDAP Integration (Optional)
-
-Set `LDAP_ENABLED=true` and configure:
+### LDAP (Optionnel)
 
 ```env
+LDAP_ENABLED=true
 LDAP_URL=ldap://ldap.example.com:389
 LDAP_BASE_DN=dc=example,dc=com
 ```
 
-Then configure in Harbor UI: Administration → Configuration → Authentication
+Puis configurer dans Harbor UI: Administration → Configuration → Authentication
 
-### OIDC Integration (Optional)
-
-Set `OIDC_ENABLED=true` and configure:
+### OIDC (Optionnel)
 
 ```env
+OIDC_ENABLED=true
 OIDC_ENDPOINT=https://oidc.example.com
 OIDC_CLIENT_ID=harbor-app
 OIDC_CLIENT_SECRET=YOUR_SECRET
@@ -222,109 +229,110 @@ OIDC_CLIENT_SECRET=YOUR_SECRET
 
 ---
 
-## Service Management
+## 🔧 Gestion des Services
 
-### View Service Status
+### Afficher le statut
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
-### View Logs
+### Consulter les logs
 
 ```bash
-# All services
-docker-compose logs -f
+# Tous les services
+docker compose logs -f
 
-# Specific service
-docker-compose logs -f harbor
-docker-compose logs -f postgres-primary
-docker-compose logs -f prometheus
+# Service spécifique
+docker compose logs -f harbor
+docker compose logs -f postgres-primary
+docker compose logs -f prometheus
 ```
 
-### Stop Services
+### Arrêter les services
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
-### Restart Services
+### Redémarrer
 
 ```bash
-# All services
-docker-compose restart
+# Tous les services
+docker compose restart
 
-# Specific service
-docker-compose restart harbor
+# Service spécifique
+docker compose restart harbor
+docker compose restart postgres-primary
 ```
 
-### Update Docker Images
+### Mettre à jour les images
 
 ```bash
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 ---
 
-## Backup & Restore
+## 💾 Backup & Restore
 
-### Automated Backup
+### Backup Automatisé
 
 ```bash
-# Run backup
+# Lancer un backup
 ./scripts/backup.sh
 
-# Backup with custom name
-./scripts/backup.sh my-backup-20241207
+# Backup avec nom personnalisé
+./scripts/backup.sh mon-backup-custom
 ```
 
-Backups are stored in `./backups/` directory with retention policy (default: 30 days).
+Les backups sont stockés dans `./backups/` (rétention: 30 jours par défaut).
 
-Backup includes:
-- Harbor data and configurations
-- PostgreSQL database dump
-- Redis snapshot
-- Configuration files
+**Contenu du backup:**
+- Données Harbor et configurations
+- Dump PostgreSQL
+- Snapshot Redis
+- Fichiers de configuration
 
-### Restore from Backup
+### Restore depuis un Backup
 
 ```bash
-# List available backups
+# Lister les backups disponibles
 ls -la backups/
 
-# Restore specific backup
+# Restaurer un backup spécifique
 ./scripts/restore.sh harbor-backup-20241207-143022
 ```
 
-### Manual Backup
+### Backup Manuel
 
 ```bash
-# Backup PostgreSQL
-docker-compose exec postgres-primary pg_dump -U harbor harbor | gzip > harbor.sql.gz
+# PostgreSQL
+docker compose exec postgres-primary pg_dump -U harbor harbor | gzip > harbor.sql.gz
 
-# Backup Redis
-docker-compose exec redis-master redis-cli BGSAVE
+# Redis
+docker compose exec redis-master redis-cli BGSAVE
 docker cp redis-master:/data/dump.rdb redis-dump.rdb
 
-# Backup Harbor data
-docker-compose exec harbor tar czf - /data > harbor-data.tar.gz
+# Données Harbor
+docker compose exec harbor tar czf - /data > harbor-data.tar.gz
 ```
 
 ---
 
-## Monitoring & Alerting
+## 📊 Monitoring & Alerting
 
-### Access Dashboards
+### Accéder aux Dashboards
 
-- **Prometheus**: https://prometheus.harbor.example.com (metrics)
-- **Grafana**: https://grafana.harbor.example.com (dashboards)
-- **AlertManager**: https://alerts.harbor.example.com (alerts)
-- **Traefik**: https://traefik.harbor.example.com (reverse proxy)
+- **Prometheus**: https://prometheus.harbor.example.com
+- **Grafana**: https://grafana.harbor.example.com
+- **AlertManager**: https://alerts.harbor.example.com
+- **Traefik**: https://traefik.harbor.example.com
 
-### Configure Alerting
+### Configurer les Alertes
 
-Edit `alertmanager/config.yml`:
+Éditer `alertmanager/config.yml`:
 
 ```yaml
 receivers:
@@ -337,14 +345,14 @@ receivers:
         from: 'alerts@example.com'
 ```
 
-Reload AlertManager:
+Recharger:
 ```bash
-docker-compose restart alertmanager
+docker compose restart alertmanager
 ```
 
-### Add Custom Metrics
+### Ajouter des Métriques Personnalisées
 
-Edit `prometheus/prometheus.yml` to add new scrape targets:
+Éditer `prometheus/prometheus.yml`:
 
 ```yaml
 scrape_configs:
@@ -355,145 +363,144 @@ scrape_configs:
 
 ---
 
-## Security Considerations
+## 🔐 Sécurité
 
-### 1. Change Default Passwords
+### 1. Changer les Mots de Passe par Défaut
 
 ```bash
-# Harbor admin password (change in Harbor UI)
+# Password admin Harbor (dans Harbor UI)
 # Menu: Administration → Users → Admin
 
-# Database password (update .env and restart)
+# Mot de passe BD (mettre à jour .env et redémarrer)
 POSTGRES_PASSWORD=NewSecurePassword123!
 
-# Redis password (update .env and restart)
+# Mot de passe Redis (mettre à jour .env et redémarrer)
 REDIS_PASSWORD=NewSecurePassword123!
 ```
 
-### 2. Enable HTTPS Everywhere
+### 2. HTTPS Partout
 
-- Let's Encrypt is automatically configured
-- All HTTP traffic is redirected to HTTPS
-- TLS certificates are renewed automatically
+- Let's Encrypt automatiquement configuré
+- Redirection HTTP → HTTPS
+- Renouvellement automatique des certificats
 
-### 3. Network Isolation
+### 3. Isolation Réseau
 
-- Internal services communicate via `harbor-internal` network
-- External traffic goes through Traefik
-- Database and Redis not exposed to the internet
+- Services internes: réseau `harbor-internal`
+- Trafic externe: passant par Traefik
+- BD et Redis: pas exposés à Internet
 
-### 4. Firewall Rules
+### 4. Règles Firewall
 
 ```bash
-# Allow only required ports
-sudo ufw allow 80/tcp   # HTTP for ACME challenge
-sudo ufw allow 443/tcp  # HTTPS for Harbor
-sudo ufw allow 8080/tcp # Traefik dashboard (restrict by IP)
-sudo ufw deny from any to any port 5432   # PostgreSQL
-sudo ufw deny from any to any port 6379   # Redis
+sudo ufw allow 80/tcp    # HTTP (ACME)
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw allow 8080/tcp  # Traefik Dashboard (restreint par IP)
+sudo ufw deny 5432       # PostgreSQL
+sudo ufw deny 6379       # Redis
 ```
 
-### 5. Image Scanning
+### 5. Scan d'Images
 
-- Trivy is automatically configured for vulnerability scanning
-- Enable policy enforcement in Harbor UI
-- Configure Trivy severity levels in `.env`
+- Trivy automatiquement configuré
+- Activer enforcement policy dans Harbor UI
+- Configurer les niveaux de sévérité Trivy
 
-### 6. Content Trust (Optional)
+### 6. Content Trust (Optionnel)
 
-Enable Notary in `docker-compose.yml`:
+Activer Notary dans `docker-compose.yml`:
 
 ```yaml
 NOTARY_ENABLED: 'true'
 ```
 
-Then sign images:
+Signer les images:
 ```bash
 docker push -DCT=true user/image:tag
 ```
 
 ---
 
-## Troubleshooting
+## 🔧 Dépannage
 
-### Harbor Not Starting
+### Harbor ne démarre pas
 
 ```bash
-# Check logs
-docker-compose logs harbor
+# Consulter les logs
+docker compose logs harbor
 
-# Common issues:
-# 1. PostgreSQL not ready - wait 30+ seconds
-# 2. Port 443 already in use - check with: lsof -i :443
-# 3. .env file missing - copy from .env.example
+# Problèmes courants:
+# 1. PostgreSQL pas prêt - attendre 30+ secondes
+# 2. Port 443 déjà utilisé - vérifier: lsof -i :443
+# 3. Fichier .env manquant - copier depuis .env.example
 ```
 
-### Database Connection Issues
+### Problèmes de Connexion BD
 
 ```bash
-# Test PostgreSQL connection
-docker-compose exec postgres-primary psql -U harbor -d harbor -c "SELECT 1"
+# Tester PostgreSQL
+docker compose exec postgres-primary psql -U harbor -d harbor -c "SELECT 1"
 
-# Test replica connection
-docker-compose exec postgres-replica-1 psql -U harbor -d harbor -c "SELECT 1"
+# Tester la replica
+docker compose exec postgres-replica-1 psql -U harbor -d harbor -c "SELECT 1"
 ```
 
-### Redis Connection Issues
+### Problèmes Redis
 
 ```bash
-# Test Redis connection
-docker-compose exec redis-master redis-cli -a PASSWORD ping
+# Tester Redis
+docker compose exec redis-master redis-cli -a PASSWORD ping
 
-# Check replication status
-docker-compose exec redis-master redis-cli -a PASSWORD info replication
+# Vérifier la réplication
+docker compose exec redis-master redis-cli -a PASSWORD info replication
 ```
 
-### SSL Certificate Issues
+### Problèmes de Certificat SSL
 
 ```bash
-# Check certificate status
-docker-compose logs traefik | grep -i "tls\|acme\|certificate"
+# Vérifier le statut du certificat
+docker compose logs traefik | grep -i "tls\|acme\|certificate"
 
-# Manually trigger certificate renewal
-docker-compose restart traefik
+# Forcer le renouvellement
+docker compose restart traefik
 ```
 
-### Monitoring not collecting metrics
+### Monitoring ne collecte pas les métriques
 
 ```bash
-# Check Prometheus targets
-docker-compose logs prometheus | grep "scrape"
+# Vérifier les targets Prometheus
+docker compose logs prometheus | grep "scrape"
 
-# Test metric endpoint
-docker-compose exec harbor curl localhost:8080/metrics
+# Tester l'endpoint métrique
+docker compose exec harbor curl localhost:8080/metrics
 ```
 
 ---
 
-## Performance Tuning
+## ⚡ Tuning Performance
 
-### Database Optimization
+### Optimisation Base de Données
 
-Edit `config/postgres/postgresql.conf`:
+Éditer `config/postgres/postgresql.conf`:
 
 ```conf
-# For 16GB RAM server
+# Serveur 16GB RAM
 shared_buffers = 4GB
 effective_cache_size = 12GB
 work_mem = 32MB
 maintenance_work_mem = 512MB
 ```
 
-### Redis Optimization
+### Optimisation Redis
 
 ```bash
-# Increase memory limit if needed
+# Augmenter la limite de mémoire si nécessaire
 docker update --memory 2g redis-master
 ```
 
-### Container Resource Limits
+### Limites de Ressources Conteneurs
 
-Update `docker-compose.yml`:
+Mettre à jour `docker-compose.yml`:
 
 ```yaml
 harbor:
@@ -503,75 +510,66 @@ harbor:
 
 ---
 
-## Maintenance
+## 🔄 Maintenance
 
-### Regular Tasks
+### Tâches Régulières
 
-- **Daily**: Monitor alerting dashboard
-- **Weekly**: Review Grafana dashboards for trends
-- **Monthly**: Run backups and test restore
-- **Quarterly**: Update Docker images and applications
+- **Quotidien**: Monitorer les alertes
+- **Hebdomadaire**: Vérifier les dashboards Grafana
+- **Mensuel**: Tester les backups/restores
+- **Trimestriel**: Mettre à jour les images
 
-### Update Harbor
+### Mettre à Jour Harbor
 
 ```bash
-# 1. Backup current installation
+# 1. Backup avant mise à jour
 ./scripts/backup.sh pre-upgrade-backup
 
-# 2. Update HARBOR_VERSION in .env
+# 2. Mettre à jour HARBOR_VERSION dans .env
 HARBOR_VERSION=v2.10.0
 
-# 3. Restart with new images
-docker-compose pull
-docker-compose up -d
+# 3. Redémarrer avec les nouvelles images
+docker compose pull
+docker compose up -d
 
-# 4. Verify
-docker-compose ps
+# 4. Vérifier
+docker compose ps
 ```
 
 ---
 
-## Useful Commands
+## 💻 Commandes Utiles
 
 ```bash
-# View container resource usage
+# Utilisation ressources des conteneurs
 docker stats
 
-# Clean up unused images
+# Nettoyer les images inutilisées
 docker image prune -a
 
-# Restart all services
-docker-compose restart
+# Redémarrer tous les services
+docker compose restart
 
-# Rebuild specific service
-docker-compose up -d --build harbor
+# Reconstruire un service spécifique
+docker compose up -d --build harbor
 
-# Execute command in container
-docker-compose exec harbor bash
+# Exécuter une commande dans un conteneur
+docker compose exec harbor bash
 
-# Monitor real-time logs
-docker-compose logs -f --tail=100 service-name
+# Monitorer les logs en temps réel
+docker compose logs -f --tail=100 harbor
 ```
 
 ---
 
-## Support & Documentation
+## 📚 Documentation & Support
 
-- **Harbor Official Docs**: https://goharbor.io/docs
-- **Docker Compose Docs**: https://docs.docker.com/compose
-- **Traefik Docs**: https://doc.traefik.io/traefik/
-- **Prometheus Docs**: https://prometheus.io/docs
-
----
-
-## License
-
-This TP16 setup is provided as-is for educational and production use.
+- **Harbor Official**: https://goharbor.io/docs
+- **Docker Compose**: https://docs.docker.com/compose
+- **Traefik**: https://doc.traefik.io/traefik/
+- **Prometheus**: https://prometheus.io/docs
+- **Grafana**: https://grafana.com/docs
 
 ---
 
-## Contact & Feedback
-
-For issues or improvements, please refer to the project documentation and logs.
-
-**Last Updated**: 2025-12-07
+**Dernière mise à jour**: Décembre 2024

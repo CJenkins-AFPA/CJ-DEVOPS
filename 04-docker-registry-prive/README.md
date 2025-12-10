@@ -1,47 +1,88 @@
-# Machine Vagrant Docker pour exercice réseau
+# TP 4 : Registry Docker Privé (TLS + Auth)
 
-Machine Vagrant Ubuntu 20.04 avec Docker, Docker Compose et Alpine pré-installés.
+Vagrant VM pré-configurée avec Docker, Docker Compose et registry privé sécurisé.
 
-## Démarrage
+## 🎯 Objectifs
 
-Pour démarrer la machine :
+- Configurer une VM Vagrant avec Docker
+- Déployer un registry privé sécurisé
+- Configurer TLS et authentification
+- Tester le push/pull sur le registry
+
+## 📋 Prérequis
+
+- Vagrant 2.2+
+- VirtualBox 6.1+
+- 2 GB RAM disponible
+
+## 🚀 Démarrage Rapide
+
+### Démarrer la VM
 
 ```bash
-vagrant up
+vagrant up         # Crée et provisionne la VM
+vagrant ssh        # Se connecte à la VM
 ```
 
-Pour vous connecter :
+### Vérifier Docker
 
 ```bash
-vagrant ssh
+docker --version
+docker ps          # Doit afficher le container registry
 ```
 
-## Arrêt et suppression
+## Accès Registry
 
-Pour arrêter la machine :
+### Depuis la VM
+
+```bash
+docker login https://localhost:443
+# Username: testuser
+# Password: testpassword
+```
+
+### Push/Pull d'images
+
+```bash
+docker pull alpine:latest
+docker tag alpine:latest localhost:443/alpine
+docker push localhost:443/alpine
+
+# Consulter le catalogue
+curl -k -u testuser:testpassword https://localhost:443/v2/_catalog
+```
+
+### Depuis l'hôte (port forwardé en 5443)
+
+```bash
+vagrant ssh -- sudo cat /opt/registry-secure/certs/localhost.crt > /tmp/ca.crt
+sudo mkdir -p /etc/docker/certs.d/localhost:5443
+sudo cp /tmp/ca.crt /etc/docker/certs.d/localhost:5443/ca.crt
+sudo systemctl restart docker
+docker login https://localhost:5443
+```
+
+## Opérations Courantes
+
+### Arrêter la VM
 
 ```bash
 vagrant halt
 ```
 
-Pour supprimer la machine :
+### Supprimer la VM
 
 ```bash
 vagrant destroy
 ```
 
-## Vérification
+### Fichiers de configuration (dans la VM)
 
-Une fois connecté, vérifiez que Docker fonctionne :
-
-```bash
-docker --version
-docker ps
-```
-
-## Exercice
-
-Vous êtes maintenant prêt à faire l'exercice de manipulation des réseaux Docker.
+- Registry: `/opt/registry-secure`
+- Données: `/opt/registry-secure/data`
+- Certificats: `/opt/registry-secure/certs`
+- Auth: `/opt/registry-secure/auth/htpasswd`
+- Docker Compose: `/opt/registry-secure/docker-compose.yml`
 
 ## Exercice : Registry Docker privé (TLS + auth)
 

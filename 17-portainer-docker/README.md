@@ -1,166 +1,180 @@
-# TP17 - Portainer Basic Setup
+# TP17 - Portainer Community (Gestion Docker Web)
 
-## Overview
+Interface légère de gestion Docker pour la gestion des conteneurs, images, volumes et réseaux via interface web.
 
-**TP17** is a basic, simple Portainer Community Edition setup for Docker container management via web interface.
+## 🎯 Vue d'ensemble
 
-### What is Portainer?
+**Portainer** est une interface de gestion open-source légère qui permet de gérer facilement vos environnements Docker (machines individuelles ou clusters Swarm).
 
-[Portainer](https://www.portainer.io/) is a lightweight, open-source management UI that allows you to easily manage your Docker environments (hosts or Swarm clusters).
+## ✨ Fonctionnalités
 
-### Features
+✅ **Gestion des Conteneurs**
+- Lister les conteneurs actifs
+- Démarrer/arrêter/redémarrer
+- Créer de nouveaux conteneurs
+- Supprimer des conteneurs
+- Consulter les logs en temps réel
 
-✅ **Container Management**
-- View running containers
-- Start/stop/restart containers
-- Create new containers from images
-- Delete containers
-- View container logs
+✅ **Gestion des Images**
+- Tirer des images depuis des registres
+- Pousser des images
+- Supprimer des images
+- Consulter les détails et couches
 
-✅ **Image Management**
-- Pull images from registries
-- Push images
-- Delete images
-- View image details
+✅ **Gestion des Volumes**
+- Créer/supprimer des volumes
+- Consulter les détails
+- Gérer les montages
 
-✅ **Volume Management**
-- Create/delete volumes
-- View volume details
-- Manage volume mounts
+✅ **Gestion des Réseaux**
+- Créer/supprimer des réseaux
+- Consulter les détails
+- Connecter les conteneurs
 
-✅ **Network Management**
-- Create/delete networks
-- View network details
-- Connect containers to networks
-
-✅ **Stack Management** (Docker Compose)
-- Deploy stacks from compose files
-- Manage running stacks
-- View stack logs
+✅ **Gestion des Stacks** (Docker Compose)
+- Déployer des fichiers compose
+- Gérer les apps multi-conteneurs
+- Consulter les logs
 
 ---
 
-## Quick Start
+## 🚀 Démarrage Rapide
 
-### 1. Configure
+### 1. Configuration
 
 ```bash
 cd 17-portainer-docker
 cp .env.example .env
 ```
 
-### 2. Deploy
+### 2. Déployer
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-### 3. Access
+### 3. Accéder à Portainer
 
-- **URL**: http://localhost:9000
-- **Port HTTP**: 8000
-- **Port HTTPS**: 9443
+- **HTTP**: http://localhost:9000
+- **HTTPS**: https://localhost:9443
+- **Port agent**: 8000
 
-### 4. Initial Setup
+### 4. Configuration initiale
 
-1. Set admin password on first login
-2. Connect to local Docker environment
-3. Start managing containers
+1. Définir le mot de passe admin au premier accès
+2. Connecter à l'environnement Docker local
+3. Commencer à gérer les conteneurs
 
 ---
 
-## Accessing Portainer
+## 🌐 Accès à Portainer
 
 ```bash
-# Access via HTTP
+# HTTP
 http://localhost:9000
 
-# Or via HTTPS
+# HTTPS
 https://localhost:9443
 
-# Default credentials (first login):
+# Credentials (premier accès):
 Username: admin
-Password: [From PORTAINER_ADMIN_PASSWORD in .env]
+Password: [Depuis PORTAINER_ADMIN_PASSWORD dans .env]
 ```
 
 ---
 
-## Service Management
+## 🔧 Gestion des Services
+
+### Vérifier le statut
 
 ```bash
-# View status
-docker-compose ps
+docker compose ps
+```
 
-# View logs
-docker-compose logs -f portainer
+### Consulter les logs
 
-# Stop
-docker-compose down
+```bash
+docker compose logs -f portainer
+```
 
-# Restart
-docker-compose restart portainer
+### Arrêter Portainer
+
+```bash
+docker compose down
+```
+
+### Redémarrer
+
+```bash
+docker compose restart portainer
 ```
 
 ---
 
-## Features & Usage
+## 💡 Utilisation des Fonctionnalités
 
-### Containers
-- List all containers
-- View real-time stats
-- Access container logs
-- Execute commands in containers
-- Inspect container details
+### Conteneurs
+
+- Lister tous les conteneurs
+- Consulter les statistiques temps réel
+- Accéder aux logs
+- Exécuter des commandes
+- Inspecter les détails
 
 ### Images
-- Browse available images
-- Pull images from Docker Hub
-- Delete unused images
-- View image details and layers
+
+- Parcourir les images disponibles
+- Tirer des images depuis Docker Hub
+- Supprimer les images inutilisées
+- Consulter les détails et couches
 
 ### Volumes
-- Create persistent volumes
-- List volumes
-- Delete volumes
-- Browse volume contents
 
-### Networks
-- Create custom networks
-- List networks
-- Delete networks
-- Connect containers
+- Créer des volumes persistants
+- Lister les volumes
+- Supprimer les volumes
+- Parcourir les contenus
+
+### Réseaux
+
+- Créer des réseaux personnalisés
+- Lister les réseaux
+- Supprimer les réseaux
+- Connecter les conteneurs
 
 ### Stacks
-- Deploy Docker Compose files
-- Manage multi-container apps
-- View stack status
-- Edit stack configurations
+
+- Déployer des fichiers Docker Compose
+- Gérer les apps multi-conteneurs
+- Consulter le statut
+- Éditer les configurations
 
 ---
 
-## User Management
+## 👥 Gestion des Utilisateurs
 
-### Create Users
+### Créer des Utilisateurs
 
-Via Portainer UI:
-1. Admin > Users
-2. Click "Add user"
-3. Set credentials and role:
-   - **Admin**: Full permissions
-   - **Editor**: Container management only
-   - **Viewer**: Read-only access
+Via l'interface Portainer:
+
+1. Admin > Utilisateurs
+2. Cliquer "Add user"
+3. Définir les credentials et le rôle:
+   - **Admin**: Permissions complètes
+   - **Editor**: Gestion des conteneurs
+   - **Viewer**: Accès lecture seule
 
 ---
 
-## Backup & Restore
+## 💾 Backup & Restore
 
-### Backup Portainer Data
+### Backup des Données Portainer
 
 ```bash
-# Copy volume data
+# Copier le volume
 docker cp portainer:/data ./portainer-backup-$(date +%Y%m%d)
 
-# Or use volume backup
+# Ou utiliser tar
 docker run --rm -v portainer-data:/data -v $(pwd):/backup \
   alpine tar czf /backup/portainer-backup-$(date +%Y%m%d).tar.gz -C /data .
 ```
@@ -168,87 +182,134 @@ docker run --rm -v portainer-data:/data -v $(pwd):/backup \
 ### Restore
 
 ```bash
-docker-compose down
+docker compose down
 docker volume rm portainer-data
 docker volume create portainer-data
 
 docker run --rm -v portainer-data:/data -v $(pwd):/backup \
   alpine tar xzf /backup/portainer-backup-YYYYMMDD.tar.gz -C /data
 
-docker-compose up -d
+docker compose up -d
 ```
 
 ---
 
-## Troubleshooting
+## 🔧 Dépannage
 
-### Port Already in Use
+### Port Déjà Utilisé
 
 ```bash
-# Check what's using port 9000
+# Vérifier quel processus utilise le port 9000
 lsof -i :9000
 
-# Kill process
+# Arrêter le processus
 kill -9 <PID>
 
-# Or change port in docker-compose.yml
+# Ou modifier le port dans docker-compose.yml
 ```
 
-### Cannot Connect to Docker
+### Connexion à Docker Impossible
 
 ```bash
-# Check Docker socket permission
+# Vérifier les permissions du socket Docker
 ls -l /var/run/docker.sock
 
-# Add current user to docker group
+# Ajouter l'utilisateur au groupe docker
 sudo usermod -aG docker $USER
 ```
 
-### Logs
+### Consulter les Logs
 
 ```bash
-# View portainer logs
-docker-compose logs portainer
+# Logs Portainer
+docker compose logs portainer
 
-# Follow logs
-docker-compose logs -f portainer
+# Logs en temps réel
+docker compose logs -f portainer
 ```
 
 ---
 
-## Common Tasks
+## 📋 Tâches Courantes
 
-### Deploy a Container
+### Déployer un Conteneur
 
-1. Open Portainer (http://localhost:9000)
-2. Select "Containers" > "Create container"
-3. Choose image and configure
-4. Click "Deploy"
+1. Ouvrir Portainer (http://localhost:9000)
+2. Sélectionner "Conteneurs" > "Créer un conteneur"
+3. Choisir l'image et configurer
+4. Cliquer "Déployer"
 
-### Manage Multiple Hosts
+### Gérer Plusieurs Hôtes
 
-1. Add environments in "Environments"
-2. Connect to remote Docker hosts
-3. Manage all from one dashboard
+1. Ajouter des environnements
+2. Connecter à des hôtes Docker distants
+3. Gérer tous les hôtes depuis un seul dashboard
 
-### Deploy Stack
+### Déployer une Stack
 
-1. "Stacks" > "Add stack"
-2. Paste docker-compose.yml content
-3. Configure and deploy
-
----
-
-## Security Notes
-
-- Change default admin password immediately
-- Restrict network access to trusted IPs
-- Use HTTPS in production
-- Enable authentication
-- Regularly backup data
+1. "Stacks" > "Ajouter une stack"
+2. Coller le contenu du docker-compose.yml
+3. Configurer et déployer
 
 ---
 
-**Status**: ✅ Complete and Ready
-**Version**: TP17 v1.0
-**Last Updated**: 2025-12-07
+## 🔐 Notes de Sécurité
+
+- Changer le mot de passe admin immédiatement
+- Restreindre l'accès réseau aux IPs de confiance
+- Utiliser HTTPS en production
+- Activer l'authentification
+- Faire régulièrement des backups
+
+---
+
+## 📊 Configuration Avancée
+
+### Connexion à Swarm Mode
+
+```bash
+# Portainer détecte automatiquement Swarm
+docker swarm init  # Si pas déjà initialisé
+docker compose up -d
+```
+
+### Limites de Ressources
+
+```yaml
+# Dans docker-compose.yml
+portainer:
+  mem_limit: 512m
+  memswap_limit: 512m
+```
+
+### Certificats Personnalisés
+
+```bash
+# Placer les certificats dans ./certs/
+./certs/portainer.crt
+./certs/portainer.key
+```
+
+---
+
+## 💻 Commandes Utiles
+
+```bash
+# Utilisation des ressources
+docker stats portainer
+
+# Accéder au shell du conteneur
+docker compose exec portainer sh
+
+# Forcer la mise à jour
+docker compose pull
+docker compose up -d --force-recreate
+
+# Nettoyer les données (⚠️ destructif)
+docker volume rm portainer-data
+```
+
+---
+
+**Status**: ✅ Opérationnel
+**Dernière mise à jour**: Décembre 2024
