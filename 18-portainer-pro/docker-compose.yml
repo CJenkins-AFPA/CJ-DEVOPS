@@ -34,7 +34,7 @@ services:
       - ./traefik/config.yml:/etc/traefik/dynamic/config.yml:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-dashboard.rule=Host(\`${TRAEFIK_DASHBOARD_HOST}\`)"
+      - "traefik.http.routers.traefik-dashboard.rule=Host('${TRAEFIK_DASHBOARD_HOST}')"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
       - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
       - "traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt"
@@ -101,7 +101,7 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(\`${PORTAINER_HOSTNAME}\`)"
+      - "traefik.http.routers.portainer.rule=Host('${PORTAINER_HOSTNAME}')"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.tls.certresolver=letsencrypt"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
@@ -130,7 +130,7 @@ services:
       - '--storage.tsdb.retention.time=${PROMETHEUS_RETENTION:-30d}'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(\`prometheus.${PORTAINER_HOSTNAME}\`)"
+      - "traefik.http.routers.prometheus.rule=Host('prometheus.${PORTAINER_HOSTNAME}')"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
       - "traefik.http.routers.prometheus.tls.certresolver=letsencrypt"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
@@ -159,7 +159,7 @@ services:
       - prometheus
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(\`grafana.${PORTAINER_HOSTNAME}\`)"
+      - "traefik.http.routers.grafana.rule=Host('grafana.${PORTAINER_HOSTNAME}')"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
@@ -191,7 +191,7 @@ services:
       - portainer-agent-data:/var/lib/portainer
     labels:
       - "traefik.enable=true"
-      - "traefik.tcp.routers.portainer-agent.rule=HostSNI(\`*\`)"
+      - "traefik.tcp.routers.portainer-agent.rule=HostSNI('*')"
       - "traefik.tcp.routers.portainer-agent.entrypoints=websecure"
       - "traefik.tcp.services.portainer-agent.loadbalancer.server.port=9001"
 
