@@ -1,4 +1,4 @@
-# TP14 - Prometheus + Grafana Production 🚀
+# TP 14 : Prometheus + Grafana Production
 
 Stack de monitoring production-ready avec Prometheus, Grafana, Loki, Alertmanager, Traefik et dashboards avancés pour une observabilité complète.
 

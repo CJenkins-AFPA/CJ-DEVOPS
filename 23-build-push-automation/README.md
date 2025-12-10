@@ -1,4 +1,4 @@
-# 📦 Build & Push Automation - TP23
+# TP 23 : Build & Push Automation
 
 Script bash intelligent pour automatiser le build, le tagging et le push d'images Docker vers Harbor.
 

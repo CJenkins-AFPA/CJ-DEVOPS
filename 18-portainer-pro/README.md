@@ -1,4 +1,4 @@
-# TP18 - Portainer Enterprise (Production-Ready)
+# TP 18 : Portainer Enterprise (Production-Ready)
 
 Déploiement production d'une édition Portainer Enterprise avec fonctionnalités avancées pour la gestion d'environnements Docker multi-hôtes.
 

@@ -1,4 +1,4 @@
-# TP20 - Dive pour analyser les images Docker
+# TP 20 : Dive pour analyser les images Docker
 
 Analyse interactive (TUI) et en mode CI des couches d'une image Docker afin d'optimiser taille, cache et sécurité.
 

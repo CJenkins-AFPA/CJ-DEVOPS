@@ -1,4 +1,4 @@
-# TP17 - Portainer Community (Gestion Docker Web)
+# TP 17 : Portainer Community (Gestion Docker Web)
 
 Interface légère de gestion Docker pour la gestion des conteneurs, images, volumes et réseaux via interface web.
 

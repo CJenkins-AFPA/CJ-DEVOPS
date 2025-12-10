@@ -1,4 +1,4 @@
-# TP19 - AfpaBike
+# TP 19 : AfpaBike
 
 Organisation des livrables pour l'application AfpaBike.
 

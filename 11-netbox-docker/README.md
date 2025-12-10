@@ -1,4 +1,4 @@
-# 🌐 TP11 - NetBox Docker (Basique)
+# TP 11 : NetBox Docker (Basique)
 
 Installation rapide de NetBox pour la gestion d'infrastructure réseau avec Docker.
 

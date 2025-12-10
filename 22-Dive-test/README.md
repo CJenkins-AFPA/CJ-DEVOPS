@@ -1,4 +1,4 @@
-# TP22 - Dive Docker : Analyse et Optimisation d'Images
+# TP 22 : Dive Docker : Analyse et Optimisation d'Images
 
 ## 🎯 Objectifs
 

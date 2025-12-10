@@ -1,4 +1,4 @@
-# TP21 - Dive + Harbor (Production) avec Ansible
+# TP 21 : Dive + Harbor (Production) avec Ansible
 
 Automatiser l'audit des images poussées sur Harbor (stack TP16) avec l'outil Dive, en mode non interactif et intégrable en CI/CD.
 

@@ -1,4 +1,4 @@
-# TP24 - Docker Swarm Infrastructure
+# TP 24 : Docker Swarm Infrastructure
 
 Automatisation complète d'un cluster Docker Swarm 3 nœuds (manager + 2 workers) avec PostgreSQL via Vagrant + Ansible.
 

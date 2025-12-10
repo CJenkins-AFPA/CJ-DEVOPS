@@ -1,4 +1,4 @@
-# TP13 - Prometheus Docker 📊
+# TP 13 : Prometheus Docker
 
 Stack de monitoring complet avec Prometheus, Node Exporter, cAdvisor et Alertmanager pour surveiller vos systèmes et conteneurs Docker.
 

@@ -1,4 +1,4 @@
-# TP16 - Harbor Production-Ready (Registre d'Entreprise)
+# TP 16 : Harbor Production-Ready (Registre d'Entreprise)
 
 Déploiement complet et production-ready d'un registre Harbor avec haute disponibilité, monitoring et sécurité avancée.
 

@@ -1,4 +1,4 @@
-# 🌐 TP12 - NetBox Professionnel (Production-Ready)
+# TP 12 : NetBox Professionnel (Production-Ready)
 
 Déploiement complet et sécurisé de NetBox avec toutes les couches d'infrastructure.
 

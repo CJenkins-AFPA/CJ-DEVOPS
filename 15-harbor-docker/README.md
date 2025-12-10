@@ -1,4 +1,4 @@
-# TP15 - Harbor Docker 🏭
+# TP 15 : Harbor Docker
 
 Registry sécurisé de conteneurs avec Harbor pour la gestion d'images Docker à grande échelle.
 
