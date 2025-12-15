@@ -1,0 +1,103 @@
+---
+- hosts: harbor
+  become: yes
+  tasks:
+    - name: Installer Docker sur Harbor VM
+      include_role:
+        name: ../roles/docker-engine
+        
+    - name: Installer docker-compose
+      apt:
+        name: docker-compose-plugin
+        state: present
+        
+    - name: Créer le répertoire Harbor
+      file:
+        path: /opt/harbor
+        state: directory
+        mode: '0755'
+
+    - name: Télécharger Harbor offline installer
+      get_url:
+        url: https://github.com/goharbor/harbor/releases/download/v2.11.0/harbor-offline-installer-v2.11.0.tgz
+        dest: /tmp/harbor-offline-installer-v2.11.0.tgz
+        timeout: 300
+      register: harbor_download
+
+    - name: Extraire Harbor dans /opt
+      unarchive:
+        src: /tmp/harbor-offline-installer-v2.11.0.tgz
+        dest: /opt
+        remote_src: yes
+      when: harbor_download.changed
+
+    - name: Copier harbor.yml de configuration
+      template:
+        src: ../../config/harbor/harbor.yml.j2
+        dest: /opt/harbor/harbor.yml
+        mode: '0644'
+      ignore_errors: yes
+
+    - name: Créer répertoire certificats Harbor
+      file:
+        path: /etc/harbor/ssl
+        state: directory
+        mode: '0755'
+
+    - name: Créer config OpenSSL avec SAN
+      copy:
+        content: |
+          [req]
+          default_bits = 2048
+          default_md = sha256
+          default_keyfile = harbor.key
+          distinguished_name = req_distinguished_name
+          req_extensions = v3_req
+          x509_extensions = v3_ca
+          prompt = no
+
+          [req_distinguished_name]
+          C = FR
+          ST = IDF
+          L = Paris
+          O = AFPA
+          OU = DevOps
+          CN = harbor.local
+
+          [v3_req]
+          keyUsage = keyEncipherment, dataEncipherment
+          extendedKeyUsage = serverAuth
+          subjectAltName = @alt_names
+
+          [v3_ca]
+          subjectKeyIdentifier = hash
+          authorityKeyIdentifier = keyid:always,issuer:always
+          basicConstraints = CA:true
+          subjectAltName = @alt_names
+
+          [alt_names]
+          DNS.1 = harbor.local
+          DNS.2 = *.harbor.local
+          IP.1 = 192.168.56.10
+        dest: /tmp/harbor-ssl.conf
+
+    - name: Générer clé privée Harbor
+      shell: openssl genrsa -out /etc/harbor/ssl/harbor.key 2048
+      args:
+        creates: /etc/harbor/ssl/harbor.key
+
+    - name: Générer certificat self-signed avec SAN
+      shell: |
+        openssl req -x509 -new -nodes -days 365 \
+          -keyout /etc/harbor/ssl/harbor.key \
+          -out /etc/harbor/ssl/harbor.crt \
+          -config /tmp/harbor-ssl.conf
+      args:
+        creates: /etc/harbor/ssl/harbor.crt
+
+    - name: Installer Harbor avec install.sh
+      shell: /opt/harbor/install.sh --with-trivy
+      args:
+        chdir: /opt/harbor
+        creates: /opt/harbor/common/config/nginx/cert/harbor.crt
+      ignore_errors: yes

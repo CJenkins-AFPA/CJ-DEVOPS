@@ -1,0 +1,106 @@
+Host harbor
+  HostName 127.0.0.1
+  User vagrant
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/harbor/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostKeyAlgorithms +ssh-rsa
+
+Host manager
+  HostName 127.0.0.1
+  User vagrant
+  Port 2200
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/manager/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostKeyAlgorithms +ssh-rsa
+
+Host worker1
+  HostName 127.0.0.1
+  User vagrant
+  Port 2201
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/worker1/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostKeyAlgorithms +ssh-rsa
+
+Host worker2
+  HostName 127.0.0.1
+  User vagrant
+  Port 2202
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/worker2/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostKeyAlgorithms +ssh-rsa
+
+Host db
+  HostName 127.0.0.1
+  User vagrant
+  Port 2203
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/db/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+  PubkeyAcceptedKeyTypes +ssh-rsa
+  HostKeyAlgorithms +ssh-rsa
+
+# Accès direct sur le réseau privé Vagrant (192.168.56.0/24)
+Host 192.168.56.10
+  HostName 192.168.56.10
+  User vagrant
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/harbor/virtualbox/private_key
+  IdentitiesOnly yes
+
+Host 192.168.56.20
+  HostName 192.168.56.20
+  User vagrant
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/manager/virtualbox/private_key
+  IdentitiesOnly yes
+
+Host 192.168.56.21
+  HostName 192.168.56.21
+  User vagrant
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/worker1/virtualbox/private_key
+  IdentitiesOnly yes
+
+Host 192.168.56.22
+  HostName 192.168.56.22
+  User vagrant
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/worker2/virtualbox/private_key
+  IdentitiesOnly yes
+
+Host 192.168.56.30
+  HostName 192.168.56.30
+  User vagrant
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile /home/cj/gitdata/24-swarm-infrastructure/.vagrant/machines/db/virtualbox/private_key
+  IdentitiesOnly yes
+

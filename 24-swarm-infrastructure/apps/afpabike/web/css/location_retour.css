@@ -1,0 +1,42 @@
+/*------------------------------------Page location_retour------------------------------------*/
+.retourloc_signature{
+    width: 100%;
+    height: 120px;
+    border: 2px dashed #6c757d;
+    background-color: #f8f9fa;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
+}
+.retourloc_bg_green {
+    background-color: #86BD24;
+    border-radius: 10px;
+    border-color: white;
+}
+/*-Style pour les lignes impaires et paires des tableaux-*/
+#table_retourloc tbody tr:nth-child(odd) {
+    background-color:#86BD24; /* Fond vert pour les lignes impaires */
+
+}
+#table_retourloc tr:nth-child(even) {
+    background-color: white; /* Fond blanc pour les lignes paires */
+    border: 1px;
+}
+#table_retourloc tr, #table_retourloc td {
+    border: solid 1px black;
+}
+#table_retourloc thead {
+    font-weight: bold;
+}
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Fine bordure grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.location_retour_head {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+}

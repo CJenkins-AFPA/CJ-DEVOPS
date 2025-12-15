@@ -1,0 +1,10 @@
+---
+- name: Vérifier si le worker est déjà dans le Swarm
+  shell: "docker info --format '{{ '{{' }}.Swarm.LocalNodeState{{ '}}' }}'"
+  register: swarm_status
+  changed_when: false
+  failed_when: false
+
+- name: Joindre le Swarm en tant que worker
+  command: docker swarm join --token {{ hostvars[groups['manager'][0]]['swarm_worker_token'] }} {{ hostvars[groups['manager'][0]]['swarm_manager_ip'] }}:2377
+  when: swarm_status.stdout != "active"

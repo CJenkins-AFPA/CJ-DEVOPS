@@ -2,6 +2,8 @@
 
 Bienvenue dans la formation Docker ! Cette branche contient l'ensemble des travaux pratiques pour maîtriser Docker de A à Z.
 
+> 🤖 **Pour Copilot** : Le contexte technique complet se trouve dans le repo privé [CJAI-CONTEXT](https://github.com/CJenkins-AFPA/CJAI-CONTEXT) → `projects/cj-devops-docker/`
+
 ## 📚 Liste des TPs (1-22)
 
 ### Fondamentaux Docker

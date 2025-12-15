@@ -1,0 +1,57 @@
+---
+- name: Vérifier si Swarm est déjà initialisé
+  shell: "docker info --format '{{ '{{' }}.Swarm.LocalNodeState{{ '}}' }}'"
+  register: swarm_status
+  changed_when: false
+  failed_when: false
+
+- name: Initialiser Swarm sur le manager
+  command: docker swarm init --advertise-addr {{ ansible_host }}
+  when: swarm_status.stdout != "active"
+  register: swarm_init
+
+- name: Récupérer le token worker
+  command: docker swarm join-token worker -q
+  register: worker_token
+  changed_when: false
+
+- name: Récupérer le token manager
+  command: docker swarm join-token manager -q
+  register: manager_token
+  changed_when: false
+
+- name: Sauvegarder les tokens en facts
+  set_fact:
+    swarm_worker_token: "{{ worker_token.stdout }}"
+    swarm_manager_token: "{{ manager_token.stdout }}"
+    swarm_manager_ip: "{{ ansible_host }}"
+
+- name: Créer le réseau overlay frontend
+  command: docker network create --driver overlay frontend
+  register: network_frontend
+  failed_when: network_frontend.rc != 0 and 'already exists' not in network_frontend.stderr
+  changed_when: network_frontend.rc == 0
+
+- name: Créer le réseau overlay backend
+  command: docker network create --driver overlay backend
+  register: network_backend
+  failed_when: network_backend.rc != 0 and 'already exists' not in network_backend.stderr
+  changed_when: network_backend.rc == 0
+
+- name: Créer le volume traefik-certs
+  command: docker volume create traefik-certs
+  register: volume_traefik
+  failed_when: volume_traefik.rc != 0 and 'already exists' not in volume_traefik.stderr
+  changed_when: volume_traefik.rc == 0
+
+- name: Créer le volume portainer-data
+  command: docker volume create portainer-data
+  register: volume_portainer
+  failed_when: volume_portainer.rc != 0 and 'already exists' not in volume_portainer.stderr
+  changed_when: volume_portainer.rc == 0
+
+- name: Créer le volume uyoop-data
+  command: docker volume create uyoop-data
+  register: volume_uyoop
+  failed_when: volume_uyoop.rc != 0 and 'already exists' not in volume_uyoop.stderr
+  changed_when: volume_uyoop.rc == 0

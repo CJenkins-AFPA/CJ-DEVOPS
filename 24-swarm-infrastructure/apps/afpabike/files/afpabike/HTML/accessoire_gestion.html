@@ -1,0 +1,129 @@
+<script src="js/accessoire.js"></script> 
+
+<div class="tableau">
+    <div class="titre d-flex align-items-center">
+        <div class="col-6">
+            <h2 class="text-white ms-5">Gestion des accessoires</h2>
+        </div>
+        <div class="col-6 text-end">
+            <!-- Bouton enregistrement utilisateur -->
+            <button type="button" class="btn btn-primary my-4 btn_bggreen text-light border-1 ms-3" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg> Ajouter un accessoire
+            </button>
+        </div>
+    </div>
+    <!-- Tableau des accessoires -->
+    <!-- <table id="table_accessoires" class="" border="1"></table> -->
+    <div class="table-responsive ">
+        <table id="table_accessoires" class="table  table-striped">
+            <!-- Votre contenu du tableau ici -->
+        </table>
+    </div>
+</div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="addRowModal" tabindex="-1" aria-labelledby="addRowModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRowModalLabel">Ajouter un nouvel accessoire</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Colonne de gauche -->
+                        <div class="col-md-6 pe-md-4"> <!-- Ajout du padding à droite -->
+                            <div class="mb-4"> <!-- Espacement entre les sections -->
+                                <label for="nom_accessoire" class="form-label">Nom Accessoire:</label>
+                                <input type="text" class="form-control form-control-lg" id="nom_accessoire" name="nom_accessoire" placeholder="Saisir nom accessoire">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="couleur_Accessoire" class="form-label">Saisire la couleur:</label>
+                                <input type="text" class="form-control form-control-lg" id="couleur_accessoire" name="couleur_accessoire" placeholder="Saisir la Couleur">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p>Saisir la taille:</p>
+                                <div class="form-check ">
+                                    <div class=" d-flex justify-content-around">
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="XS" class="dispo_Accessoire" />
+                                    <label for="huey" class="dispo_Accessoire pr-3">XS</label>
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="S" class="dispo_Accessoire" />
+                                    <label for="huey" class="dispo_Accessoire">S</label>
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="M" class="dispo_Accessoire" checked />
+                                    <label for="dewey" class="dispo_Accessoire">M</label>
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="L" class="dispo_Accessoire"  />
+                                    <label for="dewey" class="dispo_Accessoire">L</label>
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="XL" class="dispo_Accessoire"  />
+                                    <label for="dewey" class="dispo_Accessoire">XL</label>
+                                    <input type="radio" id="taille_accessoire" name="taille_accessoire" value="XXL" class="dispo_Accessoire"  />
+                                    <label for="dewey" class="dispo_Accessoire">XXL</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p>Disponible:</p>
+                                <div class="form-check">
+                                    <input type="radio" id="disponibilite_accessoire" name="disponibilite_accessoire" value="0" class="dispo_Accessoire" />
+                                    <label for="huey" class="dispo_Accessoire">Non disponible</label>
+                                
+                                    <input type="radio" id="disponibilite_accessoire" name="disponibilite_accessoire" value="1" class="dispo_Accessoire" checked />
+                                    <label for="dewey" class="dispo_Accessoire">Disponible</label>
+                                </div>
+                        
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="numeroserie_Accessoire" class="form-label">Numéro série accessoire:</label>
+                                <input type="text" class="form-control form-control-lg" id="numeroserie_accessoire" name="numeroserie_accessoire" placeholder="Saisir numéro série">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="numeroafpa_accessoire" class="form-label">Numéro afpa accessoire:</label>
+                                <input type="text" class="form-control form-control-lg" id="numeroafpa_accessoire" name="numeroafpa_accessoire" placeholder="Saisir numéro afpa accessoire">
+                            </div>
+                        </div>
+
+                        <!-- Colonne de droite -->
+                        <div class="col-md-6 ps-md-4"> <!-- Ajout du padding à gauche -->
+                            <div class="mb-4">
+                                <p>Saisir l'état:</p>
+                                <div class="form-check">
+                                    <input type="radio" id="etat_accessoire" name="etat_accessoire" value="ok" class="dispo_Accessoire" checked />
+                                    <label for="huey" class="dispo_Accessoire">Ok</label>
+                                    <input type="radio" id="etat_accessoire" name="etat_accessoire" value="a reviser" class="dispo_Accessoire"  />
+                                    <label for="dewey" class="dispo_Accessoire">A réviser</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="prix_accessoire" class="form-label">Prix Accessoire:</label>
+                                <input type="number" class="form-control form-control-lg" id="prix_accessoire" name="prix_accessoire" placeholder="Saisir prix accessoire">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="photo_accessoire" class="form-label">Photo Accessoire:</label>
+                                <input type="file" class="form-control form-control-lg" id="photo_accessoire" name="photo_accessoire">
+                            </div>
+                            <div class="mb-4">  
+                                <label for="particularite_accessoire" class="form-label">Particularite de l'accessoire:</label>
+                                <input type="text" class="form-control form-control-lg" id="particularite_accessoire" name="particularite_accessoire" placeholder="Saisir la particularite de l'accessoire">   
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button onClick="ajoutaCcessoires()" class="btn btn-primary btn_bggreen border-0" id="btn_ajouter">Ajouter</button>
+                    <button onClick="modifieraCcessoires()" class="btn btn-success" id="btn_modifier" style="display:none;">Modifier</button>
+                    <button onClick="effaceFormulaire()" class="btn btn-danger" data-bs-dismiss="modal" id="btn_annuler">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            

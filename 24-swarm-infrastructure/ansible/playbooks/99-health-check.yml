@@ -1,0 +1,39 @@
+---
+- hosts: manager
+  become: yes
+  tasks:
+    - name: Lister les services Swarm
+      shell: docker service ls
+      register: service_list
+      
+    - name: Afficher les services
+      debug:
+        msg: "{{ service_list.stdout_lines }}"
+        
+    - name: Afficher l'état détaillé des services
+      shell: docker service ls --format "table {{ '{{' }}.Name{{ '}}' }}\t{{ '{{' }}.Mode{{ '}}' }}\t{{ '{{' }}.Replicas{{ '}}' }}\t{{ '{{' }}.Image{{ '}}' }}"
+      register: service_status
+      changed_when: false
+      
+    - name: Afficher l'état des services
+      debug:
+        msg: "{{ service_status.stdout_lines }}"
+        
+    - name: Vérifier les réseaux overlay
+      shell: docker network ls --filter driver=overlay
+      register: overlay_networks
+      changed_when: false
+      
+    - name: Afficher les réseaux
+      debug:
+        msg: "{{ overlay_networks.stdout_lines }}"
+        
+    - name: Vérifier les volumes
+      shell: docker volume ls
+      register: volumes_list
+      changed_when: false
+      
+    - name: Afficher les volumes
+      debug:
+        msg: "{{ volumes_list.stdout_lines }}"
+

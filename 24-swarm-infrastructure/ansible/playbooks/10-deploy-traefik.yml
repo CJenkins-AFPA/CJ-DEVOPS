@@ -1,0 +1,18 @@
+---
+- hosts: manager
+  become: yes
+  tasks:
+    - name: Copier le fichier stack Traefik
+      copy:
+        src: ../../docker-stack/stack-traefik.yml
+        dest: /root/stack-traefik.yml
+        
+    - name: Copier les configs Traefik
+      copy:
+        src: ../../config/traefik/
+        dest: /root/config/traefik/
+        
+    - name: Déployer stack Traefik
+      shell: docker stack deploy -c /root/stack-traefik.yml traefik
+      environment:
+        TRAEFIK_DOMAIN: "{{ frontend_domain_traefik | default('traefik.local') }}"

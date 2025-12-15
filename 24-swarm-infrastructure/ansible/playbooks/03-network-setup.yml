@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Mettre à jour /etc/hosts avec hostnames du cluster
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          192.168.56.10 harbor.local
+          192.168.56.20 swarm-manager.local portainer.local afpabike.local uyoop.local traefik.local
+          192.168.56.21 swarm-worker1.local
+          192.168.56.22 swarm-worker2.local
+          192.168.56.30 db.local
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - SWARM CLUSTER"
+        
+    - name: Installer UFW
+      apt:
+        name: ufw
+        state: present
+      when: ansible_os_family == "Debian"
+        
+    - name: Configurer le firewall UFW (autoriser Docker Swarm)
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - 2377   # cluster management
+        - 7946   # node communication
+        - 4789   # overlay network
+      when: ansible_os_family == "Debian"
+      ignore_errors: yes
+

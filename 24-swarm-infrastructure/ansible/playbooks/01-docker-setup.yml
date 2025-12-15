@@ -1,0 +1,5 @@
+---
+- hosts: manager:workers
+  become: yes
+  roles:
+    - docker-engine

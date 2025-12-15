@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="css/type_utilisateur_gestion.css"> <!-- Inclusion du fichier CSS personnalisé -->
+
+<script src="js/type_utilisateur.js"></script>
+
+        <div class="container-fluid tableau">
+            <div class="d-flex type_utilisateur_bandeau-tab align-items-center justify-content-between pe-4 ps-4">
+                <div class="col-6 text-light">
+                    <h3>Gestion des type d'utilisateurs</h3>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary my-4" data-bs-toggle="modal" data-bs-target="#exampleModal" id="type_utilisateur_bouton_ajout" onclick="Fermeturemodal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                              </svg> Ajouter un type d'utilisateur
+                        </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table_type_utilisateur" class="table_rep" border="1"></table>
+            </div>
+        </div>
+      <!--------------------------------------Message si l'utilisateur veux-être sur de vouloir supprimé la ligne-------------------------------------->
+    <div id="confirmModal" style="display: none;">
+        <div id="confirmModalContent">
+            <p>Êtes-vous sûr de vouloir supprimer la ligne pour le type d'utilisateur : <span id="supprtype_utilisateur"></span> ?</p>
+            <button id="confirmYesBtn">Oui</button>
+            <button id="confirmNoBtn" >Non</button>
+        </div>
+    </div>
+        <!-- Modal Ajouter une type_utilisateur-->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border border-dark">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter un type d'utilisateur</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="Fermeturemodal()"></button>
+                    </div>
+                    <div class="modal-body col-lg-12">
+                        <div class="col-12 pt-2 align-items-center text-center">
+                            <p>Nom du type d'utilisateur</p>
+                            <input type="text" id="nom_type_utilisateur" name="nom_type_utilisateur" style="width: 50%;">
+                            <input type="hidden" id="id_type_utilisateur" name="id_type_utilisateur" style="width: 50%;">
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button onclick="ajoutType_utilisateur()" type="button" class="btn btn-secondary bg-success" id="type_utilisateur_valide">Valider</button>
+                        <button onclick="modifType_utilisateur()" type="button" class="btn btn-secondary bg-success" id="type_utilisateur_modifier">Modifier</button>
+                        <button onclick="Fermeturemodal()" type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
+                        <div class="form-check form-switch d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" role="switch" name="actif_type_utilisateur" id="actif_type_utilisateur" style="margin-left:2px;">
+                            <label class="form-check-label" for="ficheactive" style="margin-left:10px;">Fiche active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
+
+                 

@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_root_password
+      - db_password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.storage == nfs
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "app=wordpress"
+        - "tier=database"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+      WORDPRESS_DB_NAME: wordpress
+    secrets:
+      - db_password
+    volumes:
+      - wp-content:/var/www/html/wp-content
+    networks:
+      - backend
+      - frontend
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "app=wordpress"
+        - "tier=frontend"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/wp-admin/install.php"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - db
+
+networks:
+  frontend:
+    driver: overlay
+  backend:
+    driver: overlay
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.56.10,rw
+      device: ":/srv/nfs/swarm-data/mysql"
+  
+  wp-content:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.56.10,rw
+      device: ":/srv/nfs/swarm-data/wordpress"
+
+secrets:
+  db_root_password:
+    external: true
+  db_password:
+    external: true

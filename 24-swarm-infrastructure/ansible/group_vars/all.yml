@@ -1,35 +1,21 @@
----
-# Common variables for all hosts
+harbor_url: harbor.local
+harbor_project: library
+harbor_username: admin
+harbor_password: Harbor12345
 
-# System
-timezone: "UTC"
-ntp_pool: "pool.ntp.org"
+mariadb_host: db.local
+afpabike_db: afpabike_db
+afpabike_user: afpabike_user
+afpabike_password: ChangeMeAfpabike
+uyoop_db: uyoopapp_db
+uyoop_user: uyoop_user
+uyoop_password: ChangeMeUyoop
 
-# Docker
-docker_storage_driver: "overlay2"
-docker_log_driver: "json-file"
-docker_max_concurrent_downloads: 10
+frontend_domain_traefik: traefik.local
+frontend_domain_portainer: portainer.local
+frontend_domain_afpabike: afpabike.local
+frontend_domain_uyoop: uyoop.local
 
-# Swarm
-swarm_subnet: "192.168.56.0/24"
-swarm_advertise_addr_interface: "eth1"
-swarm_data_path_port: 7946
-
-# Database
-postgres_version: "15"
-postgres_user: "postgres"
-postgres_password: "postgres123"
-postgres_database: "swarm_db"
-postgres_port: 5432
-
-# Registry
-registry_url: "harbor.local"
-registry_user: "admin"
-registry_project: "myproject"
-insecure_registries:
-  - "harbor.local"
-  - "192.168.1.100:80"  # Update with your host IP
-
-# Backup
-backup_retention_days: 7
-backup_path: "/backups"
+# Image tags (à surcharger lors du déploiement)
+afpabike_image_tag: latest
+uyoop_image_tag: latest

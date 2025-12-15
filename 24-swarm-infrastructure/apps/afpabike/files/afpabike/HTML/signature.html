@@ -1,0 +1,126 @@
+    <div>
+		<p>&nbsp;</p>
+		<div style="width: 400px; height: 200px; border: 1px solid black;">
+			<canvas id="signature-pad" width="400" height="200"></canvas>
+		</div>
+		<p>&nbsp;</p>
+        <div class="controls">
+            <select id="stroke-style">
+                <option value="pen">Pen</option>
+                <option value="brush">Brush</option>
+            </select>
+            <button id="clear">Clear</button>
+            <button id="export-png">Export as PNG</button>
+            <button id="export-jpeg">Export as JPEG</button>
+        </div>
+		<p>&nbsp;</p>
+		<img src="data:image/png;base64,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" data-filename="go.png">
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    var canvas = document.getElementById('signature-pad');
+    var ctx = canvas.getContext('2d');
+    var drawing = false;
+    var strokeStyle = 'pen';
+    var signatureData = null;
+
+    function resizeCanvas() {
+        if (signatureData) {
+            var img = new Image();
+            img.src = signatureData;
+            img.onload = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                setStrokeStyle();
+            };
+        } else {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            setStrokeStyle();
+        }
+    }
+
+    function setStrokeStyle() {
+        if (strokeStyle === 'pen') {
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+        } else if (strokeStyle === 'brush') {
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+        }
+    }
+
+    function startDrawing(e) {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX || e.touches[0].clientX - canvas.offsetLeft, e.offsetY || e.touches[0].clientY - canvas.offsetTop);
+    }
+
+    function draw(e) {
+        if (drawing) {
+            ctx.lineTo(e.offsetX || e.touches[0].clientX - canvas.offsetLeft, e.offsetY || e.touches[0].clientY - canvas.offsetTop);
+            ctx.stroke();
+        }
+    }
+
+    function stopDrawing() {
+        drawing = false;
+        signatureData = canvas.toDataURL();
+    }
+
+    function exportCanvas(format) {
+        var exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+        var exportCtx = exportCanvas.getContext('2d');
+
+        // Fill the background with white
+        exportCtx.fillStyle = '#fff';
+        exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+        // Draw the signature
+        exportCtx.drawImage(canvas, 0, 0);
+
+        // Export the canvas
+        var dataURL = exportCanvas.toDataURL(`image/${format}`);
+		console.log("dataURL : " + dataURL);
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch events
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+
+    document.getElementById('clear').addEventListener('click', function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        signatureData = null;
+    });
+
+    document.getElementById('stroke-style').addEventListener('change', function (e) {
+        strokeStyle = e.target.value;
+        setStrokeStyle();
+    });
+
+    document.getElementById('export-png').addEventListener('click', function () {
+        exportCanvas('png');
+    });
+
+    document.getElementById('export-jpeg').addEventListener('click', function () {
+        exportCanvas('jpeg');
+    });
+
+    // Initial canvas setup
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+});
+	</script>
+	

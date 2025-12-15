@@ -1,210 +1,143 @@
-# TP 24 : Docker Swarm Infrastructure
+# TP24 - Swarm Infrastructure
 
-Automatisation complète d'un cluster Docker Swarm 3 nœuds (manager + 2 workers) avec PostgreSQL via Vagrant + Ansible.
+Infrastructure complète Docker Swarm avec Traefik, Portainer, Harbor (registry privé) et MariaDB externe pour déploiement des applications Afpabike et uyoopApp.
 
-## Architecture
+## 🎓 Formation Pratique Docker Swarm
 
-```
-VMs: 4 × Ubuntu 22.04 (Vagrant)
-├─ swarm-manager   192.168.56.20 (Manager Swarm)
-├─ swarm-worker1   192.168.56.21 (Worker)
-├─ swarm-worker2   192.168.56.22 (Worker)
-└─ swarm-db        192.168.56.23 (PostgreSQL 15)
+Ce projet contient une **formation complète en 3 labs progressifs** pour maîtriser Docker Swarm de A à Z.
 
-Network: 192.168.56.0/24 (private)
-```
+### 📚 Accès aux Labs
+**➡️ [CONSULTER L'INDEX DES LABS](./labs/INDEX.md)**
 
-## Installation (10-20 min)
+Les labs couvrent :
+- **Lab 1** : Découverte et Architecture (4-6h) ⭐⭐☆☆☆
+- **Lab 2** : Haute Disponibilité et Persistance (6-8h) ⭐⭐⭐⭐☆
+- **Lab 3** : Sécurité et Monitoring (8-10h) ⭐⭐⭐⭐⭐
 
-### Prérequis
+---
 
-```bash
-- Vagrant >= 2.3
-- VirtualBox >= 6.1 (ou libvirt)
-- Ansible >= 2.12
-- 10GB RAM libre
-```
+## Architecture Production
 
-### Démarrage
+- **PC Dev** : poste de développement (build/tag/push vers Harbor)
+- **5 VMs** :
+  - `harbor.local` : Registry privé Harbor (HTTPS self-signed)
+  - `swarm-manager.local` : Manager Swarm + Traefik + Portainer
+  - `swarm-worker1.local` : Worker Swarm
+  - `swarm-worker2.local` : Worker Swarm
+  - `db.local` : MariaDB externe (hors Swarm)
 
-```bash
-# 1. Créer et démarrer les VMs
-vagrant up
+Voir `RECAP-TP24.md` pour l'architecture détaillée.
 
-# 2. Provisionner (choisir UNE option):
+## Prérequis
 
-# Option A: Playbooks individuels
-ansible-playbook -i ansible/inventory.ini ansible/playbooks/00-prepare.yml
-ansible-playbook -i ansible/inventory.ini ansible/playbooks/01-docker-install.yml
-ansible-playbook -i ansible/inventory.ini ansible/playbooks/02-swarm-init.yml
-ansible-playbook -i ansible/inventory.ini ansible/playbooks/03-db-deploy.yml
-ansible-playbook -i ansible/inventory.ini ansible/playbooks/04-registry-config.yml
+- 5 VMs Linux (Debian/Ubuntu recommandé) avec SSH
+- Docker Engine sur PC Dev
+- Ansible sur PC Dev
+- Accès réseau entre toutes les machines
+- `/etc/hosts` configuré sur PC Dev et VMs
 
-# Option B: Automatisé (recommandé)
-bash scripts/setup-cluster.sh
-```
+## Quickstart
 
-### Vérification
+### 1. Configuration PC Dev
 
 ```bash
-# Connexion au manager
-vagrant ssh swarm-manager
+cd 24-swarm-infrastructure
+cp .env.example .env
+# Éditer .env (hostnames, mots de passe, Harbor credentials)
 
-# Dans la VM:
-docker node ls        # Voir les nœuds
-docker service ls     # Services actifs
-bash ../scripts/monitor-health.sh  # Monitoring complet
+./scripts/setup-dev-env.sh
+# Login Harbor + vérification /etc/hosts
 ```
 
-## Fichiers & Structure
-
-| Fichier | Objectif |
-|---------|----------|
-| `Vagrantfile` | 4 VMs Ubuntu 22.04 |
-| `ansible/playbooks/00-prepare.yml` | Système (NTP, DNS, kernel) |
-| `ansible/playbooks/01-docker-install.yml` | Docker CE + Compose |
-| `ansible/playbooks/02-swarm-init.yml` | Initialiser Swarm ⭐ |
-| `ansible/playbooks/03-db-deploy.yml` | PostgreSQL 15 |
-| `ansible/playbooks/04-registry-config.yml` | Registre privé |
-| `scripts/setup-cluster.sh` | Auto-provisionnement |
-| `scripts/monitor-health.sh` | Monitoring |
-
-## Commandes Essentielles
-
-### Vagrant
+### 2. Génération certificats self-signed
 
 ```bash
-vagrant up [name]                 # Créer/démarrer VMs
-vagrant ssh [name]                # Connexion SSH
-vagrant halt [name]               # Arrêter VM
-vagrant destroy -f [name]         # Supprimer VM
-vagrant status                    # Voir statut
+./certs/generate-certs.sh
+# Génère ca.crt + certs pour *.local domains
 ```
 
-### Docker Swarm (depuis manager)
+### 3. Déploiement Infrastructure + Services
 
 ```bash
-docker node ls                    # Lister nœuds
-docker swarm status               # État du cluster
-docker service create --name web --replicas 3 nginx
-docker service ls                 # Services actifs
-docker service ps <name>          # Tâches du service
-docker service logs -f <name>     # Logs en temps réel
+./scripts/deploy-all.sh
+# Lance tous les playbooks Ansible:
+# - Install Docker sur Manager/Workers
+# - Init Swarm + join workers
+# - Config /etc/hosts, firewall
+# - Deploy Harbor, MariaDB externe
+# - Deploy Traefik, Portainer
+# - Deploy Afpabike, uyoopApp
 ```
 
-## Test Rapide
+### 4. Build et Push des images
 
 ```bash
-# 1. Créer réseau overlay
-vagrant ssh swarm-manager -c "docker network create --driver overlay test-net"
+# Depuis apps/afpabike
+cd apps/afpabike
+../../scripts/build-and-push.sh afpabike docker 1.0.0
 
-# 2. Déployer nginx (3 replicas)
-vagrant ssh swarm-manager -c "docker service create --name test-nginx --replicas 3 --publish 8080:80 nginx"
-
-# 3. Tester (load balanced):
-curl http://192.168.56.20:8080
-curl http://192.168.56.21:8080
-curl http://192.168.56.22:8080
-
-# 4. Nettoyer
-vagrant ssh swarm-manager -c "docker service rm test-nginx"
+# Depuis apps/uyoopapp
+cd apps/uyoopapp
+../../scripts/build-and-push.sh uyoopapp docker 1.0.0
 ```
 
-## Playbooks Détaillés
+### 5. Accès aux services
 
-### 00-prepare.yml (2-3 min)
+- Traefik dashboard : `https://traefik.local`
+- Portainer : `https://portainer.local`
+- Afpabike : `https://afpabike.local`
+- uyoopApp : `https://uyoop.local`
+- Harbor : `https://harbor.local`
 
-- Hostname configuration
-- NTP synchronization
-- DNS setup
-- System packages
-- Kernel parameters
+## Structure
 
-### 01-docker-install.yml (3-4 min)
+```
+24-swarm-infrastructure/
+├── README.md
+├── RECAP-TP24.md (architecture détaillée)
+├── QUICKSTART.md
+├── .env.example
+├── ansible/ (playbooks + rôles)
+├── apps/ (code source Afpabike + uyoopApp)
+├── certs/ (certificats self-signed)
+├── config/ (Traefik, MariaDB, Harbor, apps)
+├── docker-stack/ (compose files Swarm)
+├── docs/ (architecture, déploiement, troubleshooting)
+└── scripts/ (build-push, deploy-all, health-check, logs)
+```
 
-- Docker CE installation
-- Docker Compose
-- Docker CLI plugins
-- User permissions
+## Documentation
 
-### 02-swarm-init.yml ⭐ (1-2 min)
+- `RECAP-TP24.md` : architecture complète, composants, flux
+- `QUICKSTART.md` : steps rapides de déploiement
+- `docs/ARCHITECTURE.md` : détails techniques
+- `docs/DEPLOYMENT.md` : guide déploiement pas-à-pas
+- `docs/TROUBLESHOOTING.md` : résolution problèmes courants
+- `docs/SECURITY.md` : considérations sécurité
+- `docs/MONITORING.md` : observabilité
 
-**CRITIQUE**: Initialise le Swarm
-- Manager: `docker swarm init`
-- Récupère token worker
-- Workers: `docker swarm join --token`
-- Vérification cluster
-
-### 03-db-deploy.yml (1-2 min)
-
-- PostgreSQL 15 container
-- Volume persistant
-- Environment variables
-- Backup scripts
-
-### 04-registry-config.yml (1 min)
-
-- Update `/etc/docker/daemon.json`
-- Insecure registries (harbor.local)
-- Redémarrer Docker daemon
-- Test push
-
-## Accès aux Services
-
-| Service | URL/IP | Port |
-|---------|--------|------|
-| Swarm Manager | 192.168.56.20 | 2377 |
-| PostgreSQL | 192.168.56.23 | 5432 |
-| Harbor Registry | harbor.local | 443 |
-
-## Troubleshooting
-
-| Problème | Solution |
-|----------|----------|
-| VMs ne démarrent | Réduire RAM/CPU dans Vagrantfile, vérifier VirtualBox |
-| Ansible ne se connecte | Vérifier `inventory.ini`, `vagrant up` d'abord |
-| Worker ne joindre pas | `docker swarm join-token worker` sur manager |
-| Docker inaccessible | SSH → VM → `sudo systemctl restart docker` |
-| Harbor push échoue | Vérifier `/etc/hosts` include `harbor.local` |
-
-## Monitoring
+## Commandes utiles
 
 ```bash
-# Health check continu
-vagrant ssh swarm-manager
-bash ../scripts/monitor-health.sh --continuous
+# Health check cluster
+./scripts/health-check.sh
 
-# Voir les services
-docker service ls
-docker service ps <service_name>
+# Logs d'un service
+./scripts/logs.sh <service-name>
 
-# Logs
-docker service logs -f <service_name>
-journalctl -u docker -f
+# Rebuild + redeploy une app
+cd apps/<app>
+../../scripts/build-and-push.sh <app> <ref> <version>
+docker stack deploy -c ../../docker-stack/stack-<app>.yml <app>
 ```
 
-## Sauvegardes
+## Maintenance
 
-```bash
-# Backup DB
-bash scripts/backup-db.sh          # → backups/postgres_backup_TIMESTAMP.sql.gz
+- **Mise à jour app** : rebuild/push + redeploy stack
+- **Backup DB** : dump MariaDB depuis `db.local`
+- **Rotation logs** : configurer logrotate sur VMs
+- **Renouvellement certs** : regénérer avec `certs/generate-certs.sh`
 
-# Restore DB
-bash scripts/restore-db.sh backups/postgres_backup_TIMESTAMP.sql.gz
-```
+## Support
 
-## Intégration
-
-Fonctionne avec:
-- **TP16 (Harbor)**: Registre privé Docker
-- **TP14 (Prometheus/Grafana)**: Monitoring de l'infrastructure
-- **TP23 (Build & Push)**: Automatisation build/push vers ce registre
-
-## Ressources
-
-- [Docker Swarm Docs](https://docs.docker.com/engine/swarm/)
-- [Vagrant Docs](https://www.vagrantup.com/docs)
-- [Ansible Docs](https://docs.ansible.com/)
-- [Blog Stéphane Robert](https://blog.stephane-robert.info/docs/conteneurs/orchestrateurs/docker-swarm/)
-
-**Status**: Production-ready ✅
+Voir `docs/TROUBLESHOOTING.md` pour les problèmes courants ou consulter les logs des services via Portainer.

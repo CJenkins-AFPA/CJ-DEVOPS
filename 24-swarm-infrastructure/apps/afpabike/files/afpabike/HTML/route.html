@@ -1,0 +1,52 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+	<?php include $GLOBALS_INI["PATH_HOME"] . $GLOBALS_INI["PATH_FILES"] . "commun/head.html" ?>
+</head>
+
+<body>
+
+    <div id="page">
+
+        <!--header start -->
+		<header class="d-flex col-12 p-3">
+			<?php 
+				if ($oMain->VARS_HTML["page"] != "connection")	{
+					include $GLOBALS_INI["PATH_HOME"] . $GLOBALS_INI["PATH_FILES"] . "commun/header.html";
+				}
+			?>
+        </header>
+        <!--header end-->
+		
+        <!--nav start -->
+		<nav class="col-12">
+			<?php 
+				if ($oMain->VARS_HTML["page"] != "connection")	{
+					include $GLOBALS_INI["PATH_HOME"] . $GLOBALS_INI["PATH_FILES"] . "commun/nav.html";
+				}
+			?>
+        </nav>
+        <!--nav end-->
+
+        <!--aside start -->
+        <aside>
+        </aside>
+        <!--aside end-->
+
+        <!--section start -->
+		<section class="vel_section">
+            <?php include $GLOBALS_INI["PATH_HOME"] . $GLOBALS_INI["PATH_FILES"] . $oMain->VARS_HTML["page"] . ".html" ?>
+		</section>		
+        <!--section end-->
+
+        <!--footer start-->
+        <footer class="bg-body- text-center p-3">
+            <?php include $GLOBALS_INI["PATH_HOME"] . $GLOBALS_INI["PATH_FILES"] . "commun/footer.html" ?>
+        </footer>
+        <!--footer end-->
+    </div>
+
+</body>
+
+</html>

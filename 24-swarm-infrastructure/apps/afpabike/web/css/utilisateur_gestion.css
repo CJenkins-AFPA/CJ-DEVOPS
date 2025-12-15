@@ -1,0 +1,131 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.uti_head_table {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+}
+
+.dataTables_wrapper {
+    margin-top: 2%;
+    margin-left: 5%;
+    width: 90%;
+    display: block;
+}
+
+.dataTables_length {
+    margin-bottom: 3%;
+    font-size: 14px;
+}
+.daTables_filter {
+    margin-bottom: 3%;
+}
+
+#utilisateur_table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    width: 100%;
+}
+
+#utilisateur_table td img {
+    cursor: pointer;
+    width: 20px;  /* Ajustez la taille selon vos besoins */
+    height: auto;
+}
+
+#utilisateur_table td img:hover {
+    opacity: 0.5;  /* Effet visuel lors du survol */
+}
+
+#utilisateur_table th, #utilisateur_table td {
+    border: 1px solid #000000;
+    padding: 10px;
+    text-align: center;
+}
+
+#utilisateur_table tbody tr:nth-child(odd) {
+    background-color: #bfbfbf;
+}
+
+#utilisateur_table thead {
+    font-weight: bold;
+}
+
+#utilisateur_table.datautilisateur_table.no-footer {
+    border-bottom: 1px solid #000000;
+}
+
+.dataTables_info{
+    font-size: smaller;
+}
+
+button {
+    text-decoration: none;
+    font-family: Verdana, Arial;
+    font-weight: bold;
+    font-size: 11 px;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 40px;
+    margin-left: 10px;
+}
+
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /*Fine bordure grise */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+/*------------------------------------Style pour le message de confirmation de suppression et de modification------------------------------------*/
+#confirmModal, #editConfirmModal {
+    display: none; /* Masqué par défaut */
+    position: fixed; /* Position fixe pour couvrir l'écran */
+    z-index: 1000; /* Priorité d'affichage élevée */
+    left: 0;
+    top: 0;
+    width: 100%; /* Largeur complète */
+    height: 100%; /* Hauteur complète */
+    overflow: auto; /* Permet le défilement si nécessaire */
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent noir */
+}
+
+#confirmModalContent, #editConfirmModalContent {
+    background-color: #f3f3f3; /* Fond blanc pour le contenu */
+    margin: 15% auto; /* Centre le contenu verticalement avec marge */
+    padding: 20px; /* Espacement interne */
+    border: 1px solid #888; /* Bordure gris clair */
+    width: 80%; /* Largeur de 80% */
+    max-width: 300px; /* Largeur maximale de 300px */
+    border-radius: 10px; /* Coins arrondis */
+    text-align: center; /* Centre le texte */
+    color: black; /* Couleur du texte en noir */
+}
+
+#confirmYesBtn, #editConfirmYesBtn {
+    background-color: #86BD24; /* Fond bleu pour les boutons */
+    color: white; /* Couleur du texte en blanc */
+    padding: 10px 20px; /* Espacement interne */
+    border: none; /* Supprime les bordures */
+    border-radius: 5px; /* Coins légèrement arrondis */
+    cursor: pointer; /* Curseur de type pointeur */
+    margin: 5px; /* Marge pour espacer les boutons */
+}
+
+#confirmModal button:hover, #editConfirmModal button:hover {
+    transform: translateY(-5px); /* Déplacement léger vers le haut */
+    cursor: pointer;  /* Curseur de type pointeur */
+}
+
+#confirmNoBtn, #editConfirmNoBtn {
+    background-color: red; /* Fond vert pour les boutons */
+    color: white; /* Couleur du texte en blanc */
+    padding: 10px 20px; /* Espacement interne */
+    border: none; /* Supprime les bordures */
+    border-radius: 5px; /* Coins légèrement arrondis */
+    cursor: pointer; /* Curseur de type pointeur */
+    margin: 5px; /* Marge pour espacer les boutons */
+}
+
+
+

@@ -1,0 +1,12 @@
+/*------------------------------------Page piece_gestion------------------------------------*/
+.piece_custom-modal-size {
+    width: 1050px; 
+    height: 100%; /* S'assurer que le conteneur parent prend la hauteur */
+    max-width: 100%; 
+    max-height: 100%;
+}
+
+.piece_modal-content {
+    height: 100%; /* Appliquer la hauteur à la modale */
+    overflow-y: auto; /* Ajouter un défilement si nécessaire */
+}

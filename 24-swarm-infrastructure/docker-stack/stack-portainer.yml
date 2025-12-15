@@ -1,0 +1,75 @@
+version: "3.8"
+ 
+services:
+  agent:
+    image: portainer/agent:latest
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.agent
+      AGENT_PORT: 9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - portainer_agent_network
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.platform.os == linux
+ 
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    command: >
+      -H tcp://tasks.agent:9001 
+    # -H tcp://tasks.agent:9001 --tlsskipverify
+    # PAS de ports exposés ici : Traefik se charge du 80/443
+    volumes:
+      - portainer_data:/data
+    networks:
+      - portainer_agent_network
+      - frontend
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+ 
+        # Réseau utilisé par Traefik pour joindre le service
+        - "traefik.docker.network=frontend"
+ 
+        # Router HTTP (optionnel, si tu veux rediriger HTTP -> HTTPS)
+        - "traefik.http.routers.portainer-http.rule=Host(`portainer.local`)"
+        - "traefik.http.routers.portainer-http.entrypoints=web"
+        #- "traefik.http.routers.portainer-http.middlewares=portainer-https-redirect"
+ 
+        # Middleware de redirection vers HTTPS
+        #- "traefik.http.middlewares.portainer-https-redirect.redirectscheme.scheme=https"
+ 
+        # Router HTTPS principal
+        #- "traefik.http.routers.portainer.rule=Host(`portainer.local`)"
+        #- "traefik.http.routers.portainer.entrypoints=websecure"
+        #- "traefik.http.routers.portainer.tls=true"
+ 
+        # Port interne du conteneur Portainer
+        # (Portainer écoute sur 9443 en HTTPS dans l'image récente)
+        - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+ 
+
+networks:
+  portainer_agent_network:
+    driver: overlay
+    attachable: true
+ 
+  # DOIT être le même réseau overlay que celui déclaré dans le stack Traefik
+  frontend:
+    external: true
+ 
+volumes:
+  portainer_data:

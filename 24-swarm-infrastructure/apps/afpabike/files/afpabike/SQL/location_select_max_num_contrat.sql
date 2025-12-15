@@ -1,0 +1,1 @@
+select count(*)+1 as num_contrat from contrat where YEAR(datedebut_loc_contrat)=YEAR(NOW())
