@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>DevOps Calendar</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #000000;
+      --bg-panel: #050505;
+      --accent-green: #00ff00;
+      --accent-yellow: #facc15;
+      --text-main: #f9fafb;
+      --border-muted: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111111 0, #000000 55%);
+      color: var(--text-main);
+    }
+
+    header {
+      background: linear-gradient(135deg, #000000, #050505);
+      color: var(--text-main);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-muted);
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.8);
+    }
+
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 30% 30%, var(--accent-yellow), transparent 60%),
+        radial-gradient(circle at 70% 70%, var(--accent-green), transparent 60%);
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: 0.06em;
+    }
+
+    header .tagline {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    header .status-pill {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: var(--accent-green);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* Navbar */
+    .navbar {
+      max-width: 1200px;
+      margin: 16px auto;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .nav-btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #d1d5db;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+    }
+
+    .nav-btn.active {
+      border-color: var(--accent-green);
+      background: rgba(0, 255, 0, 0.1);
+      color: var(--accent-green);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nav-btn-primary {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent-green);
+      color: #022c22;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn-primary:hover {
+      background: #00dd00;
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
+    }
+
+    .nav-btn-secondary {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #d1d5db;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn-secondary:hover {
+      border-color: #d1d5db;
+      color: #f9fafb;
+    }
+
+    #calendar-wrapper {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 16px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, #050505, #000000 55%);
+      border: 1px solid var(--border-muted);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    /* FullCalendar tweaks */
+    .fc {
+      color: var(--text-main);
+    }
+
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border-color: #1f2933;
+    }
+
+    .fc .fc-toolbar.fc-header-toolbar {
+      margin-bottom: 1rem;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fc .fc-toolbar-title {
+      font-size: 1.1rem;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .fc .fc-button {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #d1d5db;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: capitalize;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: none;
+    }
+
+    .fc .fc-button:hover {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+    }
+
+    .fc .fc-button.fc-button-active,
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+      background: rgba(0, 255, 0, 0.1);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .fc .fc-button-primary {
+      background: #020617;
+      border: 1px solid #374151;
+      text-transform: capitalize;
+    }
+
+    .fc .fc-button-primary:hover {
+      background: #020617;
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .fc .fc-daygrid-day-number {
+      color: #e5e7eb;
+    }
+
+    .fc .fc-day-today {
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.08), rgba(0, 255, 0, 0.03)) !important;
+      border: 1px solid rgba(0, 255, 0, 0.3) !important;
+      box-shadow: inset 0 0 12px rgba(0, 255, 0, 0.1);
+    }
+
+    .fc .fc-day-today .fc-daygrid-day-number {
+      color: var(--accent-green);
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    }
+
+    /* Event colors by type */
+    .fc-event.meeting {
+      background: rgba(0, 255, 0, 0.15);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .fc-event.deployment_window {
+      background: rgba(250, 204, 21, 0.18);
+      border-color: var(--accent-yellow);
+      color: var(--accent-yellow);
+    }
+
+    .fc-event.git_action {
+      background: rgba(96, 165, 250, 0.15);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    /* modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      background: var(--bg-panel);
+      border-radius: 14px;
+      padding: 20px 24px;
+      min-width: 320px;
+      max-width: 380px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      border: 1px solid var(--border-muted);
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.05rem;
+    }
+
+    .modal-content label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .modal-content input,
+    .modal-content select {
+      width: 100%;
+      margin-top: 4px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      outline: none;
+    }
+
+    .modal-content input:focus,
+    .modal-content select:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.3);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .modal-actions button {
+      border-radius: 6px;
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    #modal-cancel,
+    #login-cancel {
+      background: #111827;
+      color: #e5e7eb;
+      border: 1px solid #374151;
+    }
+
+    #modal-cancel:hover,
+    #login-cancel:hover {
+      border-color: #4b5563;
+      background: #1a1f2e;
+    }
+
+    #modal-save,
+    #login-submit {
+      background: var(--accent-green);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    #modal-save:hover,
+    #login-submit:hover {
+      background: #00dd00;
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
+    }
+
+    /* Vues (Tableau, Dashboard, Membres) */
+    .view {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 16px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, #050505, #000000 55%);
+      border: 1px solid var(--border-muted);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .view h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      color: var(--accent-green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #1f2933;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #020617;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-green);
+      border-bottom: 2px solid var(--accent-green);
+    }
+
+    tbody tr {
+      background: rgba(0, 0, 0, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    tbody tr:nth-child(even):hover {
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    .table-action-btn {
+      padding: 6px 12px;
+      margin-right: 4px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-edit {
+      background: #020617;
+      color: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background: rgba(59, 130, 246, 0.1);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-delete {
+      background: #020617;
+      color: #ef4444;
+      border-color: #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: rgba(239, 68, 68, 0.1);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      padding: 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #020617, #0a0f1e);
+      border: 1px solid #374151;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 16px rgba(0, 255, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent-green);
+      text-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    }
+
+    .user-info {
+      padding: 16px;
+      border-radius: 8px;
+      background: #020617;
+      border: 1px solid #374151;
+      margin-bottom: 20px;
+    }
+
+    .user-info-row {
+      margin: 8px 0;
+      font-size: 0.95rem;
+    }
+
+    .user-info-label {
+      color: #9ca3af;
+      margin-right: 8px;
+    }
+
+    .user-info-value {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .filter-box {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-box select {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .charts-section {
+      margin-top: 32px;
+    }
+
+    .charts-section h3 {
+      color: var(--accent-green);
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-container {
+      background: linear-gradient(135deg, #020617, #0a0f1e);
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
+    }
+
+    .chart-container h4 {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 16px 0;
+      font-weight: 600;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <div class="logo"></div>
+      <div>
+        <h1>DevOps Calendar</h1>
+        <div class="tagline">Planning agile, change calendar & Git actions</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barre d'onglets + actions -->
+  <nav class="navbar">
+    <div class="nav-tabs">
+      <button class="nav-btn" id="tab-board">Tableau</button>
+      <button class="nav-btn active" id="tab-calendar">Calendrier</button>
+      <button class="nav-btn" id="tab-dashboard">Mon dashboard</button>
+      <button class="nav-btn" id="tab-members">Membres</button>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn-primary" id="btn-new-event">+ Nouvel évènement</button>
+      <button class="nav-btn-secondary" id="btn-logout">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div id="calendar-wrapper" class="view active">
+    <div id="calendar"></div>
+  </div>
+
+  <!-- Vue Tableau -->
+  <div id="view-tableau" class="view">
+    <h2>Tableau des évènements</h2>
+    <div class="filter-box">
+      <select id="filter-type">
+        <option value="">Tous les types</option>
+        <option value="meeting">Réunion</option>
+        <option value="deployment_window">Fenêtre de déploiement</option>
+        <option value="git_action">Action Git</option>
+      </select>
+    </div>
+    <table id="events-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Type</th>
+          <th>Date début</th>
+          <th>Créateur</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Vue Mon dashboard -->
+  <div id="view-dashboard" class="view">
+    <h2>Mon tableau de bord</h2>
+    <div id="user-info-panel" class="user-info"></div>
+    <div id="stats-panel" class="stats-grid"></div>
+    
+    <div class="charts-section">
+      <h3>📊 Analyses détaillées</h3>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h4>Distribution par type</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-type-distribution"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <h4>Événements par mois</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-events-timeline"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h4>Tendance hebdomadaire</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-weekly-trend"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <h4>Activité par jour de semaine</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-weekday-activity"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue Membres (admin only) -->
+  <div id="view-members" class="view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="margin:0;">Gestion des membres</h2>
+      <button class="nav-btn-primary" id="btn-add-member">+ Ajouter un membre</button>
+    </div>
+    <table id="members-table">
+      <thead>
+        <tr>
+          <th>Nom d'utilisateur</th>
+          <th>Rôle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Modal création d'événement -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Nouvel évènement</h2>
+      <label>
+        Titre
+        <input type="text" id="event-title" />
+      </label>
+      <label>
+        Date
+        <input type="date" id="event-date" />
+      </label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <label>
+          Heure de début
+          <input type="time" id="event-start-time" />
+        </label>
+        <label>
+          Heure de fin
+          <input type="time" id="event-end-time" />
+        </label>
+      </div>
+      <label>
+        Type
+        <select id="event-type">
+          <option value="meeting">Réunion</option>
+          <option value="deployment_window">Fenêtre de déploiement</option>
+          <option value="git_action">Action Git</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button id="modal-cancel">Annuler</button>
+        <button id="modal-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de connexion -->
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Connexion</h2>
+      <label>
+        Nom d'utilisateur
+        <input type="text" id="login-username" />
+      </label>
+      <label>
+        Rôle
+        <select id="login-role">
+          <option value="editor">Éditeur</option>
+          <option value="viewer">Lecteur</option>
+          <option value="admin">Administrateur</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button id="login-cancel">Annuler</button>
+        <button id="login-submit">Se connecter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal ajout membre -->
+  <div id="add-member-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Ajouter un membre</h2>
+      <label>
+        Nom d'utilisateur
+        <input type="text" id="new-member-username" />
+      </label>
+      <label>
+        Rôle
+        <select id="new-member-role">
+          <option value="editor">Éditeur</option>
+          <option value="viewer">Lecteur</option>
+          <option value="admin">Administrateur</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button id="add-member-cancel">Annuler</button>
+        <button id="add-member-submit">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+
+      const modal = document.getElementById('event-modal');
+      const titleInput = document.getElementById('event-title');
+      const dateInput = document.getElementById('event-date');
+      const startTimeInput = document.getElementById('event-start-time');
+      const endTimeInput = document.getElementById('event-end-time');
+      const typeSelect = document.getElementById('event-type');
+      const cancelBtn = document.getElementById('modal-cancel');
+      const saveBtn = document.getElementById('modal-save');
+      const tabBoard = document.getElementById('tab-board');
+      const tabCalendar = document.getElementById('tab-calendar');
+      const tabDashboard = document.getElementById('tab-dashboard');
+      const tabMembers = document.getElementById('tab-members');
+      const newEventBtn = document.getElementById('btn-new-event');
+      const logoutBtn = document.getElementById('btn-logout');
+
+      const viewCalendar = document.querySelector('div#calendar-wrapper');
+      const viewTableau = document.getElementById('view-tableau');
+      const viewDashboard = document.getElementById('view-dashboard');
+      const viewMembers = document.getElementById('view-members');
+
+      const loginModal = document.getElementById('login-modal');
+      const loginUsername = document.getElementById('login-username');
+      const loginRole = document.getElementById('login-role');
+      const loginCancel = document.getElementById('login-cancel');
+      const loginSubmit = document.getElementById('login-submit');
+
+      const addMemberModal = document.getElementById('add-member-modal');
+      const addMemberBtn = document.getElementById('btn-add-member');
+      const newMemberUsername = document.getElementById('new-member-username');
+      const newMemberRole = document.getElementById('new-member-role');
+      const addMemberCancel = document.getElementById('add-member-cancel');
+      const addMemberSubmit = document.getElementById('add-member-submit');
+
+      let pendingDate = null;
+      let currentUser = null;
+
+      function getUserId() {
+        const raw = localStorage.getItem('currentUser');
+        if (!raw) return null;
+        try {
+          const u = JSON.parse(raw);
+          return u.id;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function ensureLoggedIn() {
+        const uid = getUserId();
+        if (!uid) {
+          loginModal.classList.remove('hidden');
+          return false;
+        }
+        return true;
+      }
+
+      cancelBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        pendingDate = null;
+        titleInput.value = '';
+        dateInput.value = '';
+        startTimeInput.value = '';
+        endTimeInput.value = '';
+        typeSelect.value = 'meeting';
+      });
+
+      newEventBtn.addEventListener('click', () => {
+        if (!ensureLoggedIn()) return;
+        const today = new Date().toISOString().slice(0, 10);
+        dateInput.value = today;
+        startTimeInput.value = '09:00';
+        endTimeInput.value = '10:00';
+        modal.classList.remove('hidden');
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        location.reload();
+      });
+
+      // Tab click handlers avec changement de vue
+      function showView(activeView) {
+        viewCalendar.classList.remove('active');
+        viewTableau.classList.remove('active');
+        viewDashboard.classList.remove('active');
+        viewMembers.classList.remove('active');
+
+        tabBoard.classList.remove('active');
+        tabCalendar.classList.remove('active');
+        tabDashboard.classList.remove('active');
+        tabMembers.classList.remove('active');
+
+        activeView.classList.add('active');
+      }
+
+      tabCalendar.addEventListener('click', () => {
+        showView(viewCalendar);
+        tabCalendar.classList.add('active');
+      });
+
+      tabBoard.addEventListener('click', () => {
+        showView(viewTableau);
+        tabBoard.classList.add('active');
+        loadTableauView();
+      });
+
+      tabDashboard.addEventListener('click', () => {
+        showView(viewDashboard);
+        tabDashboard.classList.add('active');
+        loadDashboardView();
+      });
+
+      tabMembers.addEventListener('click', () => {
+        const uid = getUserId();
+        const raw = localStorage.getItem('currentUser');
+        const user = raw ? JSON.parse(raw) : null;
+        if (!user || user.role !== 'admin') {
+          alert('Accès réservé aux administrateurs');
+          return;
+        }
+        showView(viewMembers);
+        tabMembers.classList.add('active');
+        loadMembersView();
+      });
+
+      // Fonctions pour charger les vues
+      async function loadTableauView() {
+        console.log('loadTableauView called');
+        try {
+          const res = await fetch('/events');
+          const events = await res.json();
+          console.log('Events loaded:', events);
+          const tbody = document.querySelector('#events-table tbody');
+          tbody.innerHTML = '';
+
+          const filterType = document.getElementById('filter-type').value;
+          const filtered = filterType ? events.filter(e => e.type === filterType) : events;
+
+          for (const ev of filtered) {
+            const row = document.createElement('tr');
+            const creatorName = ev.created_by ? `User ${ev.created_by}` : 'N/A';
+            const dateStr = new Date(ev.start).toLocaleDateString('fr-FR');
+            row.innerHTML = `
+              <td>${ev.title}</td>
+              <td>${ev.type}</td>
+              <td>${dateStr}</td>
+              <td>${creatorName}</td>
+              <td>
+                <button class="table-action-btn btn-edit" data-event-id="${ev.id}">Modifier</button>
+                <button class="table-action-btn btn-delete" data-event-id="${ev.id}">Supprimer</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+          // Attacher les event listeners
+          document.querySelectorAll('#events-table .btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => editEvent(btn.dataset.eventId));
+          });
+          document.querySelectorAll('#events-table .btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => deleteEventFromView(btn.dataset.eventId));
+          });
+        } catch (err) {
+          console.error('Error loading tableau view', err);
+        }
+      }
+
+      let dashboardCharts = [];
+
+      async function loadDashboardView() {
+        const raw = localStorage.getItem('currentUser');
+        const user = raw ? JSON.parse(raw) : null;
+        if (!user) return;
+
+        // Détruire les anciens graphiques
+        dashboardCharts.forEach(chart => chart.destroy());
+        dashboardCharts = [];
+
+        // Afficher infos utilisateur
+        const infoPanel = document.getElementById('user-info-panel');
+        const roleLabel = { admin: 'Administrateur', editor: 'Éditeur', viewer: 'Lecteur' }[user.role] || user.role;
+        infoPanel.innerHTML = `
+          <div class="user-info-row">
+            <span class="user-info-label">Nom d'utilisateur:</span>
+            <span class="user-info-value">${user.username}</span>
+          </div>
+          <div class="user-info-row">
+            <span class="user-info-label">Rôle:</span>
+            <span class="user-info-value">${roleLabel}</span>
+          </div>
+        `;
+
+        // Stats
+        try {
+          const res = await fetch('/events');
+          const events = await res.json();
+          const myEvents = events.filter(e => e.created_by === user.id);
+          const stats = {
+            'Réunion': myEvents.filter(e => e.type === 'meeting').length,
+            'Fenêtre de déploiement': myEvents.filter(e => e.type === 'deployment_window').length,
+            'Action Git': myEvents.filter(e => e.type === 'git_action').length,
+          };
+
+          const statsPanel = document.getElementById('stats-panel');
+          statsPanel.innerHTML = `
+            <div class="stat-card">
+              <div class="stat-label">Total événements</div>
+              <div class="stat-value">${myEvents.length}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Réunions</div>
+              <div class="stat-value">${stats['Réunion']}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Déploiements</div>
+              <div class="stat-value">${stats['Fenêtre de déploiement']}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Actions Git</div>
+              <div class="stat-value">${stats['Action Git']}</div>
+            </div>
+          `;
+
+          // Créer les graphiques
+          createDashboardCharts(myEvents);
+        } catch (err) {
+          console.error('Error loading dashboard', err);
+        }
+      }
+
+      function createDashboardCharts(events) {
+        const chartDefaults = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#d1d5db',
+                font: { size: 12 }
+              }
+            }
+          }
+        };
+
+        // 1. Distribution par type (Donut)
+        const typeStats = {
+          'Réunion': events.filter(e => e.type === 'meeting').length,
+          'Déploiement': events.filter(e => e.type === 'deployment_window').length,
+          'Git Action': events.filter(e => e.type === 'git_action').length,
+        };
+
+        const ctx1 = document.getElementById('chart-type-distribution');
+        dashboardCharts.push(new Chart(ctx1, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(typeStats),
+            datasets: [{
+              data: Object.values(typeStats),
+              backgroundColor: [
+                'rgba(0, 255, 0, 0.7)',
+                'rgba(250, 204, 21, 0.7)',
+                'rgba(59, 130, 246, 0.7)'
+              ],
+              borderColor: [
+                '#00ff00',
+                '#facc15',
+                '#3b82f6'
+              ],
+              borderWidth: 2
+            }]
+          },
+          options: {
+            ...chartDefaults,
+            plugins: {
+              ...chartDefaults.plugins,
+              legend: {
+                position: 'bottom',
+                labels: { color: '#d1d5db', padding: 15, font: { size: 13 } }
+              }
+            }
+          }
+        }));
+
+        // 2. Événements par mois (Bar)
+        const monthlyData = {};
+        events.forEach(e => {
+          const month = new Date(e.start).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+          monthlyData[month] = (monthlyData[month] || 0) + 1;
+        });
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+          return new Date(a) - new Date(b);
+        }).slice(-6); // 6 derniers mois
+
+        const ctx2 = document.getElementById('chart-events-timeline');
+        dashboardCharts.push(new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: sortedMonths,
+            datasets: [{
+              label: 'Événements',
+              data: sortedMonths.map(m => monthlyData[m]),
+              backgroundColor: 'rgba(0, 255, 0, 0.6)',
+              borderColor: '#00ff00',
+              borderWidth: 2,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            ...chartDefaults,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { color: '#9ca3af', stepSize: 1 },
+                grid: { color: 'rgba(255, 255, 255, 0.05)' }
+              },
+              x: {
+                ticks: { color: '#9ca3af' },
+                grid: { display: false }
+              }
+            }
+          }
+        }));
+
+        // 3. Tendance hebdomadaire (Line)
+        const weeklyData = {};
+        events.forEach(e => {
+          const date = new Date(e.start);
+          const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
+          const weekKey = weekStart.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+          weeklyData[weekKey] = (weeklyData[weekKey] || 0) + 1;
+        });
+        const sortedWeeks = Object.keys(weeklyData).slice(-8); // 8 dernières semaines
+
+        const ctx3 = document.getElementById('chart-weekly-trend');
+        dashboardCharts.push(new Chart(ctx3, {
+          type: 'line',
+          data: {
+            labels: sortedWeeks,
+            datasets: [{
+              label: 'Événements par semaine',
+              data: sortedWeeks.map(w => weeklyData[w]),
+              borderColor: '#00ff00',
+              backgroundColor: 'rgba(0, 255, 0, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#00ff00',
+              pointBorderColor: '#000',
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              pointHoverRadius: 7
+            }]
+          },
+          options: {
+            ...chartDefaults,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { color: '#9ca3af', stepSize: 1 },
+                grid: { color: 'rgba(255, 255, 255, 0.05)' }
+              },
+              x: {
+                ticks: { color: '#9ca3af' },
+                grid: { display: false }
+              }
+            }
+          }
+        }));
+
+        // 4. Activité par jour de semaine (Radar)
+        const weekdayData = { Lun: 0, Mar: 0, Mer: 0, Jeu: 0, Ven: 0, Sam: 0, Dim: 0 };
+        const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+        events.forEach(e => {
+          const day = new Date(e.start).getDay();
+          weekdayData[dayNames[day]]++;
+        });
+
+        const ctx4 = document.getElementById('chart-weekday-activity');
+        dashboardCharts.push(new Chart(ctx4, {
+          type: 'polarArea',
+          data: {
+            labels: Object.keys(weekdayData),
+            datasets: [{
+              label: 'Événements',
+              data: Object.values(weekdayData),
+              backgroundColor: [
+                'rgba(0, 255, 0, 0.5)',
+                'rgba(0, 255, 0, 0.6)',
+                'rgba(0, 255, 0, 0.7)',
+                'rgba(0, 255, 0, 0.8)',
+                'rgba(0, 255, 0, 0.6)',
+                'rgba(0, 255, 0, 0.4)',
+                'rgba(0, 255, 0, 0.3)'
+              ],
+              borderColor: '#00ff00',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            ...chartDefaults,
+            scales: {
+              r: {
+                ticks: { color: '#9ca3af', backdropColor: 'transparent', stepSize: 1 },
+                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                pointLabels: { color: '#d1d5db', font: { size: 12 } }
+              }
+            }
+          }
+        }));
+      }
+
+      async function loadMembersView() {
+        console.log('loadMembersView called');
+        try {
+          const res = await fetch('/users');
+          const users = await res.json();
+          console.log('Users loaded:', users);
+          const tbody = document.querySelector('#members-table tbody');
+          tbody.innerHTML = '';
+
+          for (const u of users) {
+            const roleLabel = { admin: 'Administrateur', editor: 'Éditeur', viewer: 'Lecteur' }[u.role] || u.role;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${u.username}</td>
+              <td>${roleLabel}</td>
+              <td>
+                <button class="table-action-btn btn-edit" data-user-id="${u.id}" data-user-role="${u.role}">Changer rôle</button>
+                <button class="table-action-btn btn-delete" data-user-id="${u.id}">Supprimer</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+          // Attacher les event listeners
+          document.querySelectorAll('#members-table .btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => editUserRole(btn.dataset.userId, btn.dataset.userRole));
+          });
+          document.querySelectorAll('#members-table .btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => deleteUserFromView(btn.dataset.userId));
+          });
+        } catch (err) {
+          console.error('Error loading members view', err);
+        }
+      }
+
+      window.editEvent = function(eventId) {
+        alert('Édition d\'événement #' + eventId + ' - à implémenter');
+      };
+
+      window.deleteEventFromView = async function(eventId) {
+        if (!confirm('Supprimer cet événement?')) return;
+        const uid = getUserId();
+        try {
+          const res = await fetch(`/events/${eventId}`, {
+            method: 'DELETE',
+            headers: { 'X-User-Id': uid }
+          });
+          if (!res.ok) throw new Error(await res.text());
+          loadTableauView();
+          calendar.refetchEvents();
+        } catch (err) {
+          alert('Erreur: ' + err.message);
+        }
+      };
+
+      window.editUserRole = async function(userId, currentRole) {
+        const roles = ['editor', 'viewer', 'admin'];
+        const roleLabels = { admin: 'Administrateur', editor: 'Éditeur', viewer: 'Lecteur' };
+        const newRole = prompt(`Nouveau rôle (${roles.map(r => roleLabels[r]).join(', ')}):`, roleLabels[currentRole]);
+        if (!newRole) return;
+
+        const roleKey = Object.keys(roleLabels).find(k => roleLabels[k] === newRole) || currentRole;
+        const uid = getUserId();
+        try {
+          const res = await fetch(`/users/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-User-Id': uid },
+            body: JSON.stringify({ role: roleKey })
+          });
+          if (!res.ok) throw new Error(await res.text());
+          loadMembersView();
+        } catch (err) {
+          alert('Erreur: ' + err.message);
+        }
+      };
+
+      window.deleteUserFromView = async function(userId) {
+        if (!confirm('Supprimer cet utilisateur?')) return;
+        const uid = getUserId();
+        try {
+          const res = await fetch(`/users/${userId}`, {
+            method: 'DELETE',
+            headers: { 'X-User-Id': uid }
+          });
+          if (!res.ok) throw new Error(await res.text());
+          loadMembersView();
+        } catch (err) {
+          alert('Erreur: ' + err.message);
+        }
+      };
+
+      // Filtre tableau
+      document.getElementById('filter-type').addEventListener('change', loadTableauView);
+
+      loginCancel.addEventListener('click', () => {
+        loginModal.classList.add('hidden');
+      });
+
+      loginSubmit.addEventListener('click', async () => {
+        const username = loginUsername.value.trim();
+        const role = loginRole.value;
+        if (!username) {
+          alert('Nom d\'utilisateur requis');
+          return;
+        }
+        try {
+          const res = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, role })
+          });
+          const user = await res.json();
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          currentUser = user;
+          loginModal.classList.add('hidden');
+          calendar.refetchEvents();
+        } catch (err) {
+          console.error('Login error', err);
+        }
+      });
+
+      addMemberBtn.addEventListener('click', () => {
+        addMemberModal.classList.remove('hidden');
+      });
+
+      addMemberCancel.addEventListener('click', () => {
+        addMemberModal.classList.add('hidden');
+        newMemberUsername.value = '';
+        newMemberRole.value = 'editor';
+      });
+
+      addMemberSubmit.addEventListener('click', async () => {
+        const username = newMemberUsername.value.trim();
+        const role = newMemberRole.value;
+        if (!username) {
+          alert('Nom d\'utilisateur requis');
+          return;
+        }
+        try {
+          const res = await fetch('/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, role })
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            alert('Erreur: ' + errText);
+            return;
+          }
+          addMemberModal.classList.add('hidden');
+          newMemberUsername.value = '';
+          newMemberRole.value = 'editor';
+          loadMembersView();
+        } catch (err) {
+          alert('Erreur: ' + err.message);
+          console.error('Error adding member', err);
+        }
+      });
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'fr',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        buttonText: {
+          today: 'Aujourd\'hui',
+          month: 'Mois',
+          week: 'Semaine',
+          day: 'Jour',
+          multiMonthYear: 'Année'
+        },
+        events: async function (info, successCallback, failureCallback) {
+          try {
+            const res = await fetch('/events');
+            const data = await res.json();
+            const events = data.map(ev => ({
+              id: ev.id,
+              title: ev.title,
+              start: ev.start,
+              end: ev.end,
+              classNames: [ev.type], // pour la couleur
+              extendedProps: {
+                type: ev.type,
+                extra: ev.extra
+              }
+            }));
+            successCallback(events);
+          } catch (err) {
+            console.error('Error loading events', err);
+            failureCallback(err);
+          }
+        },
+        dateClick: function (info) {
+          if (!ensureLoggedIn()) return;
+          pendingDate = info.dateStr;
+          titleInput.value = '';
+          typeSelect.value = 'meeting';
+          modal.classList.remove('hidden');
+        }
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        const title = titleInput.value.trim();
+        const date = dateInput.value;
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+        const type = typeSelect.value;
+
+        if (!title || !date) {
+          alert('Titre et date obligatoires');
+          return;
+        }
+
+        if (!startTime || !endTime) {
+          alert('Heure de début et fin obligatoires');
+          return;
+        }
+
+        if (startTime >= endTime) {
+          alert('L\'heure de fin doit être après l\'heure de début');
+          return;
+        }
+
+        const start = `${date}T${startTime}:00`;
+        const end = `${date}T${endTime}:00`;
+
+        const body = {
+          title: title,
+          start: start,
+          end: end,
+          type: type,
+          extra: null
+        };
+
+        try {
+          const uid = getUserId();
+          const res = await fetch('/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-User-Id': uid },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            alert('Erreur lors de la création: ' + errText);
+            console.error('Erreur POST /events', errText);
+            return;
+          }
+          const created = await res.json();
+          calendar.addEvent({
+            id: created.id,
+            title: created.title,
+            start: created.start,
+            end: created.end,
+            classNames: [created.type]
+          });
+        } catch (err) {
+          alert('Erreur: ' + err.message);
+          console.error('Error creating event', err);
+        } finally {
+          modal.classList.add('hidden');
+          pendingDate = null;
+          titleInput.value = '';
+          dateInput.value = '';
+          startTimeInput.value = '';
+          endTimeInput.value = '';
+          typeSelect.value = 'meeting';
+        }
+      });
+
+      calendar.render();
+
+      // Force login prompt at first visit
+      ensureLoggedIn();
+
+      // Initialize calendar with active view
+      tabCalendar.classList.add('active');
+    });
+  </script>
+</body>
+</html>
