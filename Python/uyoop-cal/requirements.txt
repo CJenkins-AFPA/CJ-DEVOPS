@@ -11,3 +11,8 @@ pillow==12.1.0
 slowapi==0.1.9
 PyJWT==2.8.0
 python-jose[cryptography]==3.3.0
+
+# Dev / Test
+pytest==8.0.0
+httpx==0.26.0
+ruff==0.1.14

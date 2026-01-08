@@ -5,7 +5,7 @@ import shlex
 import io
 import base64
 
-from fastapi import FastAPI, Depends, HTTPException, Header, Body, Request
+from fastapi import FastAPI, Depends, HTTPException, Body, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
@@ -18,7 +18,7 @@ from . import models, schemas, crud
 from .database import Base, engine, SessionLocal
 from .vault_client import vault_client
 from . import auth as auth_module
-from . import auth as auth_module
+
 
 
 # Création des tables au démarrage (MVP)
@@ -152,7 +152,12 @@ def get_current_user_secure(
 # Users
 
 @app.get("/users", response_model=List[schemas.User], tags=["users"])
-def read_users(db: Session = Depends(get_db)):
+def read_users(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user_secure)
+):
+    if current_user.role != "ADMIN":
+        raise HTTPException(status_code=403, detail="Only admins can list users")
     return crud.get_users(db)
 
 

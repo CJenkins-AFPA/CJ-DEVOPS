@@ -1,0 +1,40 @@
+stages:
+  - quality
+  - security
+
+variables:
+  POSTGRES_DB: devops_calendar_test
+  POSTGRES_USER: devops_calendar
+  POSTGRES_PASSWORD: devops_calendar
+  POSTGRES_HOST_AUTH_METHOD: trust
+  VAULT_DEV_ROOT_TOKEN_ID: root
+  VAULT_ADDR: http://vault:8200
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+pytest:
+  stage: quality
+  image: python:3.13
+  services:
+    - name: postgres:16
+      alias: postgres
+    - name: hashicorp/vault:latest
+      alias: vault
+  variables:
+    DATABASE_URL: postgresql://devops_calendar:devops_calendar@postgres:5432/devops_calendar_test
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - ruff check app/ tests/
+    - pytest tests/
+
+trivy_scan:
+  stage: security
+  image: 
+    name: aquasecurity/trivy:latest
+    entrypoint: [""]
+  services:
+    - docker:dind
+  script:
+    - trivy fs --exit-code 1 --severity HIGH,CRITICAL .
