@@ -1,0 +1,10 @@
+FROM hashicorp/vault:1.15
+
+# Créer le répertoire data avec les bonnes permissions
+RUN mkdir -p /vault/data /vault/certs && \
+    chown -R vault:vault /vault/data /vault/certs && \
+    chmod 755 /vault/data /vault/certs
+
+USER vault
+
+ENTRYPOINT ["vault"]

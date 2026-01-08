@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Calendar</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <img class="logo" src="/static/uG512.png" alt="Logo" />
+      <div>
+        <h1>uyoop Calendar</h1>
+        <div class="tagline">Planning agile, deployment calendar & Git actions</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barre d'onglets + actions -->
+  <nav class="navbar">
+    <div class="nav-tabs">
+      <button class="nav-btn" id="tab-board">Tableau</button>
+      <button class="nav-btn active" id="tab-calendar">Calendrier</button>
+      <button class="nav-btn" id="tab-dashboard">Mon dashboard</button>
+      <button class="nav-btn" id="tab-members">Membres</button>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn-primary" id="btn-new-event">+ Nouvel évènement</button>
+      <button class="nav-btn" id="btn-login">Connexion</button>
+      <button class="nav-btn" id="btn-2fa-setup" title="Configurer l'authentification à deux facteurs">🔐 2FA</button>
+      <button class="nav-btn-secondary" id="btn-logout">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div id="calendar-wrapper" class="view active">
+    <div id="calendar"></div>
+  </div>
+
+  <!-- Vue Tableau -->
+  <div id="view-tableau" class="view">
+    <h2>Tableau des évènements</h2>
+    <div class="filter-box">
+      <select id="filter-type">
+        <option value="">Tous les types</option>
+        <option value="meeting">Réunion</option>
+        <option value="deployment_window">Fenêtre de déploiement</option>
+        <option value="git_action">Action Git</option>
+      </select>
+    </div>
+    <table id="events-table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Type</th>
+          <th>Date début</th>
+          <th>Créateur</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Vue Mon dashboard -->
+  <div id="view-dashboard" class="view">
+    <h2>Mon tableau de bord</h2>
+    <div id="user-info-panel" class="user-info"></div>
+    <div id="stats-panel" class="stats-grid"></div>
+    
+    <div class="charts-section">
+      <h3>📊 Analyses détaillées</h3>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h4>Distribution par type</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-type-distribution"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <h4>Événements par mois</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-events-timeline"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h4>Tendance hebdomadaire</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-weekly-trend"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <h4>Activité par jour de semaine</h4>
+          <div class="chart-wrapper">
+            <canvas id="chart-weekday-activity"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue Membres (admin only) -->
+  <div id="view-members" class="view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="margin:0;">Gestion des membres</h2>
+      <button class="nav-btn-primary" id="btn-add-member">+ Ajouter un membre</button>
+    </div>
+    <table id="members-table">
+      <thead>
+        <tr>
+          <th>Nom d'utilisateur</th>
+          <th>Rôle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Modal création d'événement -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 520px;">
+      <h2 id="event-modal-title">Nouvel événement</h2>
+      
+      <!-- Step indicator -->
+      <div id="step-indicator" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+      </div>
+
+      <!-- Step 1: Base info -->
+      <div id="event-step-1" class="event-step">
+        <label>
+          Titre
+          <input type="text" id="event-title" />
+        </label>
+        <label>
+          Date
+          <input type="date" id="event-date" />
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <label>
+            Heure de début
+            <input type="time" id="event-start-time" />
+          </label>
+          <label>
+            Heure de fin
+            <input type="time" id="event-end-time" />
+          </label>
+        </div>
+        <label id="event-type-container">
+          Type
+          <select id="event-type">
+            <option value="meeting">Réunion</option>
+            <option value="deployment_window">Fenêtre de déploiement</option>
+            <option value="git_action">Action Git</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Step 2: Type-specific fields -->
+      <div id="event-step-2" class="event-step hidden">
+        <!-- Meeting fields -->
+        <div id="meeting-fields" class="type-fields hidden">
+          <label>
+            Type de réunion
+            <select id="meeting-subtype">
+              <option value="daily">Daily Stand-up</option>
+              <option value="sprint_planning">Sprint Planning</option>
+              <option value="retro">Rétrospective</option>
+              <option value="review">Sprint Review</option>
+              <option value="other">Autre</option>
+            </select>
+          </label>
+          <label>
+            Lien visio (optionnel)
+            <input type="url" id="meeting-link" placeholder="https://meet.google.com/..." />
+          </label>
+          <label>
+            Notes / Agenda
+            <textarea id="meeting-notes" rows="3" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #374151; background: #020617; color: #e5e7eb;"></textarea>
+          </label>
+        </div>
+
+        <!-- Deployment Window fields -->
+        <div id="deployment-fields" class="type-fields hidden">
+          <label>
+            Environnement
+            <select id="deployment-env">
+              <option value="dev">Développement</option>
+              <option value="staging">Staging</option>
+              <option value="prod">Production</option>
+            </select>
+          </label>
+          <label>
+            Services impactés
+            <input type="text" id="deployment-services" placeholder="API, Frontend, Database..." />
+          </label>
+          <label>
+            Description du déploiement
+            <textarea id="deployment-description" rows="3" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #374151; background: #020617; color: #e5e7eb;"></textarea>
+          </label>
+          <label>
+            <input type="checkbox" id="deployment-needs-approval" style="width: auto; margin-right: 8px;" />
+            Nécessite une approbation (prod uniquement)
+          </label>
+        </div>
+
+        <!-- Git Action fields -->
+        <div id="git-fields" class="type-fields hidden">
+          <label>
+            URL du dépôt
+            <input type="url" id="git-repo-url" placeholder="https://github.com/user/repo.git" />
+          </label>
+          <label>
+            Branche
+            <input type="text" id="git-branch" value="main" />
+          </label>
+          <label>
+            Action
+            <select id="git-action-type">
+              <option value="clone">Clone</option>
+              <option value="pull">Pull</option>
+              <option value="clone_or_pull">Clone ou Pull</option>
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" id="git-auto-trigger" style="width: auto; margin-right: 8px;" />
+            Déclenchement automatique
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 3: Confirmation -->
+      <div id="event-step-3" class="event-step hidden">
+        <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 8px; padding: 16px;">
+          <h3 style="margin-top: 0; font-size: 1rem; color: var(--accent-green);">📋 Récapitulatif</h3>
+          <div id="event-summary" style="font-size: 0.9rem; line-height: 1.6;"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="modal-cancel">Annuler</button>
+        <button id="modal-prev" style="display: none;">← Précédent</button>
+        <button id="modal-next">Suivant →</button>
+        <button id="modal-save" style="display: none;">✓ Créer l'événement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de connexion -->
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Connexion</h2>
+      <label>
+        Nom d'utilisateur
+        <input type="text" id="login-username" />
+      </label>
+      <label>
+        Mot de passe
+        <input type="password" id="login-password" placeholder="Mot de passe" />
+      </label>
+      <label id="login-totp-field" class="hidden">
+        Code 2FA
+        <input type="text" id="login-totp-code" placeholder="123456" maxlength="6" pattern="[0-9]{6}" />
+        <small style="opacity: 0.7;">Entrez le code à 6 chiffres de votre authenticator app</small>
+      </label>
+      
+      <div class="modal-actions">
+        <button id="login-cancel">Annuler</button>
+        <button id="login-submit">Se connecter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2FA Setup -->
+  <div id="2fa-setup-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+      <h2>🔐 Configuration Authentification 2FA</h2>
+      <div id="2fa-step-1" class="2fa-step">
+        <p>Scannez ce QR code avec votre application d'authentification (Google Authenticator, Authy, etc.)</p>
+        <div style="text-align: center; margin: 20px 0;">
+          <img id="2fa-qr-code" src="" alt="QR Code" style="max-width: 300px; border: 2px solid #374151; border-radius: 8px;" />
+        </div>
+        <label>
+          Code de vérification
+          <input type="text" id="2fa-verify-code" placeholder="123456" maxlength="6" pattern="[0-9]{6}" />
+          <small style="opacity: 0.7;">Entrez le code à 6 chiffres affiché dans votre app</small>
+        </label>
+        <div class="modal-actions">
+          <button id="2fa-setup-cancel">Annuler</button>
+          <button id="2fa-verify-submit">Vérifier et activer</button>
+        </div>
+      </div>
+      <div id="2fa-step-2" class="2fa-step hidden">
+        <div style="padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #374151;">
+          <h3>⚠️ Codes de secours</h3>
+          <p>Conservez ces codes en lieu sûr. Vous pouvez les utiliser si vous perdez accès à votre authenticator app.</p>
+          <div id="2fa-backup-codes" style="font-family: monospace; font-size: 1.1rem; margin: 15px 0; line-height: 1.8;">
+            <!-- Codes générés ici -->
+          </div>
+          <button id="2fa-download-codes" style="width: 100%; margin-top: 10px;">
+            📥 Télécharger les codes
+          </button>
+        </div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button id="2fa-complete">J'ai sauvegardé mes codes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal ajout membre -->
+  <div id="add-member-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Ajouter un membre</h2>
+      <label>
+        Nom d'utilisateur
+        <input type="text" id="new-member-username" />
+      </label>
+      <label>
+        Rôle
+        <select id="new-member-role">
+          <option value="PROJET">Chef de projet</option>
+          <option value="DEV">Développeur</option>
+          <option value="OPS">Ops/SysAdmin</option>
+          <option value="ADMIN">Administrateur</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button id="add-member-cancel">Annuler</button>
+        <button id="add-member-submit">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="/static/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+SQLAlchemy==2.0.36
+psycopg2-binary==2.9.11
+python-dotenv==1.0.1
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+hvac==2.1.0
+qrcode[pil]==7.4.2
+pillow==12.1.0
+slowapi==0.1.9
+PyJWT==2.8.0
+python-jose[cryptography]==3.3.0

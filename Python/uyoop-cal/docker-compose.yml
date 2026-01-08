@@ -1,0 +1,181 @@
+services:
+  # Vault HA Cluster - Node 1 (Leader)
+  vault-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.vault
+    image: uyoop-vault:latest
+    container_name: vault_node_1
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    environment:
+      VAULT_ADDR: https://0.0.0.0:8200
+      VAULT_API_ADDR: https://vault-1:8200
+      VAULT_CLUSTER_ADDR: https://vault-1:8201
+      SKIP_SETCAP: "true"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data_1:/vault/data
+      - ./vault/config/vault-node1.hcl:/vault/config/vault.hcl:ro
+      - ./vault/certs/vault-1-cert.pem:/vault/certs/vault-1-cert.pem:ro
+      - ./vault/certs/vault-1-key.pem:/vault/certs/vault-1-key.pem:ro
+      - ./vault/certs/ca-cert.pem:/vault/certs/ca-cert.pem:ro
+      - vault_shared:/vault/shared
+    command: server -config=/vault/config/vault.hcl
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -sf --cacert /vault/certs/ca-cert.pem https://127.0.0.1:8200/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - vault-network
+
+  # Vault HA Cluster - Node 2
+  vault-2:
+    image: uyoop-vault:latest
+    container_name: vault_node_2
+    ports:
+      - "8210:8200"
+      - "8211:8201"
+    environment:
+      VAULT_ADDR: https://0.0.0.0:8200
+      VAULT_API_ADDR: https://vault-2:8200
+      VAULT_CLUSTER_ADDR: https://vault-2:8201
+      SKIP_SETCAP: "true"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data_2:/vault/data
+      - ./vault/config/vault-node2.hcl:/vault/config/vault.hcl:ro
+      - ./vault/certs/vault-2-cert.pem:/vault/certs/vault-2-cert.pem:ro
+      - ./vault/certs/vault-2-key.pem:/vault/certs/vault-2-key.pem:ro
+      - ./vault/certs/ca-cert.pem:/vault/certs/ca-cert.pem:ro
+      - vault_shared:/vault/shared
+    command: server -config=/vault/config/vault.hcl
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -sf --cacert /vault/certs/ca-cert.pem https://127.0.0.1:8200/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - vault-network
+    depends_on:
+      - vault-1
+
+  # Vault HA Cluster - Node 3
+  vault-3:
+    image: uyoop-vault:latest
+    container_name: vault_node_3
+    ports:
+      - "8220:8200"
+      - "8221:8201"
+    environment:
+      VAULT_ADDR: https://0.0.0.0:8200
+      VAULT_API_ADDR: https://vault-3:8200
+      VAULT_CLUSTER_ADDR: https://vault-3:8201
+      SKIP_SETCAP: "true"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data_3:/vault/data
+      - ./vault/config/vault-node3.hcl:/vault/config/vault.hcl:ro
+      - ./vault/certs/vault-3-cert.pem:/vault/certs/vault-3-cert.pem:ro
+      - ./vault/certs/vault-3-key.pem:/vault/certs/vault-3-key.pem:ro
+      - ./vault/certs/ca-cert.pem:/vault/certs/ca-cert.pem:ro
+      - vault_shared:/vault/shared
+    command: server -config=/vault/config/vault.hcl
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -sf --cacert /vault/certs/ca-cert.pem https://127.0.0.1:8200/v1/sys/health?standbyok=true&sealedcode=200&uninitcode=200 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - vault-network
+    depends_on:
+      - vault-1
+
+  # Init container pour setup Vault HA
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: vault_init
+    environment:
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_CACERT: /vault/certs/ca-cert.pem
+    volumes:
+      - ./scripts/init-vault-ha.sh:/tmp/init-vault-ha.sh:ro
+      - ./vault/certs:/vault/certs:ro
+      - vault_shared:/vault/shared
+    command: sh -c "apk add --no-cache jq curl bash && cp /tmp/init-vault-ha.sh /init-vault-ha.sh && chmod +x /init-vault-ha.sh && bash /init-vault-ha.sh"
+    networks:
+      - vault-network
+    depends_on:
+      vault-1:
+        condition: service_healthy
+      vault-2:
+        condition: service_healthy
+      vault-3:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16
+    container_name: devops_calendar_db
+    environment:
+      POSTGRES_DB: devops_calendar
+      POSTGRES_USER: devops_calendar
+      POSTGRES_PASSWORD: devops_calendar
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devops_calendar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vault-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.hardened
+    image: uyoop-cal:hardened
+    container_name: devops_calendar_app
+    environment:
+      VAULT_ADDR: https://vault-1:8200
+      VAULT_CACERT: /vault/certs/ca-cert.pem
+      DATABASE_URL: postgresql://devops_calendar:devops_calendar@postgres:5432/devops_calendar
+    ports:
+      - "8000:8000"
+    depends_on:
+      vault-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    volumes:
+      - vault_shared:/vault/shared:ro
+      - ./vault/certs/ca-cert.pem:/vault/certs/ca-cert.pem:ro
+    networks:
+      - vault-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+  vault_data_1:
+  vault_data_2:
+  vault_data_3:
+  vault_shared:
+
+networks:
+  vault-network:
+    driver: bridge

@@ -1,0 +1,98 @@
+# Action History
+
+- 2026-01-08: Docker Hardened Images (DHI) finalisé. Build multi-stage avec roues binaires cp314 uniquement; runtime distroless nonroot; healthcheck interne Python; base OS 0 CVE; 3 CVE Python restantes à corriger (ecdsa, python-jose, starlette).
+- 2026-01-08: Intégration Compose complète. Service app sur image durcie, healthcheck HTTP; suppression env_file; variables `VAULT_ADDR` (https) et `VAULT_CACERT`; Postgres healthy via healthcheck.
+- 2026-01-08: Cluster Vault HA TLS opérationnel. 3 nœuds Raft avec certificats; healthchecks `curl --cacert`; init container idempotent (init, unseal, join, AppRole, KV). `.env.vault` généré dans volume partagé; secrets hors compose.
+- 2026-01-08: Déploiement 1‑commande validé. `docker compose up -d` depuis état vierge construit tout, initialise Vault, et rend l’app healthy (`/health`). Idempotence vérifiée (re-run sans erreur).
+
+
+- 2026-01-07 23:45: **Externalisation Scripts/Styles + CSP Hardening + Suppression X-User-Id**. Créé app/static/style.css (616 lignes) et app/static/app.js (1233 lignes). Supprimé fallback X-User-Id de get_current_user_secure → JWT uniquement. CSP durci: supprimé 'unsafe-inline' et 'unsafe-eval', autorisé cdn.jsdelivr.net pour FullCalendar/Chart.js. Tests: JWT ✅, Events API ✅, Interface web ✅.
+- 2026-01-07 23:10: **JWT Backend Authentication Fixed**. Root cause: HTTPBearer → OAuth2PasswordBearer, JWT sub claim integer → string, get_current_user_optional refactored. Tests: login ✅, POST/GET /events with Bearer token ✅, RBAC (DEV blocked from meeting) ✅, token refresh ✅. JWT Backend + Frontend now 100% operational.
+- 2025-12: Initial context: FastAPI + FullCalendar app with PostgreSQL requirement; objective to align UI/features with provided mockup.
+- 2025-12: Docker fixes: volume mount corrected to ./:/app (previously ./app:/app/app), Dockerfile COPY . . to match WORKDIR; containers healthy on ports 8000 (app) and 5433 (db).
+- 2025-12: Frontend polish: Chart.js dashboards added; FullCalendar toolbar and today highlighting improved; header logo replaced with static/uG512.png (50x50).
+- 2025-12: Event form UX: added start/end time inputs and duration handling; built a 3-step wizard with progress dots; type-specific fields persisted in JSONB extra.
+- 2025-12: Bugfix: event deletion 404 resolved via ID validation and clearer error logging; action buttons expose IDs via title tooltips for debugging.
+- 2025-12: RBAC overhaul: roles PROJET, DEV, OPS, ADMIN. Updated schemas/models/main.py and frontend role selectors. Rules: ADMIN full; PROJET all events; DEV only git_action; OPS only deployment_window; creator or ADMIN may edit/delete; git_action endpoint allowed for ADMIN/DEV.
+- 2025-12: Git action endpoint: relaxed permission to ADMIN/DEV; validated subprocess execution path inside container.
+- 2025-12: UI role mapping: French labels (Chef de projet, Développeur, Ops/SysAdmin, Administrateur) wired to literals PROJET/DEV/OPS/ADMIN.
+- 2025-12: Calendar type filtering: new-event button filters allowed event types per active role before showing modal.
+- 2025-12: JSONB schema: meeting (subtype/link/notes), deployment_window (environment/services/needs_approval), git_action (repo_url/branch/action/auto_trigger).
+- 2026-01-07: Phase 1 validation kickoff: docker compose ps confirmed app up; db healthy; API reachable at http://127.0.0.1:8000.
+- 2026-01-07: Created test users via /login: admin_test (ADMIN), dev_test (DEV), ops_test (OPS), projet_test (PROJET) with returned IDs 2-5.
+- 2026-01-07: RBAC tests via API: DEV rejected for meeting (expected), allowed git_action; OPS rejected for meeting, allowed deployment_window; PROJET allowed meeting and deployment_window. Event IDs recorded: git_action id 7, deployment_window id 8, meeting id 9, deployment_window id 10.
+- 2026-01-07: Documentation foundation: created and populated action-history.md and instructions-ia.md to preserve context across sessions.
+- 2026-01-07: Next focus identified: frontend verification of role-based filtering and multi-step form with real users.
+- 2026-01-07: Kit de contexte validé: action-history.md (journal) et instructions-ia.md (règles) serviront de base pour les prochaines sessions.
+- 2026-01-07: Tâche à venir: vérifier côté frontend que le filtrage par rôle et le wizard à 3 étapes respectent les règles RBAC (avec users de test) et que les extra JSONB sont bien transmis.
+- 2026-01-07: Session reprise: lecture complète des fichiers action-history.md et instructions-ia.md pour assimiler le contexte projet.
+- 2026-01-07: Correction données legacy: user "demo" (id=1) avait rôle "admin" (minuscules) causant erreur validation Pydantic; corrigé en "ADMIN".
+- 2026-01-07: Script test automatisé: créé test_rbac.py (Python) pour valider permissions création/suppression selon rôles; tous tests PASS (13/13).
+- 2026-01-07: Validation RBAC backend complète: DEV bloqué meeting/deployment (403); OPS bloqué meeting/git_action (403); PROJET autorisé tous types; ADMIN autorisé tout; permissions édition/suppression (créateur ou ADMIN) validées.
+- 2026-01-07: Persistance JSONB validée: champs extra (subtype/link/notes pour meeting, environment/services/needs_approval pour deployment, repo_url/branch/action pour git_action) correctement stockés et récupérés.
+- 2026-01-07: Frontend wizard 3 étapes: structure présente dans index.html avec indicateurs de progression (dots), étape 1 (infos base), étape 2 (champs spécifiques type), étape 3 (récapitulatif); champs extra construits côté client avant envoi POST /events.
+- 2026-01-07: Filtrage types événements par rôle: logique présente dans newEventBtn (ligne ~1140 index.html); ADMIN/PROJET voient 3 options, DEV uniquement git_action, OPS uniquement deployment_window; typeSelect masqué si une seule option.
+- 2026-01-07: Interface web ouverte sur http://127.0.0.1:8000 pour tests manuels; backend et frontend alignés avec règles RBAC; projet opérationnel et validé.
+- 2026-01-07: Nettoyage documentation: suppression fichiers ETAT_PROJET.md, TESTS_MANUELS.md, test_rbac.sh créés sans validation; conservation test_rbac.py (utile pour tests RBAC); consolidation infos dans action-history.md et instructions-ia.md uniquement.
+- 2026-01-07: Processus IA formalisé dans instructions-ia.md section 11: règle proposition-validation obligatoire, interdiction de créer fichiers non demandés, centralisation documentation dans 3 fichiers (action-history.md, instructions-ia.md, README.md).
+- 2026-01-07: Tests RBAC Phase 2: 10 tests supplémentaires ajoutés (édition croisée, gestion users, endpoint git actions, cas limites X-User-Id); total 23/23 PASS; RBAC validé 100% fonctionnel.
+- 2026-01-07: Restructuration dossiers: projet déplacé dans /home/cj/gitdata/Python/uyoop-cal/ pour respecter organisation git (Python = branche, uyoop-cal = projet); chemins relatifs préservés, aucune modification code nécessaire; redémarrage conteneurs OK.
+- 2026-01-07: Roadmap détaillée intégrée dans instructions-ia.md section 15: phases 2-7 avec priorités (auth mot de passe, métriques DORA, intégrations CI/CD, gestion Agile, UX avancée).
+- 2026-01-07: Phase sécurité 3 (Vault AppRole & database secrets):
+  - ✅ AppRole auth implémenté (remplace dev-root-token); policy minimale (app-policy)
+  - ✅ DATABASE_URL stockée dans Vault KV v2 (secret/app/config, clé database_url)
+  - ✅ Résolution dynamique au démarrage: env var > Vault > fallback hardcoded
+  - ✅ vault_client.py: AppRole login avec fallback token; TOTP + KV full; logging diagnostic
+  - ✅ database.py: resolve_database_url() fonction avec fallbacks sûrs
+  - ✅ scripts/init-vault.sh: idempotent, configure engines/policy/approle/SECRET_ID, génère .env.vault
+  - ✅ docker-compose.yml: suppression VAULT_TOKEN et DATABASE_URL en clair; env_file: .env.vault
+  - ✅ VAULT_APPROLE_SETUP.md: documentation complète (architecture, setup, troubleshooting)
+  - ✅ Tests e2e: AppRole auth, DB URL resolution, TOTP workflow, login sans 2FA (requires_totp), login avec 2FA code (success), wrong code (401)
+  - ✅ Sécurité: aucun secret plaintext docker-compose, policies least-privilege, ready production vault+mTLS
+  - Status: Prêt pour durcissement et déploiement production.
+- 2026-01-07: Phase sécurité globale (5 étapes):
+  - **Étape 1 (✅ TERMINÉ)**: Rate Limiting implémenté avec slowapi
+    - Limiter /login et /2fa/* à 5 req/min par IP
+    - Ajouté slowapi dans requirements.txt
+    - Intégré dans main.py avec @limiter.limit("5 per 1 minute")
+    - Testé: 429 après dépassement; réinitialisation après 60s; login nominal OK
+  - **Étape 2 (🔄 EN COURS)**: JWT Sessions (remplacer X-User-Id)
+    - Backend ✅ implémenté: auth.py avec create_access_token/create_refresh_token/verify_token
+    - Schémas ✅: LoginResponse avec access_token/refresh_token/token_type; TokenResponse; RefreshTokenRequest
+    - Endpoint /login ✅: émet tokens JWT après validation 2FA (requires_totp garde si désactivé)
+    - Endpoint /token/refresh ✅: renouvelle access_token avec refresh_token valide
+    - Dépendance get_current_user_secure ✅: préfère JWT (Authorization: Bearer), fallback X-User-Id pour migration
+    - Endpoints migrés ✅: /users, /events, /git_action utilisent get_current_user_secure
+    - Requirements ✅: python-jose[cryptography], PyJWT ajoutés
+    - Frontend ⏳ EN ATTENTE: stocker tokens sessionStorage, passer Authorization header, implémenter refresh
+  - **Étape 3 (✅ TERMINÉ)**: Security Headers (HSTS, CSP, etc.)
+    - Middleware headers ajouté dans main.py
+    - Headers: Strict-Transport-Security max-age=31536000, Content-Security-Policy default-src 'self' unsafe-inline unsafe-eval, X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy geolocation=() microphone=() camera=()
+    - Testé: curl -I http://localhost:8000 confirme présence tous headers
+    - CSP ⚠️ nécessite durcissement après migration frontend (remove unsafe-inline/unsafe-eval)
+  - **Étape 4 (✅ TERMINÉ)**: Docker Hardening (multi-stage, non-root)
+    - Dockerfile multi-stage: stage wheelhouse build wheels; stage runtime install depuis wheels
+    - Runtime: USER appuser (non-root); WORKDIR /app
+    - Build corrigé: pip install -r /wheels/requirements.txt --find-links=/wheels --no-index
+    - Image rebuild et app recréé; logs: serveur démarre OK; ps montre UID appuser
+    - ⏳ Prochains pas: read-only filesystem, drop capabilities, health checks
+  - **Étape 5 (⏳ À VENIR)**: Vault Production (TLS, rotation)
+    - Vault dev mode actuel (in-memory); production nécessite HA cluster + persistence
+    - AppRole SECRET_ID statique (.env.vault); rotation hebdomadaire recommandée
+    - TLS/mTLS pour Vault en prod; auto-renouvellement tokens AppRole; audit logging
+    - Référence: VAULT_APPROLE_SETUP.md section "Next Steps"
+  - Status: Backend sécurisé (rate limiting, JWT backend ready, headers, Docker hardened); frontend migration JWT en attente.
+- 2026-01-07: Workspace cleanup & documentation consolidation:
+  - ✅ Suppression app/repos/git/ (352MB, 4717 fichiers non nécessaires; tentative échouée → permissions read-only)
+  - ✅ Suppression .venv/ (virtualenv non utilisé; Docker env utilisé)
+  - ✅ Suppression app/__pycache__/ (cache Python auto-régénéré)
+  - ✅ Création doc/ folder (centralisé documentation)
+  - ✅ Déplacement 5 fichiers: action-history.md, instructions-ia.md, IMPLEMENTATION_SUMMARY.md, SECURITE_GLOBALE.md, VAULT_APPROLE_SETUP.md → doc/
+  - ✅ Déplacement test_rbac.py → doc/ (test RBAC utile; conservé)
+  - ✅ README.md resté à racine (demandé par user)
+- 2026-01-07: Consolidation documentation sécurité:
+  - ✅ Fusion VAULT_APPROLE_SETUP.md → SECURITE_GLOBALE.md (annexe "Vault AppRole & Secret Management")
+  - ✅ Ajout section "JWT Frontend Migration Details" (TokenManager, apiFetch, login/logout, tests validés)
+  - ✅ Suppression VAULT_APPROLE_SETUP.md (contenu intégré)
+  - ✅ Statut étapes 1-5 mis à jour dans tableau récapitulatif
+  - ✅ Documentation finalisée: 4 fichiers centralisés (action-history, instructions-ia, IMPLEMENTATION_SUMMARY, SECURITE_GLOBALE)

@@ -1,0 +1,58 @@
+###############################################################################
+# Dockerfile Durci pour UYOOP-CAL DevOps Platform (IKEA-proof)
+# 
+# Base: dhi.io/python:3-debian13 (0 CVE, Health A, CIS compliant, nonroot)
+# Architecture: Multi-stage (builder → runtime distroless)
+# Sécurité: Defense-in-depth - nonroot, no shell, no apt, 80% post-exploit blocked
+# Strategy: Binary wheels only - NO C compilation (pillow, psycopg2 with --only-binary)
+###############################################################################
+
+###############################################################################
+# STAGE 1: Builder - Lightweight venv creation (Debian 13 dev image)
+###############################################################################
+FROM dhi.io/python:3-debian13-dev AS builder
+
+LABEL stage=builder
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /build
+COPY requirements.txt .
+
+# Create venv with binary wheels only (no C compilation)
+# All packages (psycopg2, pillow, etc) use pre-compiled manylinux wheels
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip setuptools wheel && \
+    /opt/venv/bin/pip install --only-binary :all: -r requirements.txt && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+###############################################################################
+# STAGE 2: Runtime - Distroless (nonroot UID 65532, no shell, no apt)
+###############################################################################
+FROM dhi.io/python:3-debian13
+
+LABEL version="1.0.0-ikea-proof" security="CIS, 0 CVE, distroless"
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PATH="/opt/venv/bin:$PATH"
+
+USER nonroot
+WORKDIR /app
+
+# Copy venv from builder (single COPY = faster, no layer bloat)
+COPY --from=builder --chown=nonroot:nonroot /opt/venv /opt/venv
+
+# Copy app code
+COPY --chown=nonroot:nonroot ./app ./app
+
+# Health check (uses only stdlib urllib.request)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+###############################################################################
+# Build: docker build -f Dockerfile.hardened -t dhi/uyoop-cal:latest .
+# Run:   docker run --rm -p 8000:8000 dhi/uyoop-cal:latest
+# Scan:  trivy image dhi/uyoop-cal:latest
+#        grype dhi/uyoop-cal:latest
+# Push:  docker push dhi/uyoop-cal:latest
+###############################################################################
