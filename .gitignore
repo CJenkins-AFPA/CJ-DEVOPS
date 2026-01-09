@@ -57,10 +57,16 @@ out/
 Thumbs.db
 *.tmp
 
-# Dive test artifacts (large tar files)
-22-Dive-test/results/*.tar
-22-Dive-test/results/*.json
-22-Dive-test/results/*.txt
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
 # Dive test artifacts (large tar files)
 22-Dive-test/results/*.tar
