@@ -20,6 +20,7 @@ Cette branche regroupe l'application Uyoop (PHP/SQLite) et son packaging complet
 	- TP16 (prod) : HA Postgres + Redis Sentinel, Traefik SSL/Let's Encrypt, monitoring Prometheus/Grafana, alerting (40+ règles), Loki logs, Notary, backups/restore automatisés, guide 1800+ lignes.
 
 ## Documentation utile
+- `EXIGENCES_SECURITE.md` : exigences de sécurité et techniques pour applications modernes (minimales, fortes, critiques).
 - `UyoopApp/README.md` : détails appli standalone.
 - `UyoopAppDocker/README.md` : guide Docker complet + commandes.
 - `UyoopAppDocker/docs/` : architecture, quickstart, changelog, commandes.
