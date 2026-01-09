@@ -1,0 +1,99 @@
+/*------------------------------------Page velo_gestion------------------------------------*/
+
+.vel_section {
+    background-color: #d9edf344;
+}
+
+/* CSS pour changer la couleur de fond de l'en-tête du tableau */
+.vel_head_table {
+    background-color: #00AAFF;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+}
+
+/* CSS pour changer la couleur de fond du corps de la modal */
+.vel_modal-body {
+    background-color: #85bd2465; /* Remplacez #ffffff par la couleur de votre choix */
+}
+
+/* CSS pour changer la couleur de fond du pied de la modal */
+.vel_modal-footer {
+    background-color: #d9edf394; /* Remplacez #e9ecef par la couleur de votre choix */
+}
+
+/* CSS pour centrer le titre de la modal */
+.vel_modal-title {
+    text-align: center; /* Centre le texte horizontalement */
+    width: 100%; /* Assure que le texte occupe toute la largeur de l'en-tête */
+    font-weight: bold;
+}
+
+#vel_table_velo th, #vel_table_velo td {
+    text-align: center;
+    font-weight: bold;
+}
+
+#vel_table_velo th {
+    font-size: larger;
+    font-family: system-ui;
+}
+
+/* Couleur de fond pour l'en-tête du tableau */
+#vel_table_velo th {
+    background-color: white; /* Couleur blanche pour les titres */
+}
+
+#vel_table_velo th, #vel_table_velo td, #vel_table_velo tr {
+    color: black; /* Texte noir pour les titres */
+}
+
+/* Alternance des couleurs des lignes */
+#vel_table_velo tr:nth-child(even) {
+    background-color: #ffffff; /* Lignes paires en vert */
+}
+
+#vel_table_velo tr:nth-child(odd) {
+    background-color: #d1d0d0d5; /* Lignes impaires en bleu */
+}
+
+.dataTables_length {
+    margin-top: 40px;
+    margin-left: 30px;
+}
+
+.dataTables_filter {
+    margin-top: 40px;
+    margin-right: 30px;
+    margin-bottom: 40px;
+}
+
+.dataTables_info {
+    margin-top: 40px;
+    margin-left: 30px;
+}
+
+.dataTables_paginate {
+    margin-top: 40px;
+    margin-right: 30px;
+    margin-bottom: 40px;
+}
+
+/* Boutons PDF et Print de Bootstrap */
+.dt-buttons {
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
+.colonnedeux {
+    justify-content: space-around;
+}
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Fine bordure grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* fond de couleur du select nombre de pages du tableau */
+select[name="vel_table_velo_length"] { 
+    background-color : #86BD24;
+    color: white;
+}

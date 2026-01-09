@@ -1,0 +1,312 @@
+# Template GitLab CI/CD pour Build & Push
+
+## Exemple Complet .gitlab-ci.yml
+
+```yaml
+# ============================================================================
+# GitLab CI/CD Pipeline - Docker Build & Push
+# ============================================================================
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  REGISTRY_URL: "harbor.local"
+  REGISTRY_USER: "admin"
+  PROJECT_NAME: "myproject"
+
+stages:
+  - build
+  - scan
+  - deploy
+
+# ============================================================================
+# Build Job for Development
+# ============================================================================
+
+build_dev:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  
+  script:
+    # Download build-push.sh
+    - wget -O build-push.sh https://raw.githubusercontent.com/your-repo/build-push.sh
+    - chmod +x build-push.sh
+    
+    # Build and push
+    - ./build-push.sh $CI_PROJECT_NAME $REGISTRY_URL/$PROJECT_NAME
+  
+  variables:
+    REGISTRY_PASSWORD: $HARBOR_PASSWORD
+  
+  only:
+    - develop
+    - feature/*
+  
+  artifacts:
+    paths:
+      - build-push.log
+    when: always
+    expire_in: 1 week
+
+# ============================================================================
+# Build Job for Production
+# ============================================================================
+
+build_prod:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  
+  script:
+    - wget -O build-push.sh https://raw.githubusercontent.com/your-repo/build-push.sh
+    - chmod +x build-push.sh
+    
+    - ./build-push.sh $CI_PROJECT_NAME $REGISTRY_URL/$PROJECT_NAME
+  
+  variables:
+    REGISTRY_PASSWORD: $HARBOR_PROD_PASSWORD
+  
+  only:
+    - main
+    - tags
+  
+  artifacts:
+    paths:
+      - build-push.log
+    when: always
+    expire_in: 30 days
+
+# ============================================================================
+# Trivy Security Scan
+# ============================================================================
+
+scan_image:
+  stage: scan
+  image: aquasec/trivy:latest
+  
+  script:
+    - trivy image --severity HIGH,CRITICAL $REGISTRY_URL/$PROJECT_NAME/$CI_PROJECT_NAME:latest
+  
+  only:
+    - main
+    - develop
+  
+  allow_failure: true
+
+# ============================================================================
+# Deploy to Staging
+# ============================================================================
+
+deploy_staging:
+  stage: deploy
+  image: docker:latest
+  
+  script:
+    - echo "Deploying to staging..."
+    - docker service update --image $REGISTRY_URL/$PROJECT_NAME/$CI_PROJECT_NAME:latest staging_service
+  
+  only:
+    - develop
+  
+  when: manual
+
+# ============================================================================
+# Deploy to Production
+# ============================================================================
+
+deploy_production:
+  stage: deploy
+  image: docker:latest
+  
+  script:
+    - echo "Deploying to production..."
+    - docker service update --image $REGISTRY_URL/$PROJECT_NAME/$CI_PROJECT_NAME:latest prod_service
+  
+  only:
+    - main
+  
+  when: manual
+```
+
+---
+
+## Configuration Détaillée
+
+### 1. **Variables Projet**
+Définir dans GitLab > Settings > CI/CD > Variables:
+
+```
+HARBOR_PASSWORD      = your_secure_password
+HARBOR_PROD_PASSWORD = your_prod_password
+```
+
+### 2. **Docker-in-Docker (DinD)**
+Pour que Docker fonctionne en CI:
+```yaml
+services:
+  - docker:dind
+```
+
+### 3. **Triggers Spécifiques**
+
+```yaml
+# Build uniquement sur certaines branches
+only:
+  - develop
+  - feature/*
+  - main
+  - tags
+
+# ou exclure
+except:
+  - schedules
+  - web
+```
+
+### 4. **Retry Logic**
+```yaml
+retry:
+  max: 2
+  when:
+    - runner_system_failure
+    - stuck_or_timeout_failure
+```
+
+---
+
+## Exemples de Déclenchement
+
+### Sur Commit à develop
+```bash
+git checkout develop
+git commit -m "Update feature"
+git push origin develop
+
+# → Pipeline démarre automatiquement
+# → build_dev job exécuté
+# → Image poussée vers harbor.local/$PROJECT/myapp:dev-dev-*
+```
+
+### Sur Tag de Release
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+
+# → Pipeline démarre (tag)
+# → build_prod job exécuté
+# → Image poussée vers harbor.local/$PROJECT/myapp:v1.2.0-*
+```
+
+### Manuel sur Branche Feature
+```bash
+git checkout feature/payment
+git push origin feature/payment
+
+# → Pipeline démarre (feature/*)
+# → build_dev job exécuté
+# → Image poussée vers harbor.local/$PROJECT/myapp:feature-payment-*
+# → deploy_staging peut être triggered manuellement
+```
+
+---
+
+## Intégration avec Harbor
+
+### Registry URL Format
+```yaml
+# Pour projet public Harbor
+REGISTRY_URL: "harbor.local"
+
+# Pour projet privé avec namespace
+REGISTRY_URL: "harbor.local/mycompany"
+
+# Pour référence complète
+$REGISTRY_URL/$PROJECT_NAME/$CI_PROJECT_NAME:tag
+# = harbor.local/mycompany/backend/api:v1.0.0-abc123-2025-01-09-120000
+```
+
+---
+
+## Sécurité
+
+### ✅ Bonnes Pratiques
+
+```yaml
+# ✅ Utiliser des secrets GitLab
+REGISTRY_PASSWORD: $HARBOR_PASSWORD
+
+# ✅ Limiter l'accès
+only:
+  - main
+  - develop
+
+# ✅ Artifacts éphémères
+artifacts:
+  expire_in: 1 week
+
+# ✅ Builds protégés
+when: manual  # Sur prod
+```
+
+### ❌ À Éviter
+
+```yaml
+# ❌ Hardcoder les secrets
+REGISTRY_PASSWORD: "my_secret_password"
+
+# ❌ Logs verbeux avec credentials
+echo "Logging in with $REGISTRY_PASSWORD"
+
+# ❌ Artifacts indéfinis
+# Manque expire_in = stockage infini
+```
+
+---
+
+## Troubleshooting
+
+### Problème: "Permission denied"
+```yaml
+# Solution: Utiliser service Docker
+services:
+  - docker:dind
+
+# Vérifier les permissions
+script:
+  - docker ps  # Test connection
+```
+
+### Problème: "Image not found"
+```yaml
+# Vérifier la variable REGISTRY_URL
+script:
+  - echo $REGISTRY_URL  # Debug
+
+# Vérifier le credential
+- echo "$REGISTRY_PASSWORD" | docker login -u $REGISTRY_USER --password-stdin $REGISTRY_URL
+```
+
+### Problème: "Timeout"
+```yaml
+# Augmenter le timeout
+timeout: 1h
+
+# Ou paralléliser
+parallel: 3
+```
+
+---
+
+## Ressources
+
+- [GitLab CI/CD Documentation](https://docs.gitlab.com/ee/ci/)
+- [Docker-in-Docker](https://docs.gitlab.com/ee/ci/docker/using_docker_build.html)
+- [Harbor Registry](https://goharbor.io/)
+- [Build & Push Script](../build-push.sh)
+
+---
+
+**Plus d'exemples:** Voir [examples.md](../examples.md)

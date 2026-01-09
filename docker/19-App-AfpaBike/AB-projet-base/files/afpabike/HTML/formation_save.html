@@ -1,0 +1,8 @@
+<?php
+		$array_res[0] = array(
+			'error' => $oMain->resultat["formation_save"]["error"], 
+			'id_formation' => $oMain->resultat["id_formation_created"]
+		);
+		// Prepare and send view
+		echo json_encode ($array_res);
+?>

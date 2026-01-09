@@ -1,0 +1,68 @@
+services:
+  web:
+    #image: 'php:8.2-apache'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web
+    ports:
+      - '1234:80'
+    volumes:
+      - './src:/var/www'
+      - '/var/www/files'
+      - '/var/www/modules'
+      - '/var/www/html'
+    depends_on:
+      - db
+    networks:
+      - webnet2
+    restart: always
+    environment:
+      - APACHE_LOG_DIR=/var/log/apache2
+    logging: # Limitation logs
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+ 
+  db:
+    image: 'mysql:8.0'
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion_afpabike_db
+      MYSQL_USER: afpabike
+      MYSQL_PASSWORD: afpabike
+    volumes:
+      - './db-data:/var/lib/mysql'
+      - './Crebas_AfpaBike_v1-1_with_values.sql:/docker-entrypoint-initdb.d/Crebas_AfpaBike_v1-1_with_values.sql'
+    ports:
+      - '3306:3306'  # Expose MySQL on default port 3306
+    networks:
+      - webnet2
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+ 
+networks:
+#  webnet:
+#    driver: bridge
+   webnet2:
+     external: true

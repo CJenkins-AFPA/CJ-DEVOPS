@@ -1,0 +1,156 @@
+<link rel="stylesheet" href="css/velo_gestion.css"> <!-- Inclusion du fichier CSS personnalisé -->
+<script src="js/velo.js"></script> 
+	<div class="tableau">
+	<div class="vel_head_table container-fluid py-4 rounded-top">
+		<div class="d-flex align-items-center">
+			<div class="col-6"><h2 class="text-white ms-5">Gestion des vélos</h2></div>
+			<div class="col-6 text-end">
+				<!-- Bouton enregistrement vélo -->
+				<button type="button" class="btn btn-secondary btn_bggreen border border-success me-5" data-bs-toggle="modal" data-bs-target="#exampleModal"  style="border: none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+					<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+					<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+				  </svg> Enregistrement d'un vélo</button>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid col-lg-12 pt-2 pb-2">
+		<table class="col-lg-12" id="vel_table_velo" border="1">
+		</table>
+	</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="vel_exampleModalLabel" style="color: black;">Enregistrement vélo</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" onclick= "fermeturemodal()" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="d-flex flex-row col-lg-12 justify-content-around">
+							<div class="d-flex justify-content-around flex-column col-lg-3">
+								<div class="form-group text-center">
+									<label for="num_afpa">Numéro Afpa</label>
+									<input type="text" class="form-control" id="numeroafpa_velo" name="numeroafpa_velo" aria-describedby="num_afpaHelp" placeholder="Entrer numéro afpa">
+								</div>
+								<div class="form-group text-center mt-5">
+									<label for="etat_velo">Etat</label>
+									<input type="text" class="form-control" id="etat_velo" name="etat_velo" aria-describedby="num_afpaHelp" placeholder="Entrer l'état du vélo">
+								</div>
+								<div class="form-group text-center mt-5">
+									<label for="couleur_velo">Couleur</label>
+									<input type="text" class="form-control" id="couleur_velo" name="couleur_velo" aria-describedby="num_afpaHelp" placeholder="Entrer la couleur du vélo">
+								</div>
+								<div class="form-group text-center mt-5">
+									<label for="formFile" class="form-group">Photo du vélo</label>
+									<input class="form-control" type="file" id="vel_photo" name="vel_photo" accept="image/*" capture="camera">
+								</div> 
+							</div>
+							<div class="d-flex flex-column col-lg-4 colonnedeux">
+								<div class="pt-2">
+									<div class="pt-2">
+										<select class="form-select form-select-md fw-bold" id="id_marque" name="id_marque" aria-label="Large select example">
+											<option class="text-center" selected value="0">--Marque--</option>
+											<option value="1">Decathlon</option>
+											<option value="2">Montana</option>
+											<option value="3">GT</option>
+											<option value="4">Giant</option>
+											<option value="5">Massi</option>
+											<option value="6">Nakamura</option>
+											<option value="7">Btwin</option>
+										</select>
+									</div>
+								</div>
+								<div class="mt-5">
+									<div class="pt-2">
+										<select class="form-select form-select-md fw-bold" id="id_type" name="id_type" aria-label="Large select example">
+											<option class="text-center" selected value="0">--Type--</option>
+											<option value="1">VTT</option>
+											<option value="2">VTC</option>
+											<option value="3">Ville</option>
+											<option value="4">Course</option>
+											<option value="5">Electrique</option>
+										</select>
+									</div>
+								</div>
+								<div class="mt-5">
+									<div class="pt-2">
+										<select class="form-select form-select-md fw-bold" id="id_modele" name="id_modele" aria-label="Large select example">
+											<option class="text-center" selected value="0">--Modèle--</option>
+											<option value="1">Rockrider 5.2</option>
+											<option value="2">Mont</option>
+											<option value="3">Elops</option>
+											<option value="4">Talera</option>
+											<option value="5">Rockrider 4</option>
+											<option value="6">Rockrider 300</option>
+											<option value="7">Original 5</option>
+											<option value="8">Rockrider</option>
+											<option value="9">Escaper</option>
+											<option value="10">Master</option>
+											<option value="11">Women</option>
+											<option value="12">470</option>
+											<option value="13">Flower</option>
+										</select>
+									</div>
+								</div>
+								<div>
+									<div class="form-check mt-5">
+										<input class="form-check-input" type="radio" name="dispo_velo" id="dispo_velo" value="Disponible" checked>
+										<label class="form-check-label" for="flexRadioDefault1">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+												<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+											</svg> Disponible</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="dispo_velo" id="dispo_velo" value="En cours de location">
+										<label class="form-check-label" for="flexRadioDefault1">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+												<path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+												<path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+											</svg> En cours de location</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="dispo_velo" id="dispo_velo" value="En cours de réparation">
+										<label class="form-check-label" for="flexRadioDefault1">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wrench" viewBox="0 0 16 16">
+												<path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z"/>
+											</svg> En cours de réparation</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="dispo_velo" id="dispo_velo" value="Perdu / Volé">
+										<label class="form-check-label" for="flexRadioDefault1">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-emoji-frown" viewBox="0 0 16 16">
+												<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+												<path d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.5 3.5 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.5 4.5 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5"/>
+												</svg> Perdu / Volé</label>
+									</div>
+								</div>
+							</div>
+						</div>      
+					</form>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary bg-success border-0" data-bs-dismiss="modal" id="ajouter" onclick= "ajoutvelo()">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+							<path d="M11 2H9v3h2z"/>
+							<path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+						</svg> Enregistrer</button>
+					<button type="button" class="btn btn-primary bg-success border-0" data-bs-dismiss="modal" id="modifier" onclick= "majvelo()" style="display: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+							<path d="M11 2H9v3h2z"/>
+							<path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+						</svg> Modifier</button>
+					<button type="button" class="btn btn-secondary bg-danger" data-bs-dismiss="modal"  onclick= "fermeturemodal()" style="border: none;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+							<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+						</svg> Fermer</button>
+				<div class="form-check form-switch d-flex align-items-center mt-2 mb-2">
+					<input class="form-check-input" type="checkbox" role="switch" name="actif_velo" id="actif_velo" style="margin-left:2px;" checked>
+					<label class="form-check-label" for="ficheactive" style="margin-left:10px;">Fiche active</label>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+

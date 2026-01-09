@@ -1,0 +1,21 @@
+harbor_url: harbor.local
+harbor_project: library
+harbor_username: admin
+harbor_password: Harbor12345
+
+mariadb_host: db.local
+afpabike_db: afpabike_db
+afpabike_user: afpabike_user
+afpabike_password: ChangeMeAfpabike
+uyoop_db: uyoopapp_db
+uyoop_user: uyoop_user
+uyoop_password: ChangeMeUyoop
+
+frontend_domain_traefik: traefik.local
+frontend_domain_portainer: portainer.local
+frontend_domain_afpabike: afpabike.local
+frontend_domain_uyoop: uyoop.local
+
+# Image tags (à surcharger lors du déploiement)
+afpabike_image_tag: latest
+uyoop_image_tag: latest

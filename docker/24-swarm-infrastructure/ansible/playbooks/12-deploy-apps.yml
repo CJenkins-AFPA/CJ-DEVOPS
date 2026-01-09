@@ -1,0 +1,60 @@
+---
+- hosts: manager
+  become: yes
+  tasks:
+    - name: Copier les stacks des applications
+      copy:
+        src: "{{ item }}"
+        dest: "/root/{{ item | basename }}"
+      loop:
+        - ../../docker-stack/stack-afpabike.yml
+        - ../../docker-stack/stack-uyoopapp.yml
+        
+    - name: Copier les configs des applications
+      copy:
+        src: ../../config/app/
+        dest: /root/config/app/
+        mode: '0644'
+        directory_mode: '0755'
+        
+    - name: Vérifier que les répertoires de config existent
+      file:
+        path: "/root/config/app/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - afpabike
+        - uyoopapp
+        
+    - name: Créer fichier .env pour Afpabike
+      copy:
+        content: |
+          DB_HOST=db.local
+          DB_USER=afpabike_user
+          DB_PASSWORD=AfpaBike123!
+          DB_NAME=afpabike_db
+        dest: /root/config/app/afpabike/.env
+        mode: '0644'
+        
+    - name: Créer fichier .env pour uyoopApp
+      copy:
+        content: |
+          DB_HOST=db.local
+          DB_NAME=uyoopapp_db
+          DB_USER=uyoop_user
+          DB_PASSWORD=Uyoop123!
+        dest: /root/config/app/uyoopapp/.env
+        mode: '0644'
+        
+    - name: Déployer stack Afpabike
+      shell: docker stack deploy -c /root/stack-afpabike.yml afpabike
+      environment:
+        AFPABIKE_DOMAIN: "{{ frontend_domain_afpabike | default('afpabike.local') }}"
+        AFPABIKE_TAG: "{{ afpabike_image_tag | default('latest') }}"
+        
+    - name: Déployer stack uyoopApp
+      shell: docker stack deploy -c /root/stack-uyoopapp.yml uyoop
+      environment:
+        UYOOP_DOMAIN: "{{ frontend_domain_uyoop | default('uyoop.local') }}"
+        UYOOP_TAG: "{{ uyoop_image_tag | default('latest') }}"
+

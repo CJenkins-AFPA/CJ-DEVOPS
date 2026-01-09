@@ -1,0 +1,1 @@
+update reparation set id_velo=@id_velo, id_typerep=@id_typerep, datedebut_reparation=NOW() where id_reparation=@id_reparation

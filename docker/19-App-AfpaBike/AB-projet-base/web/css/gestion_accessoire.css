@@ -1,0 +1,93 @@
+ .titre{
+    color: white;
+    text-align:start;
+    justify-content: center;
+    background: #00aaff;
+    border-radius: 5px;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+ }
+
+#table_accessoires {
+    border: 1px black; /* Bordure extérieure large */
+    border-radius: 10px; /* Coins arrondis pour l'ensemble du tableau */  
+    background: rgb(218, 229, 220);
+    margin-bottom: 50px;
+}
+
+#table_accessoires th, #table_accessoires td {
+    border: 1px solid rgb(114, 112, 117); /* Bordure intérieure pour chaque cellule */
+    padding: 3px; /* Espace interne pour un meilleur confort visuel */
+    text-align: center; /* Aligner le texte au centre des cellules */
+    font-size: 1em; /* Taille de police standard pour les cellules */
+ 
+}
+
+#table_accessoires thead {
+    background-color: white; /* Couleur de fond pour l'en-tête */
+    color:black; /* Texte vert pour l'en-tête */
+    font-weight: bold;
+}
+#table_accessoires thead tr:hover {
+    background-color: rgb(228, 228, 204); /* Fond qui cahnge au survol des lignes */
+
+}
+
+#table_accessoires th {
+    font-size: 2em; /* Taille de police légèrement augmentée pour l'en-tête */
+    text-transform: uppercase; /* Texte en majuscule pour l'en-tête */
+    color: rgb(145, 119, 119);
+}
+
+#table_accessoires tbody tr:hover {
+    background-color: rgb(193, 240, 213); /* Fond jaune au survol des lignes */
+}
+
+/* Style pour les boutons dans le modal */
+.accessoire_btn_action {
+    background-color: #bbc4c3; /* Couleur de fond bleu */
+    color: white; /* Couleur du texte */
+    border: none; /* Pas de bordure */
+    padding: 10px 20px; /* Espace intérieur */
+    border-radius: 5px; /* Bords arrondis */
+    cursor: pointer; /* Curseur en forme de main */
+    margin-right: 5px; /* Espace à droite entre les boutons */
+    transition: background-color 0.3s ease; /* Transition douce pour le changement de couleur de fond */
+}
+.accessoire_btn_save{
+    background-color: #163b2c; /* Couleur de fond bleu */
+    color: white; /* Couleur du texte */
+    border: none; /* Pas de bordure */
+    padding: 10px 20px; /* Espace intérieur */
+    border-radius: 5px; /* Bords arrondis */
+    cursor: pointer; /* Curseur en forme de main */
+    margin-right: 5px; /* Espace à droite entre les boutons */
+    transition: background-color 0.3s ease; /* Transition douce pour le changement de couleur de fond */
+
+}
+
+.accessoire_btn_action:hover {
+    background-color: #9eb1a5; /* Couleur de fond au survol */
+}
+
+/* Style pour les boutons de sauvegarde */
+.acessoire_btn_save {
+    background-color: beige; /* Couleur de fond verte */
+    color: rgb(255, 255, 255); /* Couleur du texte */
+    border: none; /* Pas de bordure */
+    padding: 10px 20px; /* Espace intérieur */
+    border-radius: 5px; /* Bords arrondis */
+    cursor: pointer; /* Curseur en forme de main */
+    transition: background-color 0.3s ease; /* Transition douce pour le changement de couleur de fond */
+}
+
+.accessoire_btn_save:hover {
+    background-color: #218838; /* Couleur de fond au survol */
+}
+
+
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Fine bordure grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+

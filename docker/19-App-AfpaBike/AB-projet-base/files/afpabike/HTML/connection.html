@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="css/connection.css"> <!-- Inclusion du fichier CSS personnalisé -->
+<script src="js/connection.js"></script>
+   <div class="bg-white">
+        <div class="d-flex bg-white mb-5">
+            <div class="col-6 text-start">
+                    <img src="image/logoafpabike.png" alt="Logo" class="logo">
+            </div>
+                <div class="col-6 text-end">
+                    <img src="image/logoafpa.png" alt="Logo" class="logo">
+                </div>
+        </div>
+            <div class="btn_bggreen mb-5" style="height: 50px;"></div>
+                <div class="text-center mb-3">
+                    <img src="image/icone_connection.png" style="height: 70px;">
+                </div>
+                    <div class="connection_box m-auto mb-5">
+                        <form action="route.php" method="post">
+                            <input type="hidden" name="page" id="page" value="connection_login">
+                            <div class="connection_form_group d-flex flex-column">
+                                <label class="text-light" for="login_utilisateur">Identifiant :</label>
+                                <input type="text" id="login_utilisateur" name="login_utilisateur" required>
+                            </div>
+                            <div class="connection_form_group d-flex flex-column">
+                                <label class="text-light" for="mdp_utilisateur">Mot de passe :</label>
+                                <input type="password" id="mdp_utilisateur" name="mdp_utilisateur" required>
+                            </div>
+                            <button type="submit" class="connection_btn_rose my-3">Allez, je pédale !</button><br>
+                            <a href="#" class="mdp_oublie text-light fw my-3"> Mot de passe oublié</a>
+                        </form>
+                    </div>
+    </div> 

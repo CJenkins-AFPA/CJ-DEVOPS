@@ -1,0 +1,46 @@
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== DATABASE ====================
+*.db
+*.sqlite3
+
+# ==================== DATA ====================
+media/
+!media/.gitkeep
+data/
+volumes/
+
+# ==================== PYTHON ====================
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+env/
+
+# ==================== IDE ====================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ==================== LOGS ====================
+*.log
+logs/
+
+# ==================== OS & IDE ====================
+.DS_Store
+.directory
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ==================== BACKUPS ====================
+backups/
+*.tar.gz
+*.zip
+

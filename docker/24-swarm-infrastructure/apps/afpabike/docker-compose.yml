@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: afpabike-db
+    env_file: .env
+    command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./Crebas_AfpaBike_v1-1_with_values.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./grant_bdd.sql:/docker-entrypoint-initdb.d/02-grants.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: afpabike-web
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "1234:80"
+    env_file: .env
+    environment:
+      APACHE_LOG_DIR: /var/log/apache2
+    volumes:
+      - ./web:/var/www/html
+      - ./modules:/var/www/html/modules
+      - ./files:/var/www/html/files
+    restart: unless-stopped
+
+volumes:
+  db-data:

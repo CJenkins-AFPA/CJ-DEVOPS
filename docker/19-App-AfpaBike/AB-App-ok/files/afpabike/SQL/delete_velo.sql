@@ -1,0 +1,1 @@
+delete from velo where id_velo=@id_velo

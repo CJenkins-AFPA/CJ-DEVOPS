@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  uyoopapp:
+    image: harbor.local/library/uyoopapp:latest
+    env_file:
+      - /root/config/app/uyoopapp/.env
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - uyoop-data:/var/www/html/data
+    deploy:
+      mode: replicated
+      replicas: 2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.uyoop.rule=Host(`${UYOOP_DOMAIN}`)
+        - traefik.http.routers.uyoop.entrypoints=websecure
+        - traefik.http.services.uyoop.loadbalancer.server.port=80
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
+
+volumes:
+  uyoop-data:
+    external: true

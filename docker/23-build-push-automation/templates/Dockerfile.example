@@ -1,0 +1,180 @@
+# Template Dockerfile - Simple Web Application
+
+## Pour une application Node.js
+
+```dockerfile
+# Build stage
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer les dépendances (avec cache)
+RUN npm ci
+
+# Copier le code source
+COPY . .
+
+# Build l'app
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Installer uniquement les dépendances de production
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copier l'app buildée depuis le stage précédent
+COPY --from=builder /app/dist ./dist
+
+# Informations de métadonnées
+LABEL maintainer="DevOps Team"
+LABEL description="Node.js Web Application"
+
+# Port exposé
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# User non-root pour la sécurité
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+USER nodejs
+
+# Start application
+CMD ["node", "dist/index.js"]
+```
+
+---
+
+## Pour une application Python/Flask
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copier requirements
+COPY requirements.txt .
+
+# Installer dépendances
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copier code source
+COPY . .
+
+# User non-root
+RUN useradd -m -u 1001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Port exposé
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
+
+# Start application
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "wsgi:app"]
+```
+
+---
+
+## Pour une application Go
+
+```dockerfile
+FROM golang:1.21-alpine as builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+
+# Final stage
+FROM alpine:3.18
+
+WORKDIR /root/
+
+COPY --from=builder /app/app .
+
+# Port exposé
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/health || exit 1
+
+CMD ["./app"]
+```
+
+---
+
+## Best Practices à Appliquer
+
+### ✅ Multi-stage builds
+- Réduit la taille de l'image finale
+- Sépare build et production
+
+### ✅ Slim base images
+```dockerfile
+FROM node:18-alpine      # ~170MB (lean)
+# vs
+FROM node:18             # ~900MB (full)
+```
+
+### ✅ Cache des dépendances
+```dockerfile
+# Copier les dépendances avant le code
+COPY package.json .
+RUN npm install
+
+# Code change = rebuild layer, mais dépendances cached
+COPY . .
+```
+
+### ✅ Non-root user
+```dockerfile
+RUN useradd -m appuser
+USER appuser
+```
+
+### ✅ Health check
+```dockerfile
+HEALTHCHECK --interval=30s CMD wget --spider http://localhost:8080/health
+```
+
+### ✅ Labels pour la traçabilité
+```dockerfile
+LABEL version="1.0"
+LABEL description="My Application"
+LABEL maintainer="team@company.com"
+```
+
+---
+
+## Utilisation avec build-push.sh
+
+```bash
+# Build standard
+./build-push.sh myapp
+
+# Dockerfile dans sous-dossier
+./build-push.sh myapp harbor.local ./docker/Dockerfile
+
+# Build sans cache
+docker build --no-cache -f Dockerfile -t myapp:latest .
+```
+
+---
+
+**Voir aussi:** [Dockerfile Best Practices](https://docs.docker.com/develop/dev-best-practices/)

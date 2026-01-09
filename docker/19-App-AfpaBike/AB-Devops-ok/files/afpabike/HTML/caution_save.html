@@ -1,0 +1,8 @@
+<?php
+		$array_res[0] = array(
+			'error' => $oMain->resultat["caution_save"]["error"], 
+			'id_caution' => $oMain->resultat["id_caution_created"]
+		);
+		// Prepare and send view
+		echo json_encode ($array_res);
+?>

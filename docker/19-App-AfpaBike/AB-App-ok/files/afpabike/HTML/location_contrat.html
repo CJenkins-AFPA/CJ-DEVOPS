@@ -1,0 +1,296 @@
+<link rel="stylesheet" href="css/location_contrat.css"> <!-- Inclusion du fichier CSS personnalisé -->
+<link rel="stylesheet" href="js/jquery-ui-1.12.1/jquery-ui.min.css">
+<script src="js/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<!----------------------------------------------- Bouton retour d'un contrat ----------------------------------------------->
+  <div class="text-center pt-4">
+    <button type="button"onclick="showTableau('debutformulaire')" class="btn btn-primary btn_bggreen border-0">
+      Ajouter une location <!-- Bouton pour amener vers la page location_retour -->
+    </button>
+    <button class="btn btn-primary btn_bggreen border-0" id="jv1" onclick="showTableau('tableau_retour')">Valider un retour de location</button>
+    <button class="btn btn-primary btn_bggreen border-0" id="jv3" onclick="showTableau('tableau_gestion')">Gestion de location</button>
+  </div>
+
+  <div class="col-lg-12 col-md-12 col-sm-12 tableau_retour" id="tableau_retour" style="display: none;">
+    <div class="location_retour_head container-fluid py-4 rounded-top">
+        <div class="col-12 "><h2 class="text-white ms-5">Retour de location</h2></div>
+    </div>
+    <table id="table_retourloc" class="table_retourloc" style="width : 99%" border="1" sty> <!-- Table pour afficher les inscrits, avec un ID pour pouvoir la cibler en JavaScript. -->
+    </table>
+  </div>
+
+  <div class="col-lg-12 col-md-12 col-sm-12 tableau_gestion" id="tableau_gestion"style="display: none;">
+    <div class="location_gestion_head container-fluid py-4 rounded-top">
+        <div class="col-12 "><h2 class="text-white ms-5">Gestion de location</h2></div>
+    </div>
+  <table id="table_gestionloc" style="width: 98%" border="1"> <!-- Table pour afficher les inscrits, avec un ID pour pouvoir la cibler en JavaScript. -->
+  </table>
+</div>
+
+  <div class="container pt-4" id="debutformulaire" style="display: none;" > <!-- Début du contenu principal, avec un espacement en haut de 4 unités -->
+    <form action="route.php" method="POST" >
+    <!-----------------------------------------------  Groupe : Utilisateur ----------------------------------------------->
+    <div class="card mb-4 loc_border_green" id="liste_utilisateur"> <!-- Utilisation de Bootstrap pour créer une carte avec une marge inférieure et une bordure verte -->
+      <div class="card-header">Veuillez selectionner un compte </div> <!-- Titre de la carte -->
+      <div class="card-body"> <!-- Contenu de la carte -->
+        <div class="row">
+          <div class="col-md-12"> <!-- Colonne prenant 6 unités sur les écrans moyens et plus -->
+            <label for="loc_nom" class="form-label fw-bold">*Prenom et Nom de l'utilisateur :</label> <!-- Étiquette pour le champ Nom -->
+            <div class="d-flex">
+              <select class="form-select" name="id_utilisateur" id="id_utilisateur" onchange="remplirFormulaire()" required>
+              </select>
+              <!--<span class="validity"></span> -->
+                <button type="button" class="btn btn-primary ajout_utilisateur mx-4" id="utilisateur_bouton_ajout">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg> Ajouter un utilisateur
+                </button>
+            </div>
+            <span class="error-message" id="error-id_utilisateur">Veuillez choisir un utilisateur.</span> 
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-----------------------------------------------  Groupe 1: Informations personnelles ----------------------------------------------->
+    <div class="card mb-4 loc_border_green"> <!-- Utilisation de Bootstrap pour créer une carte avec une marge inférieure et une bordure verte -->
+      <div class="card-header">Informations personnelles</div> <!-- Titre de la carte -->
+      <div class="card-body"> <!-- Contenu de la carte -->
+        <div class="row">
+          <div class="col-md-6"> <!-- Colonne prenant 6 unités sur les écrans moyens et plus -->
+            <input type="hidden" name="id_contrat" id="id_contrat">
+            <label for="loc_nom" class="form-label fw-bold">Nom :</label> <!-- Étiquette pour le champ Nom -->
+            <div class="d-flex">
+              <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" placeholder="Entrez votre nom" required> <!-- Champ de texte pour le nom -->
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="loc_prenom" class="form-label fw-bold">Prénom :</label> <!-- Étiquette pour le champ Prénom -->
+            <input type="text" class="form-control" id="prenom_utilisateur" name="prenom_utilisateur" placeholder="Entrez votre prénom"  required> <!-- Champ de texte pour le prénom -->
+            <!-- <span class="validity"></span>
+            <span class="error-message" id="error-prenom">Veuillez ne pas inclure de chiffres et entrer au moins 3 caractères et pas plus de 60 caractères.</span> -->
+          </div>
+        </div>
+        <div class="row mt-3"> <!-- Nouvelle ligne avec une marge supérieure de 3 unités -->
+          <div class="col-md-6">
+            <label for="loc_email" class="form-label fw-bold">@mail :</label> <!-- Étiquette pour le champ Email -->
+            <input type="email" class="form-control" id="email_utilisateur" name="email_utilisateur" placeholder="Entrez votre email" required> <!-- Champ de texte pour l'email -->
+            <!-- <span class="validity"></span>
+            <span class="error-message" id="error-email">Veuillez entrer un mail valide (xxx@xx.xx).</span> -->
+          </div>
+          <div class="col-md-6">
+            <label for="loc_telephone" class="form-label fw-bold">Téléphone :</label> <!-- Étiquette pour le champ Téléphone -->
+            <input type="tel" class="form-control" id="tel_utilisateur" name="tel_utilisateur" placeholder="Entrez votre téléphone"  required> <!-- Champ de texte pour le téléphone -->
+            <!-- <span class="validity"></span>
+            <span class="error-message" id="error-tel">Veuillez entrer un numéro de téléphone valide (8 à 16 chiffres).</span> -->
+          </div>
+          <div class="col-md-6 my-3">
+            <label for="loc_formation" class="form-label fw-bold">Type d'utilisateur :</label> <!-- Étiquette pour le champ Formation -->
+            <select class="form-select" id='id_type_utilisateur' name='id_type_utilisateur' required>
+            </select>
+          </div>
+          <div class="col-md-6 my-3" id="formation">
+            <label for="loc_formation" class="form-label fw-bold">Nom de la formation :</label> <!-- Étiquette pour le champ Formation -->
+              <select class="form-select" id='id_formation' name='id_formation' required>
+              </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!----------------------------------------------- Groupe 2: Adresse ----------------------------------------------->
+    <div class="card mb-4 loc_border_green">
+      <div class="card-header">Adresse</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="loc_adresse" class="form-label fw-bold">Adresse :</label> <!-- Étiquette pour le champ Adresse -->
+            <input type="text" class="form-control" id="adresse_utilisateur" name="adresse_utilisateur" placeholder="Entrez votre adresse" required> <!-- Champ de texte pour l'adresse -->
+          </div>
+          <div class="col-md-6">
+            <label for="loc_commune" class="form-label fw-bold">Ville :</label> <!-- Étiquette pour le champ Ville -->
+              <select class="form-select" id='id_ville' name='id_ville' required>
+              </select>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="loc_codePostal" class="form-label fw-bold">Code postal :</label> <!-- Étiquette pour le champ Code Postal -->
+            <input type="number" class="form-control" id="codepostal_utilisateur" name="codepostal_utilisateur" placeholder="Entrez votre code postal" required> <!-- Champ de texte pour le code postal -->
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!----------------------------------------------- Groupe 3: Informations sur le vélo ----------------------------------------------->
+    <div class="card mb-4 loc_border_green">
+      <div class="card-header">Informations sur le vélo</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="loc_accessoires" class="form-label fw-bold">Accessoires :</label> <!-- Étiquette pour le champ Accessoires -->
+            <a href="accessoire_gestion">
+            <button type="button" class="btn btn-primary ajout_accessoire">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg> Ajouter un accessoire
+            </button>
+            </a>
+            <div  id="id_accessoire" name="id_accessoire">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="velo_datalist">*Numéro du vélo:</label> 
+            <div class="d-flex">
+              <input list="velo_list_marque" id="velo_datalist" name="velo_datalist"  class="form-control"  required placeholder="Marque | Modele | Type | N° "/>
+              <span class="validity text-center"></span>
+              <datalist id="velo_list_marque">
+              </datalist>
+              
+            </div>
+            <span class="error-message" id="error-velo_datalist">Veuillez selectionner un vélo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!----------------------------------------------- Groupe 4: Dates de location ----------------------------------------------->
+    <div class="card mb-4 loc_border_green">
+      <div class="card-header">Dates de location</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="loc_dateDebut" class="form-label fw-bold" >*Date début location :</label> <!-- Étiquette pour la date de début de location -->
+            <div class="d-flex">
+              <input type="datetime-local" class="form-control" min="2024-07-01" required pattern="\d{2}/\d{2}/\d{4} \d{2}:\d{2}" title="*Ce champ est obligatoire" id="datedebut_loc_contrat" name="datedebut_loc_contrat"> <!-- Champ pour sélectionner une date et heure -->
+              <span class="validity"></span>
+            </div>
+            <span class="error-message" id="error-datedebut_loc_contrat">Veuillez entrer une date valide.</span>
+          </div>
+          <div class="col-md-6">
+            <label for="loc_dateFin" class="form-label fw-bold">*Date fin location :</label> <!-- Étiquette pour la date de fin de formation -->
+            <div class="d-flex">
+              <input type="datetime-local" class="form-control" id="datefin_loc_contrat" name="datefin_loc_contrat" min="2024-07-01" required pattern="\d{2}-\d{2}-\d{4} \d{2}:\d{2}" title="*Ce champ est obligatoire"> <!-- Champ pour sélectionner une date et heure -->
+              <span class="validity"></span>
+            </div>
+            <span class="error-message" id="error-datefin_loc_contrat">Veuillez entrer une date valide.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!----------------------------------------------- Groupe 5: Informations supplémentaires ----------------------------------------------->
+    <div class="card mb-4 loc_border_green">
+      <div class="card-header">Informations supplémentaires</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="loc_commentaire" class="form-label fw-bold">Commentaire :</label> <!-- Étiquette pour le champ Commentaire -->
+            <textarea class="form-control" id="commentaire_contrat" name="commentaire_contrat" rows="3" placeholder="Entrez votre commentaire" style="resize: none;"></textarea> <!-- Zone de texte pour les commentaires -->
+          </div>
+          <div class="col-md-6">
+            <label for="loc_verificationIdentite" class="form-label fw-bold">*Vérification identité :</label> <!-- Étiquette pour la vérification d'identité -->
+            <div class="d-flex">
+              <select class="form-select" name="id_type_identite" id="id_type_identite" required>
+              </select>
+              <!-- <span class="validity"></span> -->
+            </div>
+            <!-- <span class="validity"></span> -->
+            <span class="error-message" id="error-id_type_identite">Veuillez choisir un type de document.</span>
+             <div class="d-flex">
+              <input type="text" class="form-control mt-3" id="numeroidentite_contrat" name="numeroidentite_contrat" placeholder="*Numéro du document" minlength="9 "maxlength="20" size="20" required title="*Ce champ est obligatoire" oninput="this.value = this.value.toUpperCase()"> <!--Champ pour entrer le numéro de document-->
+              <span class="validity my-3"></span>
+            </div>
+            <span class="error-message" id="error-numeroidentite_contrat">Veuillez entrer un numero valide.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!----------------------------------------------- Groupe 6: Retenue sur la caution----------------------------------------------->
+    <div class="card mb-4 loc_border_green" id="divretenue" style="display: none;">
+      <div class="card-header">*Retenue sur la caution</div>
+      <div class="card-body">
+        <div class="d-flex justify-content-around align-items-center">
+          <div class="form-check me-3">
+            <input class="form-check-input" type="radio" id="retenue_caution" name="retenue_caution" value="0" onchange="showRetenue()" checked>
+            <label class="form-check-label" for="retenue_caution">Aucune retenue</label>
+          </div>
+          <div class="form-check me-3">
+            <input class="form-check-input" type="radio" id="retenue_caution" name="retenue_caution" value="80" onchange="showRetenue()">
+            <label class="form-check-label" for="retenue_caution">Retenue totale</label>
+          </div>
+          <div class="d-flex">
+            <input class="form-check-input mx-2" type="radio" id="retenue_caution" name="retenue_caution" value="partielle" onchange="showRetenue()">
+            <label class="form-check-label" for="retenue_caution">Retenue Partielle</label>
+            <input type="text" class="form-control mx-2" placeholder="Retenue partielle €" id="retenuepartielle_caution" name="retenuepartielle_caution" style="display: none; width: 50%;"> <!--Champ pour saisir le montant de la retenue partielle.-->
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!----------------------------------------------- Groupe 6: Signatures ----------------------------------------------->
+    <div class="card mb-4 loc_border_green">
+      <div class="card-header">Signatures</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="loc_signatureClient" class="form-label fw-bold">Signature Client :</label> <!-- Étiquette pour la signature du client -->
+            <div class="wrapper loc_wrapper">
+              <canvas id="loc_signature_client" width="400" height="200"></canvas>
+            </div>  
+            <div >
+              <button id="loc_clear_client" class="loc_btn_clear"><span> Clear </span></button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="loc_signatureTechnicien" class="form-label fw-bold">Signature Technicien :</label> <!-- Étiquette pour la signature du technicien -->
+            <div class="wrapper loc_wrapper">
+              <canvas id="loc_signature_tech" width="400" height="200"></canvas>
+            </div>  
+            <div >
+                <button id="loc_clear_tech" class="loc_btn_clear"><span> Clear </span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+        <!--------------------------------------Message si l'utilisateur veux-être sur de vouloir supprimé la ligne-------------------------------------->
+        <div id="confirmModal" style="display: none;">
+          <div id="confirmModalContent">
+              <p>Êtes-vous sûr de vouloir supprimer le contrat de : <span id="supprcontrat"></span> ?</p>
+              <button id="confirmYesBtn">Oui</button>
+              <button id="confirmNoBtn" >Non</button>
+          </div>
+      </div>
+  
+      <!----------------------------------------------- Bouton contrat ----------------------------------------------->
+  <div class="text-center p-4">
+    <span id="champ_obligatoire" style="display: none;">Les champs avec "*" sont obligatoires</span> <!-- Phrase indiquant les champs obligatoires -->
+  </div>
+  <div class="d-flex justify-content-center">
+    <div class="text-center p-2 align-items-center">
+      <button type="button" class="btn btn-primary btn_bggreen border-0" id="btn_ajouter" style="display: none;" onclick="ajoutLocation_contrat()">
+        Ajouter <!-- Bouton pour ajouter une location, ouvre une modal Bootstrap -->
+      </button>
+      <button type="button" class="btn btn-warning border-0" id="btn_modifier" onclick="ModifLocation_contrat()" style="display: none;">
+        Modifier <!-- Bouton pour Modifier une location, ouvre une modal Bootstrap -->
+      </button>
+      <button type="button" class="btn btn-primary btn_bggreen border-0" id="btn_confirmer" onclick="ConfirmLocation_contrat()" style="display: none;">
+        Confirmer le retour <!-- Bouton pour Confirmer le retour une location, ouvre une modal Bootstrap -->
+      </button>
+      <button type="button" class="btn btn-danger border-0" id="btn_annuler" style="display: none;" onclick="annulerContrat()">
+        Annuler <!-- Bouton pour Annuler une location, ouvre une modal Bootstrap -->
+      </button>
+      </div>
+      <div class="form-switch align-items-center" style="display: none !important;" id="divactif">
+        <input class="form-check-input form-switch text-center" type="checkbox" role="switch" name="actif_contrat" id="actif_contrat" style="margin-left:2px;">
+        <label class="form-check-label" for="ficheactive" style="margin-left:10px;">En location</label>
+      </div>
+    </div>
+
+
+  </form> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.3.5/signature_pad.min.js" integrity="sha512-kw/nRM/BMR2XGArXnOoxKOO5VBHLdITAW00aG8qK4zBzcLVZ4nzg7/oYCaoiwc8U9zrnsO9UHqpyljJ8+iqYiQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="js/location.js"></script>

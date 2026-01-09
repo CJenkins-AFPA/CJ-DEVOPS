@@ -1,0 +1,185 @@
+<link rel="stylesheet" href="css/location_retour.css"> <!-- Inclusion du fichier CSS personnalisé -->
+<script src="js/location.js"></script>
+
+    <div class="col-lg-12 col-md-12 col-sm-12 tableau">
+      <div class="location_retour_head container-fluid py-4 rounded-top">
+          <div class="col-12 "><h2 class="text-white ms-5">Retour de location</h2></div>
+      </div>
+      <table id="table_retourloc" class="table_retourloc" style="width : 98%" border="1"> <!-- Table pour afficher les inscrits, avec un ID pour pouvoir la cibler en JavaScript. -->
+      </table>
+    </div>
+
+    <!----------------------------------------------- Modal pour valider le retour de location ----------------------------------------------->
+    <div class="modal fade" id="retourloc_exampleModal" tabindex="-1" aria-labelledby="retourloc_exampleModalLabel" aria-hidden="true"data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg"> <!-- Large modal pour afficher plus de contenu. -->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="retourloc_exampleModalLabel">Valider le retour de location</h1> <!-- Titre de la modal. -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Bouton pour fermer la modal. -->
+          </div>
+          <div class="modal-body">
+            <div class="container mt-1">
+              <form>
+                <!----------------------------------------------- Nom et Prénom ----------------------------------------------->
+                <div class="row mb-3">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="nom_utilisateur" class="form-label">Nom</label> <!-- Étiquette pour le champ "Nom". -->
+                    <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" placeholder="Nom" readonly> <!-- Champ de saisie pour le nom. -->
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="prenom_utilisateur" class="form-label">Prénom</label> <!-- Étiquette pour le champ "Prénom". -->
+                    <input type="text" class="form-control" id="prenom_utilisateur" name="prenom_utilisateur" placeholder="Prénom" readonly> <!-- Champ de saisie pour le prénom. -->
+                  </div>
+                </div>
+
+                <!----------------------------------------------- Accessoires et Numéro du vélo ----------------------------------------------->
+                <div class="row mb-3">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="accessoire_datalist">Accessoires :</label> 
+                    <input list="accessoire_list" id="accessoire_datalist" name="accessoire_datalist"  class="form-control"/>
+                    <datalist id="accessoire_list">
+                    </datalist>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="numeroafpa_velo" class="form-label">Numéro du vélo</label> <!-- Étiquette pour la liste des numéros de vélo. -->
+                    <input type="text" class="form-control" name="numeroafpa_velo" id="numeroafpa_velo" style="width: 100%;" readonly>
+                </div>
+
+                <!----------------------------------------------- Date de fin de location et Retenue ----------------------------------------------->
+                <div class="row mb-3">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="datefin_loc_contrat" class="form-label">Date de fin de la location</label> <!-- Étiquette pour la date de fin. -->
+                    <input type="datetime-local" class="form-control" id="datefin_loc_contrat" name="retourloc_fincontrat" readonly> <!-- Champ pour sélectionner la date et l'heure. -->
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center">
+                    <!-- Options de retenue : aucune, totale, ou partielle avec un champ de texte pour spécifier le montant. -->
+                    <div class="form-check me-3">
+                      <input class="form-check-input" type="checkbox" id="retourloc_aucuneretenue" name="retourloc_aucuneretenue">
+                      <label class="form-check-label" for="retourloc_aucuneretenue">Aucune retenue</label>
+                    </div>
+                    <div class="form-check me-3">
+                      <input class="form-check-input" type="checkbox" id="retourloc_retenuetotale" name="retourloc_retenuetotale">
+                      <label class="form-check-label" for="retourloc_retenuetotale">Retenue totale</label>
+                    </div>
+                    <div>
+                      <input type="text" class="form-control" placeholder="Retenue partielle €" id="retourloc_retenuepartielle" name="retourloc_retenuepartielle"> <!-- Champ pour saisir le montant de la retenue partielle. -->
+                    </div>
+                  </div>
+                </div>                
+
+                <!----------------------------------------------- Commentaires ----------------------------------------------->
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <label for="commentaire_contrat" class="form-label">Commentaire</label> <!-- Étiquette pour les commentaires. -->
+                    <input type="text" class="form-control" id="commentaire_contrat" name="commentaire_contrat" placeholder="Commentaire"> <!-- Champ de saisie pour les commentaires. -->
+                  </div>
+                </div>
+
+                <!----------------------------------------------- Signatures ----------------------------------------------->
+                <div class="row mb-3">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="retourloc_signatureclient" class="form-label">Signature client</label> <!-- Étiquette pour la signature du client. -->
+                    <div id="retourloc_signatureclient" name="retourloc_signatureclient" class="retourloc_signature">Signature here</div> <!-- Zone pour recueillir la signature du client. -->
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="retourloc_signaturetech" class="form-label">Signature technicien</label> <!-- Étiquette pour la signature du technicien. -->
+                    <div id="retourloc_signaturetech" name="retourloc_signaturetech" class="retourloc_signature">Signature here</div> <!-- Zone pour recueillir la signature du technicien. -->
+                  </div>
+                </div>
+
+                <!----------------------------------------------- Bouton pour générer un PDF ----------------------------------------------->
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#retourloc_">Générer PDF</button> <!-- Bouton pour générer un PDF, ouvre une autre modal. -->
+                </div>
+              </form>
+            </div>
+          </div>
+          <input type="hidden" name="id_contrat" id="id_contrat">
+          <div class="modal-footer retourloc_modalfooter">
+            <button type="button" class="btn btn-primary bg-success" data-bs-toggle="modal" data-bs-target="#retourloc_resignContractModal">Enregistrer</button> <!-- Bouton pour enregistrer les données et ouvrir une autre modal. -->
+            <button type="button" class="btn btn-secondary bg-danger" data-bs-dismiss="modal">Fermer</button> <!-- Bouton pour fermer la modal. -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------------- Modal pour resigner un contrat ----------------------------------------------->
+    <div class="modal fade" id="retourloc_resignContractModal" tabindex="-1" aria-labelledby="retourloc_resignContractModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg"> <!-- Large modal pour plus de contenu. -->
+        <div class="modal-content">
+          <div class="modal-header bg-success">
+            <h5 class="modal-title" id="retourloc_resignContractModalLabel">Resigner un contrat</h5> <!-- Titre de la modal. -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Bouton pour fermer la modal. -->
+          </div>
+          <div class="modal-body">
+            <div class="container">
+                <label class="form-label">La location du vélo.... vient de finir, l'utilisateur veut-il resigner un contrat ?</label> <!-- Question posée à l'utilisateur pour prolonger ou non la location. -->
+                <div class="mb-3">
+                  <select class="form-select">
+                    <!-- Options pour resigner le contrat avec le même vélo, un autre vélo ou pas du tout. -->
+                    <option selected>Oui avec le même vélo, combien de jours</option>
+                    <option>Oui avec un autre vélo</option>
+                    <option>Non</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer retourloc_modalfooter">
+              <button type="button" class="btn btn-primary bg-success">Confirmer</button> <!-- Bouton pour confirmer la prolongation du contrat. -->
+              <button type="button" class="btn btn-secondary bg-danger" data-bs-dismiss="modal">Fermer</button> <!-- Bouton pour fermer la modal. -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!----------------------------------------------- Modal pour prolonger le contrat ----------------------------------------------->
+    <div class="modal fade" id="retourloc_prolongercontratModal" tabindex="-1" aria-labelledby="retourloc_prolongercontratModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Large modal pour plus de contenu. -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="retourloc_prolongercontratModalLabel" >Prolonger le contrat</h1> <!-- Titre de la modal. -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Bouton pour fermer la modal. -->
+                </div>
+                <div class="modal-body">
+                    <div class="container mt-5">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 col-md-10 col-sm-12">
+                                <form>
+                                    <!----------------------------------------------- Formulaire pour prolonger le contrat avec les informations du client et la nouvelle date de fin. ----------------------------------------------->
+                                    <div class="mb-3 row">
+                                        <label for="nom_utilisateur" class="col-sm-4 col-form-label">Nom</label> <!-- Étiquette pour le nom. -->
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="nom_utilisateur" name="nom_utilisateur" readonly> <!-- Champ de saisie prérempli et en lecture seule pour le nom. -->
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="prenom_utilisateur" class="col-sm-4 col-form-label">Prénom</label> <!-- Étiquette pour le prénom. -->
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="prenom_utilisateur" name="prenom_utilisateur" readonly> <!-- Champ de saisie prérempli et en lecture seule pour le prénom. -->
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="retourloc_devise" class="col-sm-4 col-form-label">Devise du vélo</label> <!-- Étiquette pour la devise du vélo. -->
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="retourloc_devise" name="retourloc_devise" readonly> <!-- Champ de saisie prérempli et en lecture seule pour la devise du vélo. -->
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="retourloc_datefinprolong" class="col-sm-4 col-form-label">Date de fin de contrat souhaitée</label> <!-- Étiquette pour la date de fin souhaitée. -->
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control" id="retourloc_datefinprolong" name="retourloc_datefinprolong"> <!-- Champ de saisie pour sélectionner la nouvelle date de fin du contrat. -->
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer retourloc_modalfooter">
+                  <button type="button" class="btn btn-primary bg-success">Prolonger</button> <!-- Bouton pour prolonger le contrat. -->
+                  <button type="button" class="btn btn-secondary bg-danger" data-bs-dismiss="modal">Fermer</button> <!-- Bouton pour fermer la modal. -->
+                </div>
+            </div>
+        </div>
+    </div>
+

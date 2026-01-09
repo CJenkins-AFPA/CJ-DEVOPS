@@ -1,0 +1,1 @@
+SELECT * FROM typerep order by nom_typerep

@@ -1,0 +1,45 @@
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.local.local
+
+# ==================== SECRETS ====================
+secrets/
+*.key
+*.crt
+*.pem
+acme.json
+
+# ==================== DATA & VOLUMES ====================
+data/
+backups/
+volumes/
+postgresql-data/
+portainer-data/
+traefik/acme.json
+
+# ==================== LOG FILES ====================
+*.log
+logs/
+
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+

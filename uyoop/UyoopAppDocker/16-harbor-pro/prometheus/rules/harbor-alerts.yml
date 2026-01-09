@@ -1,0 +1,273 @@
+groups:
+  - name: harbor_core
+    interval: 30s
+    rules:
+      # Harbor Core API availability
+      - alert: HarborCoreDown
+        expr: up{job="harbor-core"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: core
+        annotations:
+          summary: "Harbor Core API is down"
+          description: "Harbor Core API has been unavailable for more than 2 minutes."
+
+      # Harbor Core high response time
+      - alert: HarborCoreHighLatency
+        expr: histogram_quantile(0.95, rate(harbor_http_request_duration_seconds_bucket{handler="/api/v2.0"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: core
+        annotations:
+          summary: "Harbor Core API high latency detected"
+          description: "95th percentile response time is {{ $value }}s"
+
+      # Harbor Core error rate high
+      - alert: HarborCoreHighErrorRate
+        expr: rate(harbor_http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: core
+        annotations:
+          summary: "Harbor Core API error rate too high"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+
+      # Harbor authentication failure
+      - alert: HarborAuthenticationFailures
+        expr: rate(harbor_core_auth_failures_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: auth
+        annotations:
+          summary: "High authentication failures in Harbor"
+          description: "{{ $value | humanize }} auth failures per second"
+
+  - name: harbor_registry
+    interval: 30s
+    rules:
+      # Harbor Registry down
+      - alert: HarborRegistryDown
+        expr: up{job="harbor-registry"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: registry
+        annotations:
+          summary: "Harbor Registry is down"
+          description: "Harbor Registry has been unavailable for more than 2 minutes."
+
+      # Registry push errors
+      - alert: HarborRegistryPushErrors
+        expr: rate(registry_request_duration_seconds_bucket{method="PUT"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: registry
+        annotations:
+          summary: "High push error rate in Harbor Registry"
+          description: "Push error rate is {{ $value }}"
+
+      # Registry pull errors
+      - alert: HarborRegistryPullErrors
+        expr: rate(registry_request_duration_seconds_bucket{method="GET"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: registry
+        annotations:
+          summary: "High pull error rate in Harbor Registry"
+          description: "Pull error rate is {{ $value }}"
+
+      # Registry storage usage
+      - alert: HarborRegistryStorageHigh
+        expr: harbor_registry_storage_usage_bytes / harbor_registry_storage_quota_bytes > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: registry
+        annotations:
+          summary: "Harbor Registry storage usage is high"
+          description: "Storage usage is {{ $value | humanizePercentage }} of quota"
+
+      # Registry storage space
+      - alert: HarborRegistryStorageFull
+        expr: harbor_registry_storage_usage_bytes / harbor_registry_storage_quota_bytes > 0.95
+        for: 5m
+        labels:
+          severity: critical
+          component: registry
+        annotations:
+          summary: "Harbor Registry storage space is nearly full"
+          description: "Storage usage is {{ $value | humanizePercentage }} of quota"
+
+  - name: harbor_jobservice
+    interval: 30s
+    rules:
+      # Harbor JobService down
+      - alert: HarborJobServiceDown
+        expr: up{job="harbor-jobservice"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: jobservice
+        annotations:
+          summary: "Harbor JobService is down"
+          description: "Harbor JobService has been unavailable for more than 2 minutes."
+
+      # High pending jobs
+      - alert: HarborHighPendingJobs
+        expr: harbor_job_service_pending_jobs > 100
+        for: 10m
+        labels:
+          severity: warning
+          component: jobservice
+        annotations:
+          summary: "High number of pending jobs in Harbor"
+          description: "{{ $value | humanize }} jobs are pending"
+
+      # Job processing failures
+      - alert: HarborJobProcessingFailures
+        expr: rate(harbor_job_service_failed_jobs_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: jobservice
+        annotations:
+          summary: "Jobs are failing in Harbor"
+          description: "{{ $value | humanize }} job failures per second"
+
+  - name: harbor_trivy
+    interval: 30s
+    rules:
+      # Harbor Trivy down
+      - alert: HarborTrivyDown
+        expr: up{job="harbor-trivy"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: trivy
+        annotations:
+          summary: "Harbor Trivy Scanner is down"
+          description: "Trivy Scanner has been unavailable for more than 2 minutes."
+
+      # Trivy database outdated
+      - alert: HarborTrivyDbOutdated
+        expr: (time() - harbor_trivy_db_update_time) / 86400 > 7
+        for: 1h
+        labels:
+          severity: warning
+          component: trivy
+        annotations:
+          summary: "Trivy vulnerability database is outdated"
+          description: "Database not updated for {{ $value | humanize }} days"
+
+      # High vulnerability count
+      - alert: HarborHighVulnerabilityCount
+        expr: harbor_trivy_critical_vulnerabilities > 10
+        for: 10m
+        labels:
+          severity: critical
+          component: trivy
+        annotations:
+          summary: "High number of critical vulnerabilities detected"
+          description: "{{ $value | humanize }} critical vulnerabilities found"
+
+  - name: harbor_infrastructure
+    interval: 30s
+    rules:
+      # Database connection issues
+      - alert: PostgreSQLDown
+        expr: up{job="postgres-primary"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "Harbor database has been unavailable for more than 2 minutes."
+
+      # Database high connection count
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_activity_count > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "PostgreSQL has high connection count"
+          description: "{{ $value | humanize }} connections active"
+
+      # Redis down
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been unavailable for more than 2 minutes."
+
+      # Redis memory usage
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # Traefik errors
+      - alert: TraefikHighErrorRate
+        expr: rate(traefik_entrypoint_requests_total{code=~"5.."}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: proxy
+        annotations:
+          summary: "Traefik has high error rate"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+
+  - name: recording_rules
+    interval: 10s
+    rules:
+      # Harbor Core metrics
+      - record: 'harbor:core:requests:rate1m'
+        expr: rate(harbor_http_requests_total{job="harbor-core"}[1m])
+
+      - record: 'harbor:core:errors:rate1m'
+        expr: rate(harbor_http_requests_total{job="harbor-core", status=~"5.."}[1m])
+
+      # Harbor Registry metrics
+      - record: 'harbor:registry:push:rate1m'
+        expr: rate(registry_request_duration_seconds_bucket{method="PUT"}[1m])
+
+      - record: 'harbor:registry:pull:rate1m'
+        expr: rate(registry_request_duration_seconds_bucket{method="GET"}[1m])
+
+      # Harbor JobService metrics
+      - record: 'harbor:jobs:success:rate1m'
+        expr: rate(harbor_job_service_completed_jobs_total[1m])
+
+      - record: 'harbor:jobs:failed:rate1m'
+        expr: rate(harbor_job_service_failed_jobs_total[1m])
+
+      # Database metrics
+      - record: 'postgres:connections:active'
+        expr: pg_stat_activity_count{job="postgres-primary"}
+
+      - record: 'postgres:cache:hit:ratio'
+        expr: 'rate(pg_stat_database_heap_blks_hit[5m]) / (rate(pg_stat_database_heap_blks_hit[5m]) + rate(pg_stat_database_heap_blks_read[5m]))'
+
+      # Redis metrics
+      - record: 'redis:commands:rate1m'
+        expr: rate(redis_commands_processed_total[1m])
+
+      - record: 'redis:keyspace:keys:count'
+        expr: redis_db_keys

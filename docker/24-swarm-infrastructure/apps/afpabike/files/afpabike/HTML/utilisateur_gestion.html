@@ -1,0 +1,114 @@
+<link rel="stylesheet" href="css/utilisateur_gestion.css">
+<script src="js/utilisateur.js"></script> <!-- Script personnalisé -->
+    <div class="tableau">
+        <div class="uti_head_table container-fluid py-4 rounded-top">
+            <div class="d-flex align-items-center">
+                <div class="col-6"><h2 class="text-white ms-5">Gestion utilisateurs</h2></div>
+                <div class="col-6 text-end">
+                    <!-- Bouton enregistrement utilisateur -->
+                    <button type="button" class="btn_bggreen text-light border-1" data-bs-toggle="modal" data-bs-target="#exampleModal" id="btn_ajouter_utilisateur">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                        </svg> Ajouter un utilisateur
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid col-lg-12  pb-2">
+            <table class="col-lg-12" id="utilisateur_table" border="1"></table>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border border-dark">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter un utilisateur</h1>
+                </div>
+                    <div class="modal-body border border-dark">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-lg-3 mb-3">
+                                    <h6>Profil d'utilisateur :</h6>
+                                    <select class="form-select form-select-md fw-bold" id="id_type_utilisateur" name="id_type_utilisateur">
+                                        
+                                    </select>
+                                </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Nom :</h6>
+                                    <input type="text" name="nom_utilisateur" id="nom_utilisateur" class="utilisateur_form">
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Prénom :</h6>
+                                    <input type="text" name="prenom_utilisateur" id="prenom_utilisateur" class="utilisateur_form">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Identifiant :</h6>
+                                    <input type="text" name="login_utilisateur" id="login_utilisateur" class="utilisateur_form">
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Mot de passe :</h6>
+                                    <input type="password" name="mdp_utilisateur" id="mdp_utilisateur" class="utilisateur_form">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Adresse mail :</h6>
+                                    <input type="email" name="email_utilisateur" id="email_utilisateur" class="utilisateur_form" required>
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Confirmation mot de passe :</h6>
+                                    <input type="password" name="confirmmdp" id="confirmmdp" class="utilisateur_form">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Téléphone :</h6>
+                                    <input type="number" name="tel_utilisateur" id="tel_utilisateur" class="utilisateur_form">
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Ville :</h6>
+                                    <input type="text" name="nom_ville" id="nom_ville" class="utilisateur_form">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Date de début de la formation :</h6>
+                                    <input type="date" name="debutformation_utilisateur" id="debutformation_utilisateur" class="utilisateur_form">
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <h6>Date de fin de la formation :</h6>
+                                    <input type="date" name="finformation_utilisateur" id="finformation_utilisateur" class="utilisateur_form">
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="modal-footer justify-content-center">
+                            <button onclick="ajoutUser()" type="button" class="btn btn-primary bg-success border-0" id="btn_valider" data-bs-dismiss="modal">ENREGISTRER</button>
+                            <button onclick="modifUser()" type="button" class="btn btn-primary bg-success border-0" id="btn_modifier" data-bs-dismiss="modal">MODIFIER</button>
+                            <button onclick="annulUser()" type="button" class="btn btn-secondary bg-danger" data-bs-dismiss="modal">ANNULER</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <div id="editConfirmModal" style="display: none;">
+                <div  id="editConfirmModalContent">
+                    <p>Êtes-vous sûr de vouloir modifier les informations de l'utilisateur <span id="editUserNameConfirm"></span> ?</p>
+                    <button id="editConfirmYesBtn">Oui</button>
+                    <button id="editConfirmNoBtn">Non</button>
+                </div>
+            </div>
+            <div id="confirmModal" style="display: none;">
+                <div id="confirmModalContent">
+                    <p>Êtes-vous sûr de vouloir supprimer l'utilisateur ? <span id="supprnom"></span> </p>
+                    <button id="confirmYesBtn">Oui</button>
+                    <button id="confirmNoBtn" >Non</button>
+                </div>
+            </div>
+    

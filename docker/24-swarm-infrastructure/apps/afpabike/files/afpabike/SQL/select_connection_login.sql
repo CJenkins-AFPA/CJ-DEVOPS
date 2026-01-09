@@ -1,0 +1,1 @@
+SELECT * FROM utilisateur WHERE login_utilisateur like "@login_utilisateur" and mdp_utilisateur="@mdp_utilisateur"

@@ -1,66 +1,27 @@
-# CJ-DEVOPS
+# CJ-DEVOPS — branche `uyoop`
 
-## 📚 Dépôt de Projets DevOps
+Cette branche regroupe l'application Uyoop (PHP/SQLite) et son packaging complet Docker/Ansible, plus la documentation des TPs Harbor (TP15/TP16).
 
-Ce dépôt contient l'ensemble de mes projets et travaux pratiques DevOps organisés par thématique dans des branches dédiées.
+## Projets inclus
+- `UyoopApp/` : appli minimale (formulaire intelligent, génération de cahier des charges HTML, stockage SQLite, page admin).
+- `UyoopAppDocker/` : même appli conteneurisée (Nginx + PHP-FPM), Makefile, scripts, docs complètes, playbook Ansible.
+- `UyoopAppDocker/16-harbor-pro/` : livrables TPs Harbor (basic + production), docs et configurations prêtes à l'emploi.
 
-## 🌿 Organisation des Branches
+## Démarrages rapides
+- Sans Docker : `cd UyoopApp/public && php -S localhost:8080` puis ouvrir `http://localhost:8080` (admin sur `/admin.php`).
+- Avec Docker : `cd UyoopAppDocker && make install` (ou `docker compose -f docker/docker-compose.yml up -d --build`), appli sur `http://localhost:8080`.
 
-### `main` - Documentation Générale
-Branche principale contenant la documentation d'ensemble et les liens vers les différents projets.
+## Travaux réalisés (synthèse)
+- App Uyoop : formulaires conditionnels, prévisualisation, génération de cahier des charges, persistance SQLite, admin listant les soumissions.
+- Dockerisation : images Nginx/PHP 8.4-FPM, healthchecks, environnements dev/prod, variables via `.env`, volumes pour les données, cibles Make (`up/down/logs/redeploy/backup/test`).
+- Automatisation : scripts `deploy.sh`, `test.sh`, inventaire + playbook Ansible pour déployer l'appli sur serveur distant.
+- Harbor TP15/TP16 :
+	- TP15 (basique) : stack Harbor 8 services, README guidé, workflows d'images, troubleshooting.
+	- TP16 (prod) : HA Postgres + Redis Sentinel, Traefik SSL/Let's Encrypt, monitoring Prometheus/Grafana, alerting (40+ règles), Loki logs, Notary, backups/restore automatisés, guide 1800+ lignes.
 
-### `docker` - Projets Docker & Docker Compose
-Ensemble de projets utilisant Docker et Docker Compose :
-- Déploiements d'applications web
-- Configurations multi-conteneurs
-- Exemples d'orchestration
-
-### `ansible` - Travaux Pratiques Ansible
-Projets d'automatisation avec Ansible :
-- Configuration de serveurs
-- Déploiement d'applications web
-- Gestion de l'infrastructure
-- Utilisation de rôles et playbooks
-
-### `vagrant` - Configurations Vagrant
-Environnements de développement virtualisés :
-- Machines virtuelles Debian
-- Stack LAMP
-- Configurations multi-machines (web/db)
-
-### `uyoop` - Application UyoopApp
-Projets relatifs à l'application UyoopApp :
-- Version standard
-- Version dockerisée avec Ansible
-
-## 🚀 Utilisation
-
-Pour travailler sur un projet spécifique, basculez sur la branche correspondante :
-
-```bash
-git checkout docker   # Projets Docker
-git checkout ansible  # TPs Ansible
-git checkout vagrant  # Configurations Vagrant
-git checkout uyoop    # Application UyoopApp
-```
-
-## 📖 Documentation
-
-Chaque branche contient sa propre documentation spécifique avec :
-- Instructions de déploiement
-- Prérequis techniques
-- Guides d'utilisation
-- Architecture des projets
-
-## 🔧 Technologies
-
-- **Conteneurisation** : Docker, Docker Compose
-- **Automatisation** : Ansible
-- **Virtualisation** : Vagrant, VirtualBox
-- **Stack** : PHP, MySQL, Nginx, Apache
-- **Infrastructure as Code**
-
----
-
-**Auteur** : CJenkins-AFPA  
-**Dépôt** : CJ-DEVOPS (Privé)
+## Documentation utile
+- `UyoopApp/README.md` : détails appli standalone.
+- `UyoopAppDocker/README.md` : guide Docker complet + commandes.
+- `UyoopAppDocker/docs/` : architecture, quickstart, changelog, commandes.
+- `UyoopAppDocker/ansible/README.md` : déploiement Ansible.
+- `UyoopAppDocker/COMPLETION_REPORT_TP15_16.md` : synthèse détaillée des TPs Harbor.

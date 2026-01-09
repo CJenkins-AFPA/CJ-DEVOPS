@@ -1,0 +1,73 @@
+/*---------------------type_rep_gestion------------------*/
+#type_rep_bouton_ajout{
+    margin-left: 10px;
+    background-color: #86BD24;
+}
+#table_type_rep_length{
+    padding-bottom: 30px;
+}
+#num, #date_entree, #date_sortie{
+    width: 100%;
+}
+#temps{
+    width: 41%;
+}
+.type_rep_bandeau-tab{
+    background-color: #00AAFF;
+    border-radius: 10px 10px 0px 0px;
+    margin-left: -10px;
+    margin-right: -10px;
+    box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.8); /* Ombre uniquement sur le haut */ /* Ombre portée */
+    
+}
+#table_type_rep {
+    width: 99%; /* Force le tableau à prendre 100% de la largeur disponible */
+    border-collapse: collapse; /* Réduit l'espacement entre les cellules */
+    background-color: #f9f9f9; /* Fond gris clair */
+    border-radius: 10px; /* Bordure arrondie */
+    margin-bottom: 50px;
+
+}
+/* Optionnel : stylisation des bordures des cellules */
+#table_type_rep td, #table_type_rep th {
+    border: 2px solid #000000; /* Ajoute une bordure légère aux cellules */
+}
+
+select[name="table_type_rep_length"] {
+    background-color: #86BD24;
+    color : white;
+    width: 80px;
+    text-align: center;
+    border-radius: 8px;
+}
+a[class="paginate_button current"] {
+    background-color: #86BD24 !important ;
+}
+#table_type_rep th, #table_type_rep td, #table_type_rep tr {
+    color: black; /* Texte noir pour les titres */
+}
+
+/* Couleur de fond pour l'en-tête du tableau */
+#table_type_rep th {
+    background-color: white; /* Couleur blanche pour les titres */
+}
+/* Alternance des couleurs des lignes */
+#table_type_rep tr:nth-child(even) {
+    background-color: #ffffff; /* Lignes paires en vert */
+    color: white; /* Texte blanc pour contrast */
+}
+
+#table_type_rep tr:nth-child(odd) {
+    background-color: #d1d0d0d5; /* Lignes impaires en bleu */
+    color: white; /* Texte blanc pour contrast */
+}
+.tableau {
+    border: 30px solid rgba(168, 161, 161, 0.1); /* Fine bordure grise */
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+#img_update, #img_delete {
+    width:20px  !important;
+    height: 20px !important;
+
+}

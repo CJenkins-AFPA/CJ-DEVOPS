@@ -1,0 +1,9 @@
+<?php
+		$array_res[0] = array(
+			'error' => $oMain->resultat["location_contrat_save"]["error"], 
+			'errorsaisie' => $oMain->resultat["errorsaisie"], 
+			'id_contrat' => $oMain->resultat["id_contrat_created"]
+		);
+		// Prepare and send view
+		echo json_encode ($array_res);
+?>

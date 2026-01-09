@@ -1,0 +1,14 @@
+SELECT 
+    utilisateur.id_utilisateur,
+    utilisateur.id_type_utilisateur,
+    utilisateur.id_formation,
+    utilisateur.id_ville,
+    utilisateur.prenom_utilisateur,
+    utilisateur.nom_utilisateur,
+    utilisateur.tel_utilisateur,
+    utilisateur.adresse_utilisateur,
+    utilisateur.email_utilisateur,
+    utilisateur.codepostal_utilisateur,
+    utilisateur.actif_utilisateur
+FROM 
+    utilisateur

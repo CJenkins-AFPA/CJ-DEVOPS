@@ -1,0 +1,8 @@
+<?php
+		$array_res[0] = array(
+			'error' => $oMain->resultat["save_entretien"]["error"], 
+			'id_reparation' => $oMain->resultat["id_reparation_created"]
+		);
+		// Prepare and send view
+		echo json_encode ($array_res);
+?>

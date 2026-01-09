@@ -1,0 +1,13 @@
+---
+- hosts: manager
+  become: yes
+  tasks:
+    - name: Copier le fichier stack Portainer
+      copy:
+        src: ../../docker-stack/stack-portainer.yml
+        dest: /root/stack-portainer.yml
+        
+    - name: Déployer stack Portainer
+      shell: docker stack deploy -c /root/stack-portainer.yml portainer
+      environment:
+        PORTAINER_DOMAIN: "{{ frontend_domain_portainer | default('portainer.local') }}"

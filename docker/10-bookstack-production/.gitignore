@@ -1,0 +1,42 @@
+# ==================== ENVIRONMENT & SECRETS ====================
+.env
+.env.local
+.env.*.local
+secrets/
+secrets/*.txt
+
+# ==================== BACKUPS ====================
+backups/
+*.tar.gz
+*.sql
+*.zip
+
+# ==================== TRAEFIK ====================
+acme.json
+
+# ==================== LOG FILES ====================
+*.log
+logs/
+
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== DATA & VOLUMES ====================
+volumes/
+data/
+postgresql-data/
+mysql-data/
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+*.tmp
+

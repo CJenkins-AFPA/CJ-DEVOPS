@@ -1,0 +1,5 @@
+  Using default CI config
+[1mImage Source: [0mdocker://registry-1.docker.io/library/busybox:latest
+[1mFetching image...[0m (this can take a while for large images)
+[1mAnalyzing image...[0m
+[1mExporting image to '/tmp/dive-reports/dive-report.json'...[0m

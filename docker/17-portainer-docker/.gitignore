@@ -1,0 +1,40 @@
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== SECRETS ====================
+secrets/
+*.key
+*.crt
+*.pem
+
+# ==================== DATA & VOLUMES ====================
+data/
+volumes/
+portainer-data/
+
+# ==================== LOG FILES ====================
+*.log
+logs/
+
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+

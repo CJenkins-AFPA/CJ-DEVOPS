@@ -1,0 +1,9 @@
+SELECT 
+    accessoire.id_accessoire,
+    accessoire.nom_accessoire,
+    accessoire.taille_accessoire,
+    accessoire.particularite_accessoire,
+    accessoire.etat_accessoire,
+    accessoire.actif_accessoire
+FROM 
+    accessoire

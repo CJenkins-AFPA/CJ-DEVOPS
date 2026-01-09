@@ -1,0 +1,1 @@
+insert into velo (id_caution, id_modele, numeroserie_velo, numeroafpa_velo, dispo_velo, photo_velo, couleur_velo, etat_velo, actif_velo) values ("@id_caution", "@id_modele", "@numeroserie_velo", "@numeroafpa_velo", "@dispo_velo", "@photo_velo", "@couleur_velo", "@etat_velo", "@actif_velo")

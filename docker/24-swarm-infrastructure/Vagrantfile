@@ -1,0 +1,130 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Box de base Debian 12
+  config.vm.box = "debian/bookworm64"
+  
+  # Configuration réseau privé (192.168.56.x)
+  NETWORK_PREFIX = "192.168.56"
+  
+  # Configuration commune
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.linked_clone = true
+  end
+
+  # ====================
+  # VM Harbor (Registry)
+  # ====================
+  config.vm.define "harbor" do |harbor|
+    harbor.vm.hostname = "harbor.local"
+    harbor.vm.network "private_network", ip: "#{NETWORK_PREFIX}.10"
+    
+    harbor.vm.provider "virtualbox" do |vb|
+      vb.name = "tp24-harbor"
+      vb.memory = "4096"
+      vb.cpus = 2
+    end
+    
+    harbor.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y curl vim net-tools
+      hostnamectl set-hostname harbor.local
+    SHELL
+  end
+
+  # ====================
+  # VM Swarm Manager
+  # ====================
+  config.vm.define "manager" do |manager|
+    manager.vm.hostname = "swarm-manager.local"
+    manager.vm.network "private_network", ip: "#{NETWORK_PREFIX}.20"
+    
+    manager.vm.provider "virtualbox" do |vb|
+      vb.name = "tp24-swarm-manager"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+    
+    manager.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y curl vim net-tools
+      hostnamectl set-hostname swarm-manager.local
+    SHELL
+  end
+
+  # ====================
+  # VM Swarm Worker 1
+  # ====================
+  config.vm.define "worker1" do |worker1|
+    worker1.vm.hostname = "swarm-worker1.local"
+    worker1.vm.network "private_network", ip: "#{NETWORK_PREFIX}.21"
+    
+    worker1.vm.provider "virtualbox" do |vb|
+      vb.name = "tp24-swarm-worker1"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+    
+    worker1.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y curl vim net-tools
+      hostnamectl set-hostname swarm-worker1.local
+    SHELL
+  end
+
+  # ====================
+  # VM Swarm Worker 2
+  # ====================
+  config.vm.define "worker2" do |worker2|
+    worker2.vm.hostname = "swarm-worker2.local"
+    worker2.vm.network "private_network", ip: "#{NETWORK_PREFIX}.22"
+    
+    worker2.vm.provider "virtualbox" do |vb|
+      vb.name = "tp24-swarm-worker2"
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+    
+    worker2.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y curl vim net-tools
+      hostnamectl set-hostname swarm-worker2.local
+    SHELL
+  end
+
+  # ====================
+  # VM MariaDB
+  # ====================
+  config.vm.define "db" do |db|
+    db.vm.hostname = "db.local"
+    db.vm.network "private_network", ip: "#{NETWORK_PREFIX}.30"
+    
+    db.vm.provider "virtualbox" do |vb|
+      vb.name = "tp24-mariadb"
+      vb.memory = "2048"
+      vb.cpus = 1
+    end
+    
+    db.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y curl vim net-tools
+      hostnamectl set-hostname db.local
+    SHELL
+  end
+
+  # Configuration SSH commune
+  config.vm.provision "shell", inline: <<-SHELL
+    # Autoriser root login SSH
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    systemctl restart sshd
+    
+    # Copier la clé SSH de vagrant vers root
+    mkdir -p /root/.ssh
+    cp /home/vagrant/.ssh/authorized_keys /root/.ssh/
+    chmod 600 /root/.ssh/authorized_keys
+    chmod 700 /root/.ssh
+  SHELL
+end

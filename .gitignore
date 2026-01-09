@@ -1,4 +1,68 @@
-# Fichiers locaux non versionnés
+# ==================== LOCAL FILES ====================
 MEMO_LOCAL.md
 notes-perso/
-Terraform/.terraform/
+local-notes/
+*.local
+
+# ==================== ENVIRONMENT & SECRETS ====================
+.env
+.env.local
+.env.*.local
+secrets/
+*.key
+*.pem
+*.crt
+
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== LOG FILES ====================
+*.log
+logs/
+
+# ==================== DATA & VOLUMES ====================
+volumes/
+data/
+postgresql-data/
+mysql-data/
+redis-data/
+registry-data/
+backups/
+*.tar.gz
+*.zip
+
+# ==================== CACHE & TEMP ====================
+.cache/
+.tmp/
+__pycache__/
+*.pyc
+node_modules/
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ==================== BUILD ====================
+dist/
+build/
+out/
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Dive test artifacts (large tar files)
+22-Dive-test/results/*.tar
+22-Dive-test/results/*.json
+22-Dive-test/results/*.txt
+
+# Dive test artifacts (large tar files)
+22-Dive-test/results/*.tar
+22-Dive-test/results/*.json
+22-Dive-test/results/*.txt

@@ -1,0 +1,71 @@
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== SECRETS ====================
+secrets/
+*.key
+*.crt
+*.pem
+acme.json
+
+# ==================== DATA & STORAGE ====================
+prometheus/data/
+grafana/data/
+loki/data/
+alertmanager/data/
+traefik/acme.json
+
+# ==================== BACKUPS ====================
+backups/
+*.tar.gz
+*.backup
+*.zip
+
+# ==================== LOG FILES ====================
+*.log
+logs/
+
+# ==================== DOCKER ====================
+docker-compose.override.yml
+.docker-compose.override.yml
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+.idea/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore test files
+test/
+*.test
+
+# Ignore Grafana provisioning generated files
+grafana/data/
+grafana/provisioning/notifiers/
+
+# Ignore Prometheus WAL
+prometheus/wal/
+
+# Keep directory structure
+!*/.gitkeep

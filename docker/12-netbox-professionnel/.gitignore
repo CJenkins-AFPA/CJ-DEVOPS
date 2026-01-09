@@ -1,0 +1,57 @@
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.*.local
+
+# ==================== SECRETS ====================
+.secrets/
+secrets/
+*.key
+*.crt
+*.pem
+
+# ==================== DATABASE ====================
+*.db
+*.sqlite3
+
+# ==================== DATA & MEDIA ====================
+media/
+!media/.gitkeep
+data/
+volumes/
+backups/
+!backups/.gitkeep
+
+# ==================== TRAEFIK ====================
+letsencrypt/*.json
+acme.json
+
+# ==================== PYTHON ====================
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+env/
+
+# ==================== IDE ====================
+.idea/
+.vscode/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ==================== LOGS ====================
+*.log
+logs/
+
+# ==================== OS & TEMP ====================
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+

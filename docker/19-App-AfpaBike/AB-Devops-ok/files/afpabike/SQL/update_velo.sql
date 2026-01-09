@@ -1,0 +1,1 @@
+update velo set id_caution="@id_caution", id_modele="@id_modele", numeroserie_velo="@numeroserie_velo", numeroafpa_velo="@numeroafpa_velo", dispo_velo="@dispo_velo", photo_velo="@photo_velo", couleur_velo="@couleur_velo", etat_velo="@etat_velo", actif_velo="@actif_velo" where id_velo=@id_velo
