@@ -1,0 +1,142 @@
+[
+    {
+        "name": "Projet Pilote App X",
+        "color": "#00ff00",
+        "owner_username": "demo-projets",
+        "environments": [
+            "dev",
+            "staging",
+            "prod"
+        ],
+        "jobs": [
+            {
+                "title": "Sprint Planning Meeting – Semaine 01",
+                "job_type": "meeting",
+                "planned_start": "+1d"
+            },
+            {
+                "title": "Release v0.1 – staging",
+                "job_type": "ops",
+                "environment": "staging",
+                "planned_start": "+2d"
+            },
+            {
+                "title": "Rapport hebdo – santé projet",
+                "job_type": "dev",
+                "all_day": true,
+                "planned_start": "+3d"
+            },
+            {
+                "title": "Patch sécurité – workers",
+                "job_type": "maintenance",
+                "environment": "staging",
+                "planned_start": "+4d"
+            }
+        ]
+    },
+    {
+        "name": "Infra K3s",
+        "color": "#00cc88",
+        "owner_username": "demo-ops",
+        "environments": [
+            "dev",
+            "staging",
+            "prod"
+        ],
+        "jobs": [
+            {
+                "title": "Sprint Planning Meeting – Semaine 01",
+                "job_type": "meeting",
+                "planned_start": "+1d"
+            },
+            {
+                "title": "Release k3s v1.29 – staging",
+                "job_type": "ops",
+                "environment": "staging",
+                "planned_start": "+2d"
+            },
+            {
+                "title": "Rapport hebdo – capacité cluster",
+                "job_type": "dev",
+                "all_day": true,
+                "planned_start": "+3d"
+            },
+            {
+                "title": "Patch sécurité – workers",
+                "job_type": "maintenance",
+                "environment": "prod",
+                "planned_start": "+4d"
+            }
+        ]
+    },
+    {
+        "name": "Registry Docker Privé",
+        "color": "#66ffcc",
+        "owner_username": "demo-ops",
+        "environments": [
+            "dev",
+            "staging",
+            "prod"
+        ],
+        "jobs": [
+            {
+                "title": "Sprint Planning Meeting – Semaine 01",
+                "job_type": "meeting",
+                "planned_start": "+1d"
+            },
+            {
+                "title": "Release registry config – staging",
+                "job_type": "ops",
+                "environment": "staging",
+                "planned_start": "+2d"
+            },
+            {
+                "title": "Rapport hebdo – erreurs push/pull",
+                "job_type": "dev",
+                "all_day": true,
+                "planned_start": "+3d"
+            },
+            {
+                "title": "Maintenance – rotation certificats",
+                "job_type": "maintenance",
+                "environment": "prod",
+                "planned_start": "+4d"
+            }
+        ]
+    },
+    {
+        "name": "Monitoring Stack",
+        "color": "#33ff99",
+        "owner_username": "demo-projets",
+        "environments": [
+            "dev",
+            "staging",
+            "prod"
+        ],
+        "jobs": [
+            {
+                "title": "Sprint Planning Meeting – Semaine 01",
+                "job_type": "meeting",
+                "planned_start": "+1d"
+            },
+            {
+                "title": "Déploiement dashboards – staging",
+                "job_type": "ops",
+                "environment": "staging",
+                "planned_start": "+2d"
+            },
+            {
+                "title": "Rapport hebdo – disponibilité",
+                "job_type": "dev",
+                "all_day": true,
+                "planned_start": "+3d"
+            },
+            {
+                "title": "Maintenance – upgrade exporters",
+                "job_type": "maintenance",
+                "environment": "staging",
+                "planned_start": "+4d"
+            }
+        ]
+    }
+]

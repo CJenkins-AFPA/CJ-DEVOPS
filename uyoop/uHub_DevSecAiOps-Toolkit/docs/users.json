@@ -1,0 +1,38 @@
+[
+  {
+    "username": "demo-admin",
+    "password": "demo-admin",
+    "role": "admin",
+    "display_name": "Alice ADMIN",
+    "email": "demo-admin@uhub.local",
+    "theme": "dark",
+    "is_active": true
+  },
+  {
+    "username": "demo-projets",
+    "password": "demo-projets",
+    "role": "projet",
+    "display_name": "Bruno PROJETS",
+    "email": "demo-projets@uhub.local",
+    "theme": "dark",
+    "is_active": true
+  },
+  {
+    "username": "demo-dev",
+    "password": "demo-dev",
+    "role": "dev",
+    "display_name": "Chloé DEV",
+    "email": "demo-dev@uhub.local",
+    "theme": "dark",
+    "is_active": true
+  },
+  {
+    "username": "demo-ops",
+    "password": "demo-ops",
+    "role": "ops",
+    "display_name": "David OPS",
+    "email": "demo-ops@uhub.local",
+    "theme": "dark",
+    "is_active": true
+  }
+]
