@@ -20,7 +20,7 @@ uHub est un portail DevSecAiOps conçu pour orchestrer les opérations (Projets,
 
 Le projet inclut un `Makefile` pour simplifier les opérations (Idempotence garantie).
 
-| Commande | Action |
+| Commande | Action |dhi.io/python:3.13
 |---|---|
 | `make up` | **Build & Start** (Back, Front, DB, Vault). |
 | `make down` | Arrête et supprime les conteneurs (conserve les données volume). |

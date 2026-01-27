@@ -1,0 +1,189 @@
+# Pipeline CI/CD avec SAST pour UyoopApp
+# Documentation: https://docs.gitlab.com/ee/ci/
+
+variables:
+  # Configuration Docker
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  
+  # Configuration Harbor Registry
+  HARBOR_REGISTRY: "harbor.local:8081"
+  HARBOR_PROJECT: "uyoop"
+  IMAGE_NAME: "${HARBOR_REGISTRY}/${HARBOR_PROJECT}/uyoopapp"
+  IMAGE_TAG: "${CI_COMMIT_SHORT_SHA}"
+  
+  # Configuration SAST
+  SECURE_LOG_LEVEL: "info"
+
+# Définition des stages du pipeline
+stages:
+  - test          # Tests unitaires et linting
+  - sast          # Analyse de sécurité du code
+  - build         # Construction de l'image Docker
+  - scan-image    # Scan de sécurité de l'image
+  - push          # Push vers Harbor
+  - deploy        # Déploiement (optionnel)
+
+# Templates GitLab SAST (automatique)
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+# ================================
+# STAGE: TEST
+# ================================
+
+# Linting PHP avec PHP_CodeSniffer
+lint:php:
+  stage: test
+  image: php:8.4-alpine
+  script:
+    - apk add --no-cache git
+    - echo "Installing PHP_CodeSniffer..."
+    - wget -O phpcs.phar https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+    - php phpcs.phar --version
+    - echo "Linting PHP files..."
+    - php phpcs.phar --standard=PSR12 --extensions=php ./public ./src || true
+  allow_failure: true
+  tags:
+    - docker
+
+# Tests de syntaxe PHP
+syntax:php:
+  stage: test
+  image: php:8.4-alpine
+  script:
+    - echo "Checking PHP syntax..."
+    - find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors"
+  tags:
+    - docker
+
+# ================================
+# STAGE: SAST (Code Analysis)
+# ================================
+
+# GitLab SAST est inclus automatiquement via le template
+# Il détecte automatiquement PHP et lance les analyseurs appropriés
+
+# Scan de secrets avec Gitleaks
+gitleaks:
+  stage: sast
+  image: zricethezav/gitleaks:latest
+  script:
+    - echo "Scanning for secrets and credentials..."
+    - gitleaks detect --source . --verbose --no-git || true
+  allow_failure: true
+  tags:
+    - docker
+
+# Analyse statique PHP avec PHPStan (optionnel)
+phpstan:
+  stage: sast
+  image: php:8.4-alpine
+  script:
+    - apk add --no-cache git
+    - echo "Installing PHPStan..."
+    - wget -O phpstan.phar https://github.com/phpstan/phpstan/releases/latest/download/phpstan.phar
+    - php phpstan.phar --version
+    - echo "Running static analysis..."
+    - php phpstan.phar analyse --level=5 ./src ./public || true
+  allow_failure: true
+  tags:
+    - docker
+
+# ================================
+# STAGE: BUILD
+# ================================
+
+build:image:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker info
+  script:
+    - echo "Building Docker image..."
+    - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
+    - echo "Image built successfully"
+    - docker images | grep uyoopapp
+  tags:
+    - docker
+  artifacts:
+    reports:
+      dotenv: build.env
+
+# ================================
+# STAGE: SCAN IMAGE
+# ================================
+
+# Scan de vulnérabilités avec Trivy
+trivy:scan:
+  stage: scan-image
+  image: aquasec/trivy:latest
+  script:
+    - echo "Scanning Docker image for vulnerabilities..."
+    - trivy image --severity HIGH,CRITICAL --exit-code 0 ${IMAGE_NAME}:${IMAGE_TAG}
+    - echo "Generating detailed report..."
+    - trivy image --format json --output trivy-report.json ${IMAGE_NAME}:${IMAGE_TAG}
+  allow_failure: true
+  artifacts:
+    reports:
+      container_scanning: trivy-report.json
+    paths:
+      - trivy-report.json
+    expire_in: 1 week
+  tags:
+    - docker
+
+# ================================
+# STAGE: PUSH
+# ================================
+
+push:harbor:
+  stage: push
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u ${HARBOR_USERNAME} -p ${HARBOR_PASSWORD} ${HARBOR_REGISTRY}
+  script:
+    - echo "Pushing image to Harbor..."
+    - docker push ${IMAGE_NAME}:${IMAGE_TAG}
+    - docker push ${IMAGE_NAME}:latest
+    - echo "Image pushed successfully to ${IMAGE_NAME}:${IMAGE_TAG}"
+  only:
+    - main
+    - develop
+  tags:
+    - docker
+
+# ================================
+# STAGE: DEPLOY (Optionnel)
+# ================================
+
+deploy:staging:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deployment to staging environment..."
+    - echo "Image: ${IMAGE_NAME}:${IMAGE_TAG}"
+    - echo "This is a placeholder for actual deployment"
+  only:
+    - develop
+  when: manual
+  tags:
+    - docker
+
+deploy:production:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deployment to production environment..."
+    - echo "Image: ${IMAGE_NAME}:${IMAGE_TAG}"
+    - echo "This is a placeholder for actual deployment"
+  only:
+    - main
+  when: manual
+  tags:
+    - docker
