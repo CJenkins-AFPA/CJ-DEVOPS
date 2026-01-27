@@ -72,3 +72,8 @@ override.tf.json
 22-Dive-test/results/*.tar
 22-Dive-test/results/*.json
 22-Dive-test/results/*.txt
+
+# ==================== NESTED REPOS (LAB) ====================
+uyoop/CI/app/
+
+projet-infra-rbc/
