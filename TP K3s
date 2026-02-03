@@ -1,0 +1,13 @@
+TP K3s
+
+Vagrant file + Script
+
+vagrant status
+Current machine states:
+
+nfs-storage               running (virtualbox)    inet 10.20.72.5/24
+db-server                 running (virtualbox)    inet 10.20.72.6/24
+k3s-manager               running (virtualbox)    inet 10.20.72.7/24
+k3s-worker-1              running (virtualbox)    inet 10.20.72.8/24
+k3s-worker-2              running (virtualbox)    inet 10.20.72.9/24
+
