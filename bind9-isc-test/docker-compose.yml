@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  bind9:
+    image: internetsystemsconsortium/bind9:9.18
+    container_name: bind9-isc-test
+    restart: unless-stopped
+    ports:
+      - "8053:53/tcp"
+      - "8053:53/udp"
+    volumes:
+      - ./config:/etc/bind:ro
+      - ./zones:/var/lib/bind
+      - ./cache:/var/cache/bind
+    environment:
+      - TZ=Europe/Paris
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=50m
+      - /run:rw,noexec,nosuid,size=10m
+      - /var/log/bind:rw,noexec,nosuid,size=100m,uid=53,gid=53
+    user: "53:53"

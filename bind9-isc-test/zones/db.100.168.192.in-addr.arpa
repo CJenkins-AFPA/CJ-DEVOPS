@@ -1,0 +1,25 @@
+$TTL    604800
+@       IN      SOA     dns.rbc.lab. admin.rbc.lab. (
+                        1768857511  ; Serial
+                        604800                          ; Refresh
+                        86400                           ; Retry
+                        2419200                         ; Expire
+                        604800 )                        ; Negative Cache TTL
+
+; Name servers
+@       IN      NS      dns.rbc.lab.
+
+; PTR records
+5    IN    PTR    admin.rbc.lab.
+1    IN    PTR    gateway.rbc.lab.
+51    IN    PTR    nginx1.rbc.lab.
+52    IN    PTR    nginx2.rbc.lab.
+53    IN    PTR    proxy.rbc.lab.
+60    IN    PTR    dns.rbc.lab.
+51    IN    PTR    registry.rbc.lab.
+51    IN    PTR    gitlab.rbc.lab.
+51    IN    PTR    prometheus.rbc.lab.
+51    IN    PTR    grafana.rbc.lab.
+51    IN    PTR    alertmanager.rbc.lab.
+51    IN    PTR    docs.rbc.lab.
+51    IN    PTR    vault.rbc.lab.

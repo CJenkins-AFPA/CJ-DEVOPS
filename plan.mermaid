@@ -1,0 +1,55 @@
+graph TD
+    %% Styling
+    classDef vm fill:#e1f5fe,stroke:#01579b,stroke-width:2px,rx:5,ry:5;
+    classDef storage fill:#fff3e0,stroke:#e65100,stroke-width:2px,rx:5,ry:5;
+    classDef db fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,rx:5,ry:5;
+    classDef k8s fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,rx:5,ry:5;
+    classDef net fill:#eeeeee,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5;
+
+    subgraph Infra["☁️ Infrastructure K3s Test Environment"]
+        direction TB
+
+        subgraph Network["🌐 Networking"]
+            Bridge((Public Bridge<br/>interface: eno1)):::net
+        end
+
+        subgraph StorageLayer["🗄️ Storage Layer"]
+            NFS[("nfs-storage")]:::storage
+            ExtraDisk[("💾 10GB Extra Disk")]:::storage
+            NFS --- ExtraDisk
+            note1[Debian 13<br/>2 vCPU<br/>2GB RAM]:::storage
+            NFS -.- note1
+        end
+
+        subgraph DataLayer["💾 Database Layer"]
+            DB[("db-server")]:::db
+            note2[Debian 13<br/>2 vCPU<br/>2GB RAM]:::db
+            DB -.- note2
+        end
+
+        subgraph K3sCluster["☸️ Kubernetes Cluster (K3s)"]
+            direction TB
+            
+            Manager["k3s-manager"]:::k8s
+            note3[4 vCPU / 3GB RAM]:::k8s
+            Manager -.- note3
+
+            Worker1["k3s-worker-1"]:::k8s
+            note4[4 vCPU / 3GB RAM]:::k8s
+            Worker1 -.- note4
+
+            Worker2["k3s-worker-2"]:::k8s
+            note5[4 vCPU / 3GB RAM]:::k8s
+            Worker2 -.- note5
+
+            Manager -->|Control Plane| Worker1
+            Manager -->|Control Plane| Worker2
+        end
+
+        %% Network Connections
+        Bridge <==> NFS
+        Bridge <==> DB
+        Bridge <==> Manager
+        Bridge <==> Worker1
+        Bridge <==> Worker2
+    end

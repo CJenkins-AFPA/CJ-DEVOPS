@@ -1,0 +1,28 @@
+$TTL    604800
+@       IN      SOA     dns.rbc.lab. admin.rbc.lab. (
+                        1768857511  ; Serial
+                        604800                          ; Refresh
+                        86400                           ; Retry
+                        2419200                         ; Expire
+                        604800 )                        ; Negative Cache TTL
+
+; Name servers
+@       IN      NS      dns.rbc.lab.
+
+; A records
+admin    IN    A    192.168.100.5
+gateway    IN    A    192.168.100.1
+nginx1    IN    A    192.168.100.51
+nginx2    IN    A    192.168.100.52
+proxy    IN    A    192.168.100.53
+dns    IN    A    192.168.100.60
+registry    IN    A    192.168.100.51
+gitlab    IN    A    192.168.100.51
+prometheus    IN    A    192.168.100.51
+grafana    IN    A    192.168.100.51
+alertmanager    IN    A    192.168.100.51
+docs    IN    A    192.168.100.51
+vault    IN    A    192.168.100.51
+
+; CNAME records
+harbor    IN    CNAME    registry.rbc.lab.
