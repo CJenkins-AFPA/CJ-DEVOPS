@@ -1,61 +1,99 @@
-TP K3s
+# TP K3s
+
+## État Vagrant et Configuration Initiale
 
 Vagrant file + Script
 
+```bash
 vagrant status
-Current machine states:
+```
 
+**Current machine states:**
+
+```text
 nfs-storage               running (virtualbox)    inet 10.20.72.5/24
 db-server                 running (virtualbox)    inet 10.20.72.6/24
 k3s-manager               running (virtualbox)    inet 10.20.72.7/24
 k3s-worker-1              running (virtualbox)    inet 10.20.72.8/24
 k3s-worker-2              running (virtualbox)    inet 10.20.72.9/24
+```
 
+### Configuration `/etc/hosts`
+k3s master + 2 workers: modifier `/etc/hosts` ajouter :
 
-k3s master + 2 workers: modifier /etc/hosts/
-ajouter 
+```text
 127.0.0.1 localhost
 10.20.72.7 k3s-manager
 10.20.72.8 k3s-worker-1
 10.20.72.9 k3s-worker-2
+```
 
+### Récupération du Token (Exemple)
+
+```bash
 NODE TOKEN
 sudo cat /var/lib/rancher/k3s/server/node-token
-K10a60019f860fa649e01c16bd24723fd1a526bd3b943683d8f22ec63c8dcbac6ad::server:2a6a6ec93fad3577d7f89924616b91ca
+# Exemple de sortie:
+# K10a60019f860fa649e01c16bd24723fd1a526bd3b943683d8f22ec63c8dcbac6ad::server:2a6a6ec93fad3577d7f89924616b91ca
+```
 
-Pour le worker 10.20.72.8: 
+### Commandes de jonction (Exemples)
+
+Pour le worker 10.20.72.8:
+```bash
 curl -sfL https://get.k3s.io | sudo K3S_URL="https://10.20.72.7:6443"  K3S_TOKEN="K10a60019f860fa649e01c16bd24723fd1a526bd3b943683d8f22ec63c8dcbac6ad::server:2a6a6ec93fad3577d7f89924616b91ca" sh -s - agent   --node-ip 10.20.72.8
+```
 
-Puis pour le worker 10.20.72.9: 
+Puis pour le worker 10.20.72.9:
+```bash
 curl -sfL https://get.k3s.io | sudo K3S_URL="https://10.20.72.7:6443"  K3S_TOKEN="K10a60019f860fa649e01c16bd24723fd1a526bd3b943683d8f22ec63c8dcbac6ad::server:2a6a6ec93fad3577d7f89924616b91ca" sh -s - agent   --node-ip 10.20.72.9
+```
 
+---
 
-TP COMPLET
+# TP COMPLET
 
-Machine stockage NFS ( pour y stocker des fichiers commun a +ieurs conteneurs )
-Storage NFS :
-  OS : Debian 13
-  Disque dédié : /dev/sdb (vide)
-  Réseau k3s : 192.168.1.0/24
-  Rôle : stockage NFS pour Kubernetes (RWX)
-Objectif :
-/dev/sdb formaté et monté sur /srv/nfs
- 
-1-1/ partitionner sdb
+## Configuration du Stockage NFS
+
+Machine stockage NFS (pour y stocker des fichiers commun a +ieurs conteneurs).
+
+**Storage NFS :**
+*   OS : Debian 13
+*   Disque dédié : `/dev/sdb` (vide)
+*   Réseau k3s : `192.168.1.0/24`
+*   Rôle : stockage NFS pour Kubernetes (RWX)
+
+**Objectif :**
+`/dev/sdb` formaté et monté sur `/srv/nfs`
+
+### 1-1/ Partitionner sdb
+
+```bash
 lsblk
-Partitionner le disque
+# Partitionner le disque
 fdisk /dev/sdb
-Séquence :
+```
+
+Séquence fdisk :
+```text
 n      # new
 p      # primary
 1      # partition 1
 <ENTER>
 <ENTER>
 W
-On doit voir sdb1 via la commande lsblk
+```
+
+On doit voir `sdb1` via la commande `lsblk`.
 On formate en ext4 :
 
+```bash
 mkfs.ext4 /dev/sdb1
+```
+
+### Script d'automatisation NFS
+
+```bash
 #!/bin/bash
 set -euo pipefail
  
@@ -73,7 +111,7 @@ FS_TYPE="ext4"
 MOUNT_POINT="/srv/nfs"
  
 # Réseau autorisé à monter les exports ( votre réseau vagrant ) 
-ALLOWED_CIDR="192.168.1.0/24"
+ALLOWED_CIDR="10.20.72.0/24"
  
 # Exports NFS à publier : "nom_logique:chemin_relatif"
 EXPORTS=(
@@ -293,144 +331,64 @@ for entry in "${EXPORTS[@]}"; do
  IFS=":" read -r name relpath <<< "$entry"
  log "Export    : ${MOUNT_POINT}/${relpath}"
 done
+```
 
+### Commandes de contrôle
 
-
-commandes de contrôle
+```bash
 mount | grep /srv/nfs
 exportfs -v
 ss -lntp | grep 2049
- 
- 
-Tableau récapitulatif NFS
-Paramètres globaux
-Élément
-	
-Valeur
+```
 
+### Tableau récapitulatif NFS
 
-Serveur NFS (VM)
-	
-K3snfs
+#### Paramètres globaux
 
+| Élément | Valeur |
+| :--- | :--- |
+| Serveur NFS (VM) | `K3snfs` |
+| IP serveur NFS | `10.20.72.5` |
+| Point de montage du disque (serveur) | `/srv/nfs` (monté depuis `/dev/sdb1`) |
+| Réseau autorisé | `10.20.72.0/24` |
+| Port NFS | TCP 2049 |
+| Version recommandée | NFSv4.1 (vers=4.1) |
+| Options export (serveur) | `rw,sync,no_subtree_check,no_root_squash` |
+| Options mount (clients) | `rw,sync,_netdev,hard,proto=tcp,vers=4.1,timeo=600,retrans=2` |
 
-IP serveur NFS
-	
-192.168.1.120
+#### Exports NFS et montages clients
 
+| Usage | Export NFS (serveur) | Cible NFS (client) | Point de montage (client) | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **WordPress** – contenu persistant | `/srv/nfs/wp-content` | `10.20.72.5:/srv/nfs/wp-content` | `/mnt/wp-content` | RWX requis côté K8s (NFS OK). Pour pods : PV/PVC NFS. |
+| **Backups** (dumps DB, archives) | `/srv/nfs/backups` | `10.20.72.5:/srv/nfs/backups` | `/mnt/backups` | Sert aux sauvegardes cluster/app (jobs, scripts). |
+| **Partage commun** (optionnel) | `/srv/nfs/shared` | `10.20.72.5:/srv/nfs/shared` | `/mnt/shared` | Pour données partagées entre apps (à limiter en prod). |
 
-Point de montage du disque (serveur)
-	
-/srv/nfs (monté depuis /dev/sdb1)
+#### Cibles Kubernetes (prévues)
 
+| Élément Kubernetes | Export utilisé | Exemple de chemin monté dans le Pod | Remarque |
+| :--- | :--- | :--- | :--- |
+| PVC wp-content | `/srv/nfs/wp-content` | `/var/www/html/wp-content` | WordPress nécessite persistance (uploads/plugins/themes). |
+| PVC backups | `/srv/nfs/backups` | `/backup` | Pour jobs de sauvegarde (cronjob). |
 
-Réseau autorisé
-	
-192.168.1.0/24
+---
 
+## Configuration du Cluster K3S
 
-Port NFS
-	
-TCP 2049
+### Préparation du master k3s
 
+*Modifier /etc/hosts ( ou dns )*
 
-Version recommandée
-	
-NFSv4.1 (vers=4.1)
+#### Désactiver le swap (obligatoire)
 
-
-Options export (serveur)
-	
-rw,sync,no_subtree_check,no_root_squash
-
-
-Options mount (clients)
-	
-rw,sync,_netdev,hard,proto=tcp,vers=4.1,timeo=600,retrans=2
-
-
- 
-	
- 
-Exports NFS et montages clients
-Usage
-	
-Export NFS (serveur)
-	
-Cible NFS (client)
-	
-Point de montage (client)
-	
-Notes
-
-
-WordPress – contenu persistant
-	
-/srv/nfs/wp-content
-	
-192.168.1.120:/srv/nfs/wp-content
-	
-/mnt/wp-content
-	
-RWX requis côté K8s (NFS OK). Pour pods : PV/PVC NFS.
-
-
-Backups (dumps DB, archives)
-	
-/srv/nfs/backups
-	
-192.168.1.120:/srv/nfs/backups
-	
-/mnt/backups
-	
-Sert aux sauvegardes cluster/app (jobs, scripts).
-
-
-Partage commun (optionnel)
-	
-/srv/nfs/shared
-	
-192.168.1.120:/srv/nfs/shared
-	
-/mnt/shared
-	
-Pour données partagées entre apps (à limiter en prod).
-Cibles Kubernetes (prévues)
-Élément Kubernetes
-	
-Export utilisé
-	
-Exemple de chemin monté dans le Pod
-	
-Remarque
-
-
-PVC wp-content
-	
-/srv/nfs/wp-content
-	
-/var/www/html/wp-content
-	
-WordPress nécessite persistance (uploads/plugins/themes).
-
-
-PVC backups
-	
-/srv/nfs/backups
-	
-/backup
-	
-Pour jobs de sauvegarde (cronjob).
- 
-Cluster K3S
-Préparation du master k3s
-
-modifier /etc/hosts ( ou dns )
- 
-Désactiver le swap (obligatoire)
+```bash
 sudo swapoff -a
 sudo sed -i.bak '/\sswap\s/s/^/#/' /etc/fstab
-C. Modules kernel utiles
+```
+
+#### Modules kernel utiles
+
+```bash
 sudo tee /etc/modules-load.d/k8s.conf >/dev/null <<'EOF'
 overlay
 br_netfilter
@@ -438,114 +396,118 @@ EOF
  
 sudo modprobe overlay
 sudo modprobe br_netfilter
+```
+
 Pour vérifier :
+```bash
 lsmod | grep -E 'overlay|br_netfilter'
- 
-Sysctl réseau (forward + bridge)
+```
+
+#### Sysctl réseau (forward + bridge)
+
+```bash
 sudo tee /etc/sysctl.d/99-kubernetes-cri.conf >/dev/null <<'EOF'
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
 EOF
- 
+```
+
 Pour vérifier :
-sudo sysctl –system
-SUR TOUS LES MEMBRES MASTER ET WORKERS
+```bash
+sudo sysctl --system
+```
+**SUR TOUS LES MEMBRES MASTER ET WORKERS**
 
+### Config Master
 
-Config Master
-Installer le master
+**Installer le master**
 
+```bash
 apt install sudo && apt install curl
+```
 
-Une image contenant texte, capture d’écran, Police, noir Le contenu généré par l’IA peut être incorrect.
+> "Une image contenant texte, capture d’écran, Police, noir Le contenu généré par l’IA peut être incorrect."
 
- 
-
- 
-
+```bash
 curl -sfL https://get.k3s.io | sudo sh -s - server \
+ --node-ip 10.20.72.7 \
+ --advertise-address 10.20.72.7 \
+ --tls-san 10.20.72.7 \
+ --write-kubeconfig-mode 644
+```
 
- --node-ip 192.168.1.123 \
+Vérifier : 
+```bash
+systemctl status k3s --no-pager
+```
 
- --advertise-address 192.168.1.123 \
+> "Une image contenant texte, capture d’écran, Police Le contenu généré par l’IA peut être incorrect."
 
- --tls-san 192.168.1.123 \
-
---write-kubeconfig-mode 644
-
- 
-
-Vérifier : systemctl status k3s --no-pager
-
-Une image contenant texte, capture d’écran, Police Le contenu généré par l’IA peut être incorrect.
-
+```bash
 kubectl get nodes -o wide
+```
 
+#### Récupération du token (sur le manager)
+Il n’y a plus qu’à récupérer le token qui permettra de joindre les workers :
+```bash
+cat /var/lib/rancher/k3s/server/node-token
+```
 
-Récupération du token ( sur le manager )
-Il n’y a plus qu’à récupérer le token qui permettra de joindre les workers :  cat /var/lib/rancher/k3s/server/node-token
+### Installation des Workers
 
+#### Joindre les workers
 
-Les Workers
-2) Joindre les workers
+Modifiez `/etc/hosts` comme pour le manager.
+Et même config initiale :
 
- 
+```bash
+swapoff -a
+sed -i.bak '/\sswap\s/s/^/#/' /etc/fstab
 
-Modifiez /etc/hosts comme pour le manager
-
-Et mm config initiale :
-
- swapoff -a
-
- sed -i.bak '/\sswap\s/s/^/#/' /etc/fstab
-
- tee /etc/modules-load.d/k8s.conf >/dev/null <<'EOF'
-
+tee /etc/modules-load.d/k8s.conf >/dev/null <<'EOF'
 overlay
-
 br_netfilter
-
 EOF
 
- 
+modprobe overlay
+modprobe br_netfilter
 
-    modprobe overlay
-
-    modprobe br_netfilter
-
-  tee /etc/sysctl.d/99-kubernetes-cri.conf >/dev/null <<'EOF'
-
+tee /etc/sysctl.d/99-kubernetes-cri.conf >/dev/null <<'EOF'
 net.bridge.bridge-nf-call-iptables  = 1
-
 net.bridge.bridge-nf-call-ip6tables = 1
-
 net.ipv4.ip_forward                 = 1
-
 EOF
 
- 
-
-Apt install curl sudo nfs-common
+apt install curl sudo nfs-common
+```
 
 ---
 
-Puis pour le worker en .124: 
-curl -sfL https://get.k3s.io | sudo K3S_URL="https://192.168.1.123:6443"  K3S_TOKEN="K10174eaebc91154c58bb3d08d405214be1fa25d1c3XXXX49073f7948a6a09ddec::server:3ba1ae1a8e4840bf8470c0ad7acc3X62" sh -s - agent   --node-ip 192.168.1.124
+Puis pour le worker 10.20.72.8 :
 
- 
-Idem pour  le worker en .125
-Et on vérifie en retournant sur le manager : kubectl get nodes -o wide
- 
+```bash
+curl -sfL https://get.k3s.io | sudo K3S_URL="https://10.20.72.7:6443"  K3S_TOKEN="K10a60019f860fa649e01c16bd24723fd1a526bd3b943683d8f22ec63c8dcbac6ad::server:2a6a6ec93fad3577d7f89924616b91ca" sh -s - agent   --node-ip 10.20.72.8
+```
 
-3 FICHIERS CORE :
-deployment : décrire le conteneur
-service : parler au cluster
-ingress :  accès extérieurs (genre de "reverse proxy")
+Idem pour le worker 10.20.72.9
 
-Déploiement NGINX
-nginx-deployment.yaml
- 
+Et on vérifie en retournant sur le manager : 
+```bash
+kubectl get nodes -o wide
+```
+
+---
+
+## Les 3 FICHIERS CORE (Exemples)
+*   **deployment** : décrire le conteneur
+*   **service** : parler au cluster
+*   **ingress** : accès extérieurs (genre de "reverse proxy")
+
+### Déploiement NGINX
+`nginx-deployment.yaml`
+
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -567,10 +529,12 @@ spec:
          image: nginx:1.25-alpine
          ports:
            - containerPort: 80
+```
 
-Manifest service
-nginx-svc-nodeport.yaml
+### Manifest Service (NodePort)
+`nginx-svc-nodeport.yaml`
 
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -583,10 +547,13 @@ spec:
    - port: 80
      targetPort: 80
      nodePort: 30080
+```
 
-pour l'exposition avec traefik, on crée un service clusterIP
-nginx-svc.yaml
- 
+### Manifest Service (ClusterIP pour Ingress)
+Pour l'exposition avec traefik, on crée un service ClusterIP.
+`nginx-svc.yaml`
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -598,10 +565,13 @@ spec:
  ports:
    - port: 80
      targetPort: 80
+```
 
-et le fichier d'ingress, qui exploite le service clusterIP
-nginx-ingress.yaml
- 
+### Manifest Ingress
+Fichier d'ingress, qui exploite le service ClusterIP.
+`nginx-ingress.yaml`
+
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -618,30 +588,43 @@ spec:
                name: nginx
                port:
                 number: 80
- 
-Comme d’hab, on applique : kubectl apply -f nginx-ingress.yaml
+```
 
+Comme d’hab, on applique :
+```bash
+kubectl apply -f nginx-ingress.yaml
+```
 
-fix 
-Dans le manager 
-nano /etc/systemd/system/k3s.service
- 
-rajouter 
+---
+
+## Correctif : Interface Flannel
+
+### Dans le manager
+`nano /etc/systemd/system/k3s.service`
+
+Rajouter :
+```text
 '--flannel-iface' \
 'eth1'
+```
 
+Puis redémarrer :
+```bash
 sudo systemctl daemon-reload
 sudo systemctl restart k3s
- 
- 
-Dans les workers 
-sudo nano /etc/systemd/system/k3s-agent.service
- 
-rajouter 
+```
+
+### Dans les workers
+`sudo nano /etc/systemd/system/k3s-agent.service`
+
+Rajouter :
+```text
 '--flannel-iface' \
 'eth1'
- 
+```
+
+Puis redémarrer :
+```bash
 systemctl daemon-reload
 systemctl restart k3s-agent
- 
- 
+```
