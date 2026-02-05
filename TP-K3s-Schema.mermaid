@@ -77,21 +77,3 @@ flowchart TB
   POD2 --> LOGS
   POD1 --> TRACES
   POD2 --> TRACES
-
-
-  🧭 Légende (HA + Réseau)
-Haute dispo (HA)
-
-API VIP (TCP 6443) : point d’entrée unique vers le control plane.
-3 serveurs k3s : redondance de l’API, du scheduler et du controller.
-Datastore HA : etcd ou DB externe répliquée.
-Réseau
-
-Node CIDR : 192.168.10.0/24 (réseau machines).
-Pod CIDR : 10.42.0.0/16 (IP internes pods).
-Service CIDR : 10.43.0.0/16 (IPs virtuelles des services).
-Ports clés :
-80/443 : trafic entrant HTTP/HTTPS
-6443 : API Kubernetes
-10250 : kubelet
-9090 / 3100 / 16686 : observabilité
