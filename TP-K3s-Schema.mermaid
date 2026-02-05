@@ -1,14 +1,14 @@
 flowchart TB
-  Internet((Internet / Users)) --> DNS[DNS / Anycast]
-  DNS --> LB[External Load Balancer - Ports 80/443]
-  LB --> Ingress[Ingress Controller (Traefik/Nginx) - Ports 80/443]
+  Internet((Internet Users)) --> DNS[DNS Anycast]
+  DNS --> LB[External Load Balancer Ports 80 443]
+  LB --> Ingress[Ingress Controller Traefik Nginx Ports 80 443]
 
-  subgraph CP[Control Plane HA (k3s servers)]
-    APIVIP[(API VIP / Internal LB - TCP 6443)]
-    S1[Server 1 - API/Scheduler/Controller]
-    S2[Server 2 - API/Scheduler/Controller]
-    S3[Server 3 - API/Scheduler/Controller]
-    DB[(Datastore HA - etcd/MySQL/PostgreSQL)]
+  subgraph CP[Control Plane HA k3s servers]
+    APIVIP[(API VIP TCP 6443)]
+    S1[Server 1 API Scheduler Controller]
+    S2[Server 2 API Scheduler Controller]
+    S3[Server 3 API Scheduler Controller]
+    DB[(Datastore HA etcd MySQL PostgreSQL)]
     APIVIP --> S1
     APIVIP --> S2
     APIVIP --> S3
@@ -18,29 +18,29 @@ flowchart TB
   end
 
   subgraph NET[Cluster Networking]
-    PodCIDR[Pod CIDR 10.42.0.0/16]
-    SvcCIDR[Service CIDR 10.43.0.0/16]
-    NodeCIDR[Node CIDR 192.168.10.0/24]
+    PodCIDR[Pod CIDR 10.42.0.0 16]
+    SvcCIDR[Service CIDR 10.43.0.0 16]
+    NodeCIDR[Node CIDR 192.168.10.0 24]
   end
 
-  Ingress --> SVC[Service ClusterIP/LB - Ports 80/443]
-  SVC --> POD1[Pod A - 10.42.1.10]
-  SVC --> POD2[Pod B - 10.42.2.10]
+  Ingress --> SVC[Service ClusterIP LoadBalancer Ports 80 443]
+  SVC --> POD1[Pod A 10.42.1.10]
+  SVC --> POD2[Pod B 10.42.2.10]
 
-  subgraph W1[Worker Node 1 - 192.168.10.11]
+  subgraph W1[Worker Node 1 192.168.10.11]
     POD1
-    K1[kubelet - Port 10250]
-    CNI1[CNI Flannel/Cilium - VXLAN/EBPF]
+    K1[kubelet Port 10250]
+    CNI1[CNI Flannel Cilium VXLAN EBPF]
     CRI1[containerd]
     POD1 --- K1
     POD1 --- CNI1
     POD1 --- CRI1
   end
 
-  subgraph W2[Worker Node 2 - 192.168.10.12]
+  subgraph W2[Worker Node 2 192.168.10.12]
     POD2
-    K2[kubelet - Port 10250]
-    CNI2[CNI Flannel/Cilium - VXLAN/EBPF]
+    K2[kubelet Port 10250]
+    CNI2[CNI Flannel Cilium VXLAN EBPF]
     CRI2[containerd]
     POD2 --- K2
     POD2 --- CNI2
@@ -54,13 +54,13 @@ flowchart TB
   POD2 --> PVC2[PVC]
   PVC1 --> PV1[PV]
   PVC2 --> PV2[PV]
-  PV1 --> Storage[(NFS/Ceph/Longhorn)]
+  PV1 --> Storage[(NFS Ceph Longhorn)]
   PV2 --> Storage
 
   subgraph OBS[Observability]
-    METRICS[Prometheus/Metrics Server - Port 9090]
-    LOGS[Loki/Fluentd - Port 3100]
-    TRACES[Jaeger - Port 16686]
+    METRICS[Prometheus Metrics Server Port 9090]
+    LOGS[Loki Fluentd Port 3100]
+    TRACES[Jaeger Port 16686]
   end
   POD1 --> METRICS
   POD2 --> METRICS
