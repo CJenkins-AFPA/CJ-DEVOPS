@@ -1,14 +1,14 @@
 flowchart TB
-  Internet((Internet Users)) --> DNS[DNS Anycast]
+  Internet((Internet)) --> DNS[DNS]
   DNS --> LB[External Load Balancer Ports 80 443]
-  LB --> Ingress[Ingress Controller Traefik Nginx Ports 80 443]
+  LB --> Ingress[Ingress Controller Ports 80 443]
 
-  subgraph CP[Control Plane HA k3s servers]
+  subgraph CP[Control Plane HA]
     APIVIP[(API VIP TCP 6443)]
     S1[Server 1 API Scheduler Controller]
     S2[Server 2 API Scheduler Controller]
     S3[Server 3 API Scheduler Controller]
-    DB[(Datastore HA etcd MySQL PostgreSQL)]
+    DB[(Datastore HA)]
     APIVIP --> S1
     APIVIP --> S2
     APIVIP --> S3
@@ -58,7 +58,7 @@ flowchart TB
   PV2 --> Storage
 
   subgraph OBS[Observability]
-    METRICS[Prometheus Metrics Server Port 9090]
+    METRICS[Prometheus Metrics Port 9090]
     LOGS[Loki Fluentd Port 3100]
     TRACES[Jaeger Port 16686]
   end
