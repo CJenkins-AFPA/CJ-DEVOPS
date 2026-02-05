@@ -628,3 +628,27 @@ Puis redémarrer :
 systemctl daemon-reload
 systemctl restart k3s-agent
 ```
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Services d'exposition:
+>> Déclarer Application
+- Cluster ip
+- Node port
+- Ingress
+
+Séparation des variables d'environnement et secrets dans autre fichier que deploy.yaml
+ConfigMap
+• Stocke : variables d’environnement, fichiers de conf, paramètres applicatifs.
+• Pas chiffré “par défaut” (c’est du texte encodé/stocké dans etcd).
+• On l’utilise pour : WORDPRESS_DB_HOST, WORDPRESS_DB_NAME, options WordPress, etc.
+Secret
+• Stocke : password DB, clés, certificats, tokens.
+• Encodé en base64 (ce n’est pas du chiffrement).
+• En prod : tu ajoutes chiffrement au repos (EncryptionConfiguration) + RBAC strict + éventuellement External Secrets/Vault
+
+CHECKER :
+- contenerd
+- namespace : si non spécifié = default. Lors d'une commande ,preciser -n namespace = exemple : kubectl get pods -n wordpress -o wide
+
+K3s : RANCHER > Validé par kubernetes (google)
